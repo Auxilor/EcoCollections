@@ -1,12 +1,12 @@
 package com.auxilor.ecocollections.collections
 
 import com.github.benmanes.caffeine.cache.Caffeine
-import com.auxilor.eco.core.config.interfaces.Config
-import com.auxilor.eco.core.data.keys.PersistentDataKey
-import com.auxilor.eco.core.data.keys.PersistentDataKeyType
-import com.auxilor.eco.core.items.Items
-import com.auxilor.eco.core.items.TestableItem
-import com.auxilor.eco.core.placeholder.PlayerPlaceholder
+import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.data.keys.PersistentDataKey
+import com.willfp.eco.core.data.keys.PersistentDataKeyType
+import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.TestableItem
+import com.willfp.eco.core.placeholder.PlayerPlaceholder
 import com.auxilor.ecocollections.api.completedCollectionCount
 import com.auxilor.ecocollections.api.getCollectionCount
 import com.auxilor.ecocollections.api.getCollectionTier
@@ -17,16 +17,16 @@ import com.auxilor.ecocollections.api.unlockedCollectionCount
 import com.auxilor.ecocollections.groups.CollectionGroup
 import com.auxilor.ecocollections.groups.CollectionGroups
 import com.auxilor.ecocollections.plugin
-import com.auxilor.eco.core.registry.KRegistrable
-import com.auxilor.eco.util.toNumeral
-import com.auxilor.libreforge.ViolationContext
-import com.auxilor.libreforge.conditions.ConditionList
-import com.auxilor.libreforge.conditions.Conditions
-import com.auxilor.libreforge.counters.Counter
-import com.auxilor.libreforge.counters.Counters
-import com.auxilor.libreforge.effects.Chain
-import com.auxilor.libreforge.effects.Effects
-import com.auxilor.libreforge.effects.executors.impl.NormalExecutorFactory
+import com.willfp.eco.core.registry.KRegistrable
+import com.willfp.eco.util.toNumeral
+import com.willfp.libreforge.ViolationContext
+import com.willfp.libreforge.conditions.ConditionList
+import com.willfp.libreforge.conditions.Conditions
+import com.willfp.libreforge.counters.Counter
+import com.willfp.libreforge.counters.Counters
+import com.willfp.libreforge.effects.Chain
+import com.willfp.libreforge.effects.Effects
+import com.willfp.libreforge.effects.executors.impl.NormalExecutorFactory
 import java.util.concurrent.TimeUnit
 
 class Collection(

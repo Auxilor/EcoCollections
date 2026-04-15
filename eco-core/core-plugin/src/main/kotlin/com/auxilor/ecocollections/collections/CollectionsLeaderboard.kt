@@ -2,7 +2,7 @@ package com.auxilor.ecocollections.collections
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
-import com.auxilor.eco.core.data.profile
+import com.willfp.eco.core.data.profile
 import com.auxilor.ecocollections.api.totalCollectionTiers
 import com.auxilor.ecocollections.plugin
 import org.bukkit.Bukkit

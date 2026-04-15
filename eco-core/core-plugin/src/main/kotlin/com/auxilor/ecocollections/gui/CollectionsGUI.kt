@@ -1,12 +1,12 @@
 package com.auxilor.ecocollections.gui
 
-import com.auxilor.eco.core.config.BuildableConfig
-import com.auxilor.eco.core.gui.menu
-import com.auxilor.eco.core.gui.onLeftClick
-import com.auxilor.eco.core.gui.slot
-import com.auxilor.eco.core.gui.slot.FillerMask
-import com.auxilor.eco.core.gui.slot.MaskItems
-import com.auxilor.eco.util.StringUtils
+import com.willfp.eco.core.config.BuildableConfig
+import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.slot
+import com.willfp.eco.core.gui.slot.FillerMask
+import com.willfp.eco.core.gui.slot.MaskItems
+import com.willfp.eco.util.StringUtils
 import com.auxilor.ecocollections.api.isCollectionComplete
 import com.auxilor.ecocollections.collections.Collection
 import com.auxilor.ecocollections.collections.Collections
@@ -98,7 +98,7 @@ object CollectionsGUI {
         theMenu.open(player)
     }
 
-    private fun buildGroupIcon(player: Player, group: CollectionGroup): com.auxilor.eco.core.gui.slot.Slot {
+    private fun buildGroupIcon(player: Player, group: CollectionGroup): com.willfp.eco.core.gui.slot.Slot {
         val iconItem = group.icon.item.clone()
         val meta = iconItem.itemMeta
 

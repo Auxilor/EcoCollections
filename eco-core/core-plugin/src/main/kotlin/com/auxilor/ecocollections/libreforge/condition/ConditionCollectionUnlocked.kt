@@ -1,14 +1,14 @@
 package com.auxilor.ecocollections.libreforge.condition
 
-import com.auxilor.eco.core.config.interfaces.Config
+import com.willfp.eco.core.config.interfaces.Config
 import com.auxilor.ecocollections.api.isCollectionUnlocked
 import com.auxilor.ecocollections.collections.Collections
-import com.auxilor.libreforge.Dispatcher
-import com.auxilor.libreforge.NoCompileData
-import com.auxilor.libreforge.ProvidedHolder
-import com.auxilor.libreforge.arguments
-import com.auxilor.libreforge.conditions.Condition
-import com.auxilor.libreforge.get
+import com.willfp.libreforge.Dispatcher
+import com.willfp.libreforge.NoCompileData
+import com.willfp.libreforge.ProvidedHolder
+import com.willfp.libreforge.arguments
+import com.willfp.libreforge.conditions.Condition
+import com.willfp.libreforge.get
 import org.bukkit.entity.Player
 
 object ConditionCollectionUnlocked : Condition<NoCompileData>("collection_unlocked") {

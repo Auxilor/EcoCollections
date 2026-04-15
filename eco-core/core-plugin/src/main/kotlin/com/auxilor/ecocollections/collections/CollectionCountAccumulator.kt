@@ -1,9 +1,9 @@
 package com.auxilor.ecocollections.collections
 
-import com.auxilor.eco.core.integrations.afk.AFKManager
+import com.willfp.eco.core.integrations.afk.AFKManager
 import com.auxilor.ecocollections.api.giveCollectionCount
 import com.auxilor.ecocollections.plugin
-import com.auxilor.libreforge.counters.Accumulator
+import com.willfp.libreforge.counters.Accumulator
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 

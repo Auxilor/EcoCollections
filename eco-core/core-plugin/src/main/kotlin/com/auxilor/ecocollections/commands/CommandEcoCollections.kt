@@ -1,9 +1,9 @@
 package com.auxilor.ecocollections.commands
 
-import com.auxilor.eco.core.command.impl.PluginCommand
-import com.auxilor.eco.core.command.impl.Subcommand
-import com.auxilor.eco.core.data.profile
-import com.auxilor.eco.util.StringUtils
+import com.willfp.eco.core.command.impl.PluginCommand
+import com.willfp.eco.core.command.impl.Subcommand
+import com.willfp.eco.core.data.profile
+import com.willfp.eco.util.StringUtils
 import com.auxilor.ecocollections.api.giveCollectionCount
 import com.auxilor.ecocollections.api.resetCollection
 import com.auxilor.ecocollections.api.setCollectionCount

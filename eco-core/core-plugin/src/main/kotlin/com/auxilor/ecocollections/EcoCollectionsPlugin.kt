@@ -1,6 +1,6 @@
 package com.auxilor.ecocollections
 
-import com.auxilor.eco.core.command.impl.PluginCommand
+import com.willfp.eco.core.command.impl.PluginCommand
 import com.auxilor.ecocollections.collections.Collections
 import com.auxilor.ecocollections.commands.CommandCollections
 import com.auxilor.ecocollections.commands.CommandEcoCollections
@@ -13,11 +13,11 @@ import com.auxilor.ecocollections.libreforge.effect.EffectUnlockCollection
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionComplete
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionTierUp
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionUnlock
-import com.auxilor.libreforge.loader.LibreforgePlugin
-import com.auxilor.libreforge.loader.configs.ConfigCategory
-import com.auxilor.libreforge.conditions.Conditions
-import com.auxilor.libreforge.effects.Effects
-import com.auxilor.libreforge.triggers.Triggers
+import com.willfp.libreforge.loader.LibreforgePlugin
+import com.willfp.libreforge.loader.configs.ConfigCategory
+import com.willfp.libreforge.conditions.Conditions
+import com.willfp.libreforge.effects.Effects
+import com.willfp.libreforge.triggers.Triggers
 import org.bukkit.event.Listener
 
 

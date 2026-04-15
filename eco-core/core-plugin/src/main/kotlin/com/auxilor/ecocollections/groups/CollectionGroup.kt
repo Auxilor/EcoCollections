@@ -1,9 +1,9 @@
 package com.auxilor.ecocollections.groups
 
-import com.auxilor.eco.core.config.interfaces.Config
-import com.auxilor.eco.core.items.Items
-import com.auxilor.eco.core.items.TestableItem
-import com.auxilor.eco.core.registry.KRegistrable
+import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.TestableItem
+import com.willfp.eco.core.registry.KRegistrable
 
 class CollectionGroup(
     override val id: String,

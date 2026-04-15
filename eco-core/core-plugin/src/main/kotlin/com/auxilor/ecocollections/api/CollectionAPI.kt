@@ -2,9 +2,9 @@
 
 package com.auxilor.ecocollections.api
 
-import com.auxilor.eco.core.data.profile
-import com.auxilor.eco.util.StringUtils
-import com.auxilor.eco.util.toNumeral
+import com.willfp.eco.core.data.profile
+import com.willfp.eco.util.StringUtils
+import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.event.PlayerCollectionCompleteEvent
 import com.auxilor.ecocollections.api.event.PlayerCollectionTierUpEvent
 import com.auxilor.ecocollections.api.event.PlayerCollectionUnlockEvent
@@ -13,10 +13,10 @@ import com.auxilor.ecocollections.collections.Collections
 import com.auxilor.ecocollections.plugin
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionComplete
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionTierUp
-import com.auxilor.libreforge.EmptyProvidedHolder
-import com.auxilor.libreforge.toDispatcher
-import com.auxilor.libreforge.triggers.DispatchedTrigger
-import com.auxilor.libreforge.triggers.TriggerData
+import com.willfp.libreforge.EmptyProvidedHolder
+import com.willfp.libreforge.toDispatcher
+import com.willfp.libreforge.triggers.DispatchedTrigger
+import com.willfp.libreforge.triggers.TriggerData
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player

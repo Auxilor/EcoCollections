@@ -1,8 +1,8 @@
 package com.auxilor.ecocollections.collections
 
-import com.auxilor.eco.core.config.interfaces.Config
-import com.auxilor.libreforge.loader.LibreforgePlugin
-import com.auxilor.libreforge.loader.configs.RegistrableCategory
+import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.libreforge.loader.LibreforgePlugin
+import com.willfp.libreforge.loader.configs.RegistrableCategory
 
 object Collections : RegistrableCategory<Collection>("collection", "collections") {
     override fun clear(plugin: LibreforgePlugin) {

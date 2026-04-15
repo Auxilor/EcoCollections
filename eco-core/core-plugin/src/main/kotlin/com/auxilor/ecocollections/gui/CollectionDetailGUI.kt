@@ -1,11 +1,11 @@
 package com.auxilor.ecocollections.gui
 
-import com.auxilor.eco.core.gui.menu
-import com.auxilor.eco.core.gui.onLeftClick
-import com.auxilor.eco.core.gui.slot
-import com.auxilor.eco.core.gui.slot.Slot
-import com.auxilor.eco.util.StringUtils
-import com.auxilor.eco.util.toNumeral
+import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.slot
+import com.willfp.eco.core.gui.slot.Slot
+import com.willfp.eco.util.StringUtils
+import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.getCollectionCount
 import com.auxilor.ecocollections.api.getCollectionTier
 import com.auxilor.ecocollections.collections.Collection

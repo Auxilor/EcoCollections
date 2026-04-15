@@ -1,10 +1,10 @@
 package com.auxilor.ecocollections.libreforge.trigger
 
 import com.auxilor.ecocollections.api.event.PlayerCollectionCompleteEvent
-import com.auxilor.libreforge.toDispatcher
-import com.auxilor.libreforge.triggers.Trigger
-import com.auxilor.libreforge.triggers.TriggerData
-import com.auxilor.libreforge.triggers.TriggerParameter
+import com.willfp.libreforge.toDispatcher
+import com.willfp.libreforge.triggers.Trigger
+import com.willfp.libreforge.triggers.TriggerData
+import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.event.EventHandler
 
 object TriggerCollectionComplete : Trigger("complete_collection") {

@@ -1,14 +1,14 @@
 package com.auxilor.ecocollections.libreforge.effect
 
-import com.auxilor.eco.core.config.interfaces.Config
+import com.willfp.eco.core.config.interfaces.Config
 import com.auxilor.ecocollections.api.giveCollectionCount
 import com.auxilor.ecocollections.collections.Collections
-import com.auxilor.libreforge.NoCompileData
-import com.auxilor.libreforge.arguments
-import com.auxilor.libreforge.effects.Effect
-import com.auxilor.libreforge.getDoubleFromExpression
-import com.auxilor.libreforge.triggers.TriggerData
-import com.auxilor.libreforge.triggers.TriggerParameter
+import com.willfp.libreforge.NoCompileData
+import com.willfp.libreforge.arguments
+import com.willfp.libreforge.effects.Effect
+import com.willfp.libreforge.getDoubleFromExpression
+import com.willfp.libreforge.triggers.TriggerData
+import com.willfp.libreforge.triggers.TriggerParameter
 
 object EffectGiveCollectionCount : Effect<NoCompileData>("give_collection_count") {
     override val parameters = setOf(

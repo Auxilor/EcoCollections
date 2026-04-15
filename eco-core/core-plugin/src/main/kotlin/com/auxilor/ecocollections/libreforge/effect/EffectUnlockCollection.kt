@@ -1,14 +1,14 @@
 package com.auxilor.ecocollections.libreforge.effect
 
-import com.auxilor.eco.core.config.interfaces.Config
-import com.auxilor.eco.core.data.profile
+import com.willfp.eco.core.config.interfaces.Config
+import com.willfp.eco.core.data.profile
 import com.auxilor.ecocollections.api.event.PlayerCollectionUnlockEvent
 import com.auxilor.ecocollections.collections.Collections
-import com.auxilor.libreforge.NoCompileData
-import com.auxilor.libreforge.arguments
-import com.auxilor.libreforge.effects.Effect
-import com.auxilor.libreforge.triggers.TriggerData
-import com.auxilor.libreforge.triggers.TriggerParameter
+import com.willfp.libreforge.NoCompileData
+import com.willfp.libreforge.arguments
+import com.willfp.libreforge.effects.Effect
+import com.willfp.libreforge.triggers.TriggerData
+import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.Bukkit
 
 object EffectUnlockCollection : Effect<NoCompileData>("unlock_collection") {

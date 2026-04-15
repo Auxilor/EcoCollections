@@ -6,7 +6,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("com.gradleup.shadow") version "9.3.1"
-    id("com.auxilor.libreforge-gradle-plugin") version "2.0.0"
+    id("com.willfp.libreforge-gradle-plugin") version "2.0.0"
 }
 
 group = "com.auxilor"
@@ -45,7 +45,7 @@ allprojects {
     }
 
     dependencies {
-        compileOnly("com.auxilor:eco:7.2.2")
+        compileOnly("com.willfp:eco:7.2.2")
         compileOnly("org.jetbrains:annotations:26.0.2")
         compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
         compileOnly("com.github.ben-manes.caffeine:caffeine:3.2.3")
@@ -54,12 +54,12 @@ allprojects {
     tasks {
         shadowJar {
             exclude("META-INF/**")
-            relocate("com.auxilor.libreforge.loader", "com.auxilor.ecocollections.libreforge.loader")
-            relocate("com.auxilor.ecomponent", "com.auxilor.ecocollections.ecomponent")
-            relocate("kotlin", "com.auxilor.eco.libs.kotlin")
-            relocate("kotlin.jvm", "com.auxilor.eco.libs.kotlin.jvm")
-            relocate("kotlin.coroutines", "com.auxilor.eco.libs.kotlin.coroutines")
-            relocate("kotlin.reflect", "com.auxilor.eco.libs.kotlin.reflect")
+            relocate("com.willfp.libreforge.loader", "com.auxilor.ecocollections.libreforge.loader")
+            relocate("com.willfp.ecomponent", "com.auxilor.ecocollections.ecomponent")
+            relocate("kotlin", "com.willfp.eco.libs.kotlin")
+            relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
+            relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")
+            relocate("kotlin.reflect", "com.willfp.eco.libs.kotlin.reflect")
         }
 
         compileKotlin {

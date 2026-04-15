@@ -1,6 +1,6 @@
 package com.auxilor.ecocollections.commands
 
-import com.auxilor.eco.core.command.impl.PluginCommand
+import com.willfp.eco.core.command.impl.PluginCommand
 import com.auxilor.ecocollections.gui.CollectionsGUI
 import com.auxilor.ecocollections.plugin
 import org.bukkit.command.CommandSender
