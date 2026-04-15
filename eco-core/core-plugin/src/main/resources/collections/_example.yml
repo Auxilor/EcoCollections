@@ -1,0 +1,69 @@
+name: "&6Example Collection" # The display name of the collection.
+group: foraging # The group of the collection.
+hide-before-tier-1: false # If true, the collection will be hidden in the GUI until the player reaches tier 1.
+hide-when-locked: false # If true, the collection will be hidden in the GUI until unlocked.
+
+description: # The description lore of the collection
+  - "&7Chop acacia logs to progress."
+  - "&7Tier: &e%tier_numeral%&7/&e%max_tier_numeral%"
+  - "&7Progress: &e%count%&7/&e%required% &8(&e%percent%%&8)"
+
+gui:
+  icon: acacia_log # The icon of the collection in the GUI.
+  position: # The position of the collection in the GUI.
+    row: 2
+    column: 5
+  lore: # The lore of the collection icon in the GUI.
+    - "%description%"
+    - ""
+    - "&8Click to view tiers"
+
+# There are two ways to specify tier count requirements:
+#  1. A formula to calculate for infinite tiers
+#  2. A list of count requirements for each tier
+
+# Formula
+# tier-formula: (2 ^ %level%) * 25
+# max-tier: 100 # (Optional) The max tier, if not specified, there is no max tier
+
+# List
+tier-requirements:
+  - 50
+  - 100
+  - 250
+  - 500
+  - 1000
+  - 2500
+  - 5000
+  - 10000
+  - 25000
+  - 50000
+
+# An XP Gain method takes a trigger, conditions, and filters.
+count-methods:
+  - id: mine_block
+    filters:
+      player_placed: false
+      blocks:
+        - acacia_log
+
+# Conditions that must be met to unlock the collection.
+unlock-conditions: []
+
+# Effects to be run when the player tiers up.
+# %tier% is the tier the player just reached.
+tier-up-effects:
+  - tier: all # The tier at which to run the effect. Can be a specific tier number or "all" for every tier up.
+    effects:
+      - id: send_message
+        args:
+          message: "&6&6Acacia &e%acacia_numeral% &freached!"
+
+complete-effects: # Effects to be run when the player completes the collection.
+  - id: broadcast
+    args:
+      message: "&6%player% &fhas maxed the &e&6Acacia &fcollection!"
+
+# Conditions to be met to progress the collection.
+# If any condition is not met, the player will not gain XP or progress towards the next tier, but they will still be able to see the collection and its tiers in the GUI.
+conditions: []

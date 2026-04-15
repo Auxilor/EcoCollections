@@ -82,9 +82,9 @@ class Collection(
     val allTierRewards: Chain?
 
     val completionRewardEffects: Chain? = Effects.compileChain(
-        config.getSubsections("completion-rewards"),
+        config.getSubsections("completion-effects"),
         NormalExecutorFactory.create(),
-        ViolationContext(plugin, "Collection $id completion-rewards")
+        ViolationContext(plugin, "Collection $id completion-effects")
     )
 
     val countKey = PersistentDataKey(
@@ -118,7 +118,7 @@ class Collection(
     init {
         val tierRewardsMutable = mutableMapOf<Int, Chain?>()
         var parsedAllTierRewards: Chain? = null
-        for (subsection in config.getSubsections("tier-rewards")) {
+        for (subsection in config.getSubsections("tier-up-effects")) {
             val tierValue = subsection.getString("tier")
             if (tierValue.equals("all", ignoreCase = true)) {
                 parsedAllTierRewards = Effects.compileChain(

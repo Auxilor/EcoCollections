@@ -1,0 +1,11 @@
+name: "&cCombat" # The display name of the collection.
+gui:
+  icon: diamond_sword # The icon of the collection in the GUI.
+  position: # The position of the collection in the GUI.
+    row: 2
+    column: 6
+  lore: # The lore of the collection icon in the GUI.
+    - "&7Slay monsters and hostile mobs."
+    - ""
+    - "&8Click to view collections"
+permission: "" # The permission required for the collection.
