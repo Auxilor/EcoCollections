@@ -1,8 +1,8 @@
 name: ${pluginName}
 version: ${version}
-main: com.willfp.ecocollections.EcoCollectionsPlugin
+main: com.auxilor.ecocollections.EcoCollectionsPlugin
 api-version: "1.21"
-authors: [CallumJohnson]
+authors: [Auxilor, CallumJohnson]
 depend:
   - eco
 softdepend:

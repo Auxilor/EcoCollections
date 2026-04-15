@@ -1,2 +1,2 @@
-group = "com.willfp"
+group = "com.auxilor"
 version = rootProject.version
