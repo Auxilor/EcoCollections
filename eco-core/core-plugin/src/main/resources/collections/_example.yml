@@ -41,7 +41,7 @@ tier-requirements:
 
 # An XP Gain method takes a trigger, conditions, and filters.
 count-methods:
-  - id: mine_block
+  - trigger: mine_block
     filters:
       player_placed: false
       blocks:
@@ -59,7 +59,7 @@ tier-up-effects:
         args:
           message: "&6&6Acacia &e%acacia_numeral% &freached!"
 
-complete-effects: # Effects to be run when the player completes the collection.
+completion-effects: # Effects to be run when the player completes the collection.
   - id: broadcast
     args:
       message: "&6%player% &fhas maxed the &e&6Acacia &fcollection!"

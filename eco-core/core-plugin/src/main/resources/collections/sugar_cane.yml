@@ -40,14 +40,14 @@ count-methods:
 unlock-conditions: []
 conditions: []
 
-tier-rewards:
+tier-up-effects:
   - tier: all
     effects:
       - id: send_message
         args:
           message: "&6&aSugar Cane &e%sugar_cane_numeral% &freached!"
 
-completion-rewards:
+completion-effects:
   - id: broadcast
     args:
       message: "&6%player% &fhas maxed the &e&aSugar Cane &fcollection!"

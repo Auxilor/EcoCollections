@@ -41,14 +41,14 @@ count-methods:
 unlock-conditions: []
 conditions: []
 
-tier-rewards:
+tier-up-effects:
   - tier: all
     effects:
       - id: send_message
         args:
           message: "&6&6Gold &e%gold_numeral% &freached!"
 
-completion-rewards:
+completion-effects:
   - id: broadcast
     args:
       message: "&6%player% &fhas maxed the &e&6Gold &fcollection!"

@@ -124,7 +124,7 @@ class Collection(
                 parsedAllTierRewards = Effects.compileChain(
                     subsection.getSubsections("effects"),
                     NormalExecutorFactory.create(),
-                    ViolationContext(plugin, "Collection $id tier-rewards (all)")
+                    ViolationContext(plugin, "Collection $id tier-up-effects (all)")
                 )
             } else {
                 val tier = tierValue.toIntOrNull()
@@ -132,7 +132,7 @@ class Collection(
                     tierRewardsMutable[tier] = Effects.compileChain(
                         subsection.getSubsections("effects"),
                         NormalExecutorFactory.create(),
-                        ViolationContext(plugin, "Collection $id tier-rewards (tier $tier)")
+                        ViolationContext(plugin, "Collection $id tier-up-effects (tier $tier)")
                     )
                 }
             }
