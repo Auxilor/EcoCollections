@@ -3,6 +3,9 @@ package com.auxilor.ecocollections.gui
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.slot
+import com.willfp.eco.core.gui.slot.ConfigSlot
+import com.willfp.eco.core.gui.slot.FillerMask
+import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -22,6 +25,9 @@ object CollectionDetailGUI {
                 .replace("%collection_name%", collection.name)
         )
         val rows = plugin.configYml.getInt("gui.detail.rows")
+
+        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.detail.mask.materials"))
+        val maskPattern = plugin.configYml.getStrings("gui.detail.mask.pattern").toTypedArray()
 
         val playerTier = player.getCollectionTier(collection)
         val playerCount = player.getCollectionCount(collection)
@@ -45,6 +51,13 @@ object CollectionDetailGUI {
         val theMenu = menu(rows) {
             setTitle(title)
 
+            setMask(
+                FillerMask(
+                    maskItems,
+                    *maskPattern
+                )
+            )
+
             setSlot(centerRow, centerCol, centerSlot)
 
             for (tier in 1..collection.maxTier) {
@@ -65,6 +78,14 @@ object CollectionDetailGUI {
             })
 
             setSlot(backRow, 9, rankSlot)
+
+            for (config in plugin.configYml.getSubsections("gui.detail.custom-slots")) {
+                setSlot(
+                    config.getInt("row"),
+                    config.getInt("column"),
+                    ConfigSlot(config)
+                )
+            }
         }
 
         theMenu.open(player)

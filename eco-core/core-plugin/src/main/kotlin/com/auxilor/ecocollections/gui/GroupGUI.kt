@@ -3,6 +3,9 @@ package com.auxilor.ecocollections.gui
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.slot
+import com.willfp.eco.core.gui.slot.ConfigSlot
+import com.willfp.eco.core.gui.slot.FillerMask
+import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.util.StringUtils
@@ -28,11 +31,21 @@ object GroupGUI {
         )
         val rows = plugin.configYml.getInt("gui.group.rows")
 
+        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.group.mask.materials"))
+        val maskPattern = plugin.configYml.getStrings("gui.group.mask.pattern").toTypedArray()
+
         val collectionsInGroup = CollectionsGUI.getCollectionsInGroup(group)
         val showLeaderboardRank = plugin.configYml.getBool("leaderboards.show-in-group-gui")
 
         val theMenu = menu(rows) {
             setTitle(title)
+
+            setMask(
+                FillerMask(
+                    maskItems,
+                    *maskPattern
+                )
+            )
 
             if (!bypassMode) {
                 val backMaterial = plugin.configYml.getString("gui.group.back.material")
@@ -57,6 +70,14 @@ object GroupGUI {
                 if (builtSlot != null) {
                     setSlot(collection.guiRow, collection.guiColumn, builtSlot)
                 }
+            }
+
+            for (config in plugin.configYml.getSubsections("gui.group.custom-slots")) {
+                setSlot(
+                    config.getInt("row"),
+                    config.getInt("column"),
+                    ConfigSlot(config)
+                )
             }
         }
 

@@ -19,30 +19,58 @@ collections:
 gui:
   cache-ttl: 5000   # ms — how long rendered lore is cached
 
-  root:
+  collections:
     title: "&8Collections"
     rows: 6
-    # filler item
-    filler:
-      material: "black_stained_glass_pane"
-      name: " "
+    mask:
+      materials:
+        - black_stained_glass_pane
+      pattern:
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
     close:
       material: "barrier"
       name: "&cClose"
       location: { row: 6, column: 5 }
+    custom-slots: []
 
   group:
     title: "&8%group_name%"
     rows: 6
+    mask:
+      materials:
+        - black_stained_glass_pane
+      pattern:
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
     back:
       material: "arrow"
       name: "&fBack"
       location: { row: 6, column: 1 }
+    custom-slots: []
 
   detail:
     title: "&8%collection_name%"
     rows: 6
-    # Tier-list rendering: each tier is one slot with material + lore showing requirement and rewards
+    mask:
+      materials:
+        - black_stained_glass_pane
+      pattern:
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+        - "111111111"
+    custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions
   # AND the per-collection `hide-when-locked` is false)

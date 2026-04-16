@@ -4,6 +4,7 @@ import com.willfp.eco.core.config.BuildableConfig
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.slot
+import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.util.StringUtils
@@ -13,6 +14,7 @@ import com.auxilor.ecocollections.collections.Collections
 import com.auxilor.ecocollections.groups.CollectionGroup
 import com.auxilor.ecocollections.groups.CollectionGroups
 import com.auxilor.ecocollections.plugin
+import com.willfp.eco.core.gui.slot.Slot
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -53,16 +55,16 @@ object CollectionsGUI {
     }
 
     private fun openRootGUI(player: Player) {
-        val title = StringUtils.format(plugin.configYml.getString("gui.root.title"))
-        val rows = plugin.configYml.getInt("gui.root.rows")
+        val title = StringUtils.format(plugin.configYml.getString("gui.collections.title"))
+        val rows = plugin.configYml.getInt("gui.collections.rows")
 
-        val fillerMaterial = plugin.configYml.getString("gui.root.filler.material")
-        val fillerMat = Material.matchMaterial(fillerMaterial.uppercase()) ?: Material.BLACK_STAINED_GLASS_PANE
+        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.collections.mask.materials"))
+        val maskPattern = plugin.configYml.getStrings("gui.collections.mask.pattern").toTypedArray()
 
-        val closeMaterial = plugin.configYml.getString("gui.root.close.material")
-        val closeName = plugin.configYml.getString("gui.root.close.name")
-        val closeRow = plugin.configYml.getInt("gui.root.close.location.row")
-        val closeColumn = plugin.configYml.getInt("gui.root.close.location.column")
+        val closeMaterial = plugin.configYml.getString("gui.collections.close.material")
+        val closeName = plugin.configYml.getString("gui.collections.close.name")
+        val closeRow = plugin.configYml.getInt("gui.collections.close.location.row")
+        val closeColumn = plugin.configYml.getInt("gui.collections.close.location.column")
 
         val closeItem = ItemStack(Material.matchMaterial(closeMaterial.uppercase()) ?: Material.BARRIER)
         val closeMeta = closeItem.itemMeta
@@ -74,8 +76,8 @@ object CollectionsGUI {
 
             setMask(
                 FillerMask(
-                    MaskItems(fillerMat),
-                    *Array(rows) { "111111111" }
+                    maskItems,
+                    *maskPattern
                 )
             )
 
@@ -93,12 +95,20 @@ object CollectionsGUI {
                 val groupIcon = buildGroupIcon(player, group)
                 setSlot(group.guiRow, group.guiColumn, groupIcon)
             }
+
+            for (config in plugin.configYml.getSubsections("gui.collections.custom-slots")) {
+                setSlot(
+                    config.getInt("row"),
+                    config.getInt("column"),
+                    ConfigSlot(config)
+                )
+            }
         }
 
         theMenu.open(player)
     }
 
-    private fun buildGroupIcon(player: Player, group: CollectionGroup): com.willfp.eco.core.gui.slot.Slot {
+    private fun buildGroupIcon(player: Player, group: CollectionGroup): Slot {
         val iconItem = group.icon.item.clone()
         val meta = iconItem.itemMeta
 
