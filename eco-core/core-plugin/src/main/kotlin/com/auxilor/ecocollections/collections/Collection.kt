@@ -157,6 +157,22 @@ class Collection(
         }
     }
 
+    fun getRewardMessages(tier: Int): List<String> {
+        if (!config.has("reward-messages")) return emptyList()
+
+        val messages = mutableListOf<String>()
+
+        if (config.has("reward-messages.all")) {
+            messages.addAll(config.getStrings("reward-messages.all"))
+        }
+
+        if (config.has("reward-messages.$tier")) {
+            messages.addAll(config.getStrings("reward-messages.$tier"))
+        }
+
+        return messages
+    }
+
     fun getTierForCount(count: Double): Int {
         for (i in tierRequirements.indices.reversed()) {
             if (count >= tierRequirements[i]) {

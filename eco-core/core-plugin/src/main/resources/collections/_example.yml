@@ -64,6 +64,16 @@ completion-effects: # Effects to be run when the player completes the collection
     args:
       message: "&6%player% &fhas maxed the &e&6Acacia &fcollection!"
 
+# Reward messages shown in the tier slot lore via %rewards%.
+# "all" applies to every tier, numbered keys apply only to that specific tier.
+reward-messages:
+  all:
+    - " &8» &f+1 Foraging Token"
+  5:
+    - " &8» &6Acacia Hatchet"
+  10:
+    - " &8» &6Acacia Master Title"
+
 # Conditions to be met to progress the collection.
 # If any condition is not met, the player will not gain XP or progress towards the next tier, but they will still be able to see the collection and its tiers in the GUI.
 conditions: []

@@ -7,6 +7,7 @@ import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
+import com.willfp.eco.core.items.Items
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.getCollectionCount
@@ -135,59 +136,57 @@ object CollectionDetailGUI {
         playerTier: Int,
         playerCount: Double
     ): Slot {
-        val reached = playerTier >= tier
         val isMaxTier = tier == collection.maxTier
         val requirement = collection.tierRequirements[tier - 1]
 
-        val material = when {
-            isMaxTier && reached -> Material.GOLD_BLOCK
-            reached -> Material.LIME_STAINED_GLASS_PANE
-            else -> Material.GRAY_STAINED_GLASS_PANE
+        val state = when {
+            isMaxTier && playerTier >= tier -> "completed"
+            playerTier >= tier -> "reached"
+            tier == playerTier + 1 -> "in-progress"
+            else -> "locked"
         }
 
-        val tierItem = ItemStack(material)
+        val configKey = "gui.detail.progression-slots.$state"
+
+        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
         val meta = tierItem.itemMeta
 
         if (meta != null) {
-            val tierColor = when {
-                isMaxTier && reached -> "&6"
-                reached -> "&a"
-                else -> "&7"
+            val percent = if (requirement > 0) {
+                (playerCount / requirement * 100).coerceIn(0.0, 100.0).toInt().toString()
+            } else {
+                "100"
             }
+
+            fun String.applyPlaceholders() = this
+                .replace("%tier%", tier.toString())
+                .replace("%tier_numeral%", tier.toNumeral())
+                .replace("%count%", playerCount.toLong().toString())
+                .replace("%required%", requirement.toLong().toString())
+                .replace("%percent%", percent)
+                .replace("%collection_name%", collection.name)
+
             meta.setDisplayName(
-                StringUtils.format("${tierColor}Tier ${tier.toNumeral()}")
+                StringUtils.format(
+                    plugin.configYml.getString("$configKey.name").applyPlaceholders()
+                )
             )
 
-            val lore = mutableListOf<String>()
+            val rewardMessages = collection.getRewardMessages(tier).map {
+                StringUtils.format(it.applyPlaceholders())
+            }
 
-            lore.add(StringUtils.format("&7Requires: &e${requirement.toLong()} &7items"))
-
-            if (!reached) {
-                val percent = if (requirement > 0) {
-                    (playerCount / requirement * 100).coerceIn(0.0, 100.0).toInt()
+            val lore = plugin.configYml.getStrings("$configKey.lore").flatMap { line ->
+                if (line.contains("%rewards%")) {
+                    if (rewardMessages.isEmpty()) {
+                        emptyList()
+                    } else {
+                        val margin = line.length - line.trimStart().length
+                        rewardMessages.map { " ".repeat(margin) + it }
+                    }
                 } else {
-                    100
+                    listOf(StringUtils.format(line.applyPlaceholders()))
                 }
-                lore.add(StringUtils.format("&7Progress: &e${playerCount.toLong()}&7/&e${requirement.toLong()} &8(&e${percent}%&8)"))
-            } else {
-                lore.add(StringUtils.format("&a&lCompleted"))
-            }
-
-            lore.add("")
-            lore.add(StringUtils.format("&7Rewards:"))
-
-            val tierChain = collection.tierRewards[tier]
-            if (tierChain != null) {
-                lore.add(StringUtils.format("  &8- &fTier $tier rewards"))
-            }
-
-            val allChain = collection.allTierRewards
-            if (allChain != null) {
-                lore.add(StringUtils.format("  &8- &fEvery tier rewards"))
-            }
-
-            if (isMaxTier && collection.completionRewardEffects != null) {
-                lore.add(StringUtils.format("  &8- &6Completion bonus"))
             }
 
             meta.lore = lore
