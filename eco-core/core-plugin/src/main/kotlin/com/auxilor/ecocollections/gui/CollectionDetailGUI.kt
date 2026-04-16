@@ -32,11 +32,10 @@ object CollectionDetailGUI {
         val playerTier = player.getCollectionTier(collection)
         val playerCount = player.getCollectionCount(collection)
 
-        val centerRow = rows / 2
-        val centerCol = 5
+        val progressionPattern = plugin.configYml.getStrings("gui.detail.progression-slots.pattern")
+        val tierPositions = parseProgressionPattern(progressionPattern)
 
         val centerSlot = buildCenterSlot(player, collection, playerTier, playerCount)
-        val tierSlots = calculateTierPositions(collection.maxTier, rows)
 
         val backRow = rows
         val backCol = 1
@@ -58,10 +57,14 @@ object CollectionDetailGUI {
                 )
             )
 
-            setSlot(centerRow, centerCol, centerSlot)
+            setSlot(
+                plugin.configYml.getInt("gui.detail.info-icon.location.row"),
+                plugin.configYml.getInt("gui.detail.info-icon.location.column"),
+                centerSlot
+            )
 
             for (tier in 1..collection.maxTier) {
-                val position = tierSlots.getOrNull(tier - 1) ?: continue
+                val position = tierPositions.getOrNull(tier - 1) ?: continue
                 val tierSlotItem = buildTierSlot(collection, tier, playerTier, playerCount)
                 setSlot(position.first, position.second, tierSlotItem)
             }
@@ -214,20 +217,22 @@ object CollectionDetailGUI {
         return slot(rankItem)
     }
 
-    private fun calculateTierPositions(maxTier: Int, rows: Int): List<Pair<Int, Int>> {
-        val positions = mutableListOf<Pair<Int, Int>>()
-        val centerRow = rows / 2
-        val centerCol = 5
+    private fun parseProgressionPattern(pattern: List<String>): List<Pair<Int, Int>> {
+        val slots = mutableListOf<Triple<Int, Int, Int>>() // row, column, order
 
-        for (row in 2 until rows) {
-            for (col in 2..8) {
-                if (row == centerRow && col == centerCol) continue
-                positions.add(Pair(row, col))
-                if (positions.size >= maxTier) return positions
+        for ((rowIndex, line) in pattern.withIndex()) {
+            for ((colIndex, char) in line.withIndex()) {
+                val order = when (char) {
+                    '0' -> continue
+                    in '1'..'9' -> char - '0'
+                    in 'a'..'z' -> char - 'a' + 10
+                    else -> continue
+                }
+                slots.add(Triple(rowIndex + 1, colIndex + 1, order))
             }
         }
 
-        return positions
+        return slots.sortedBy { it.third }.map { Pair(it.first, it.second) }
     }
 
     private fun substituteDetailPlaceholders(

@@ -35,7 +35,9 @@ gui:
     close:
       material: "barrier"
       name: "&cClose"
-      location: { row: 6, column: 5 }
+      location:
+        row: 6
+        column: 5
     custom-slots: []
 
   group:
@@ -54,7 +56,9 @@ gui:
     back:
       material: "arrow"
       name: "&fBack"
-      location: { row: 6, column: 1 }
+      location:
+        row: 6
+        column: 1
     custom-slots: []
 
   detail:
@@ -70,6 +74,20 @@ gui:
         - "111111111"
         - "111111111"
         - "111111111"
+    info-icon:
+      location:
+        row: 1
+        column: 5
+    # Progression slots pattern defines where tier indicators appear.
+    # 0 = empty, 1-9 then a-z define the order tiers are placed (left-to-right, top-to-bottom).
+    progression-slots:
+      pattern:
+        - "000000000"
+        - "012345670"
+        - "089abcde0"
+        - "0fghijkl0"
+        - "0mnopqrs0"
+        - "000000000"
     custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions
