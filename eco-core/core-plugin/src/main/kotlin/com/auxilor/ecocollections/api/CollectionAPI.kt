@@ -3,6 +3,7 @@
 package com.auxilor.ecocollections.api
 
 import com.willfp.eco.core.data.profile
+import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.event.PlayerCollectionCompleteEvent
@@ -193,10 +194,8 @@ private fun sendTierUpMessages(player: Player, collection: Collection, previousT
         player.sendTitle(title, subtitle, 10, 40, 10)
     }
 
-    if (plugin.configYml.getBool("messages.tier-up.sound")) {
-        val soundString = plugin.langYml.getString("messages.tier-up.sound")
-        player.playSound(player.location, soundString, 1.0f, 1.0f)
-    }
+    PlayableSound.create(plugin.configYml.getSubsection("messages.tier-up.sound"))
+        ?.playTo(player)
 }
 
 private fun sendCompletionMessages(player: Player, collection: Collection) {
@@ -219,10 +218,8 @@ private fun sendCompletionMessages(player: Player, collection: Collection) {
         player.sendTitle(title, subtitle, 10, 40, 10)
     }
 
-    if (plugin.configYml.getBool("messages.complete.sound")) {
-        val soundString = plugin.langYml.getString("messages.complete.sound")
-        player.playSound(player.location, soundString, 1.0f, 1.0f)
-    }
+    PlayableSound.create(plugin.configYml.getSubsection("messages.complete.sound"))
+        ?.playTo(player)
 
     if (plugin.configYml.getBool("messages.complete.broadcast")) {
         val broadcastMsg = applyPlaceholders(
@@ -253,8 +250,6 @@ private fun sendUnlockMessages(player: Player, collection: Collection) {
         player.sendTitle(title, subtitle, 10, 40, 10)
     }
 
-    if (plugin.configYml.getBool("messages.unlock.sound")) {
-        val soundString = plugin.langYml.getString("messages.unlock.sound")
-        player.playSound(player.location, soundString, 1.0f, 1.0f)
-    }
+    PlayableSound.create(plugin.configYml.getSubsection("messages.unlock.sound"))
+        ?.playTo(player)
 }

@@ -90,7 +90,11 @@ gui:
         - ""
         - "&cYou have not unlocked this collection."
     # Sound played when a player clicks a locked collection
-    click-sound: "block.note_block.bass"
+    click-sound:
+      enabled: true
+      sound: block.note_block.bass
+      pitch: 1.0
+      volume: 1.0
 
 # Leaderboard
 leaderboard:
@@ -109,15 +113,27 @@ messages:
     enabled: true
     chat: true
     title: true
-    sound: true
+    sound:
+      enabled: true
+      sound: entity_player_levelup
+      pitch: 1.0
+      volume: 1.0
   complete:
     enabled: true
     chat: true
     title: true
-    sound: true
+    sound:
+      enabled: true
+      sound: ui_toast_challenge_complete
+      pitch: 1.0
+      volume: 1.0
     broadcast: true
   unlock:
     enabled: true
     chat: true
     title: true
-    sound: true
+    sound:
+      enabled: true
+      sound: entity_experience_orb_pickup
+      pitch: 1.0
+      volume: 1.0

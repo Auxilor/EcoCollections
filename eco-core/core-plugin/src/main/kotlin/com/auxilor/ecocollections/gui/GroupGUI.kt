@@ -8,6 +8,7 @@ import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.getCollectionCount
@@ -166,7 +167,7 @@ object GroupGUI {
         val lockedMaterial = plugin.configYml.getString("gui.locked.icon.material")
         val lockedName = plugin.configYml.getString("gui.locked.icon.name")
         val lockedLoreConfig = plugin.configYml.getStrings("gui.locked.icon.lore")
-        val clickSound = plugin.configYml.getString("gui.locked.click-sound")
+        val clickSound = PlayableSound.create(plugin.configYml.getSubsection("gui.locked.click-sound"))
 
         val lockedItem = Items.lookup(lockedMaterial).item.clone()
         val meta = lockedItem.itemMeta
@@ -195,7 +196,7 @@ object GroupGUI {
         return slot(lockedItem) {
             onLeftClick { event, _ ->
                 val p = event.whoClicked as? Player ?: return@onLeftClick
-                p.playSound(p.location, clickSound, 1.0f, 1.0f)
+                clickSound?.playTo(p)
             }
         }
     }

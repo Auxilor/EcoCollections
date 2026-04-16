@@ -6,18 +6,15 @@ messages:
     chat: "&6&lCOLLECTION TIER UP! &r&f%collection_name% &7→ &e%tier_numeral%"
     title: "&6&l%collection_name%"
     subtitle: "&fTier &e%previous_tier_numeral% &7➜ &e%tier_numeral%"
-    sound: "entity.player.levelup"
   complete:
     chat: "&6&lCOLLECTION MAXED! &r&f%collection_name%"
     title: "&6&lMAXED!"
     subtitle: "&f%collection_name%"
-    sound: "ui.toast.challenge_complete"
     broadcast: "&6%player% &fhas maxed the &e%collection_name% &fcollection!"
   unlock:
     chat: "&a&lUNLOCKED! &r&fYou can now progress &e%collection_name%&f."
     title: "&a&lUnlocked"
     subtitle: "&f%collection_name%"
-    sound: "ui.toast.in"
 
 placeholders:
   completed-true: "&aYes"
