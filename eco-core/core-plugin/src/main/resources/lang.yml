@@ -37,6 +37,8 @@ commands:
   set-success: "&aSet &e%player%&a's &e%collection% &acount to &e%amount%&a."
   settier-success: "&aSet &e%player%&a's &e%collection% &atier to &e%tier%&a."
   reset-success: "&aReset &e%player%&a's &e%collection% &acollection."
+  unlock-success: "&aUnlocked &e%collection% &afor &e%player%&a."
+  already-unlocked: "&e%player%&c's &e%collection% &cis already unlocked."
   no-such-collection: "&cNo collection with id &e%id%&c."
   no-such-player: "&cNo player with name &e%name%&c."
 
