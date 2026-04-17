@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 object SubcommandReload : Subcommand(
     plugin,
     "reload",
-    "ecocollections.command.admin",
+    "ecocollections.command.reload",
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {

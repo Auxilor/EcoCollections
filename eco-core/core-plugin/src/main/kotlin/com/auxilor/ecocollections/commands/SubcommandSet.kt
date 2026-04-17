@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender
 object SubcommandSet : Subcommand(
     plugin,
     "set",
-    "ecocollections.command.admin",
+    "ecocollections.command.set",
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {

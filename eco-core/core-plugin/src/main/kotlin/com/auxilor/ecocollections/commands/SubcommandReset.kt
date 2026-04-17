@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender
 object SubcommandReset : Subcommand(
     plugin,
     "reset",
-    "ecocollections.command.admin",
+    "ecocollections.command.reset",
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {

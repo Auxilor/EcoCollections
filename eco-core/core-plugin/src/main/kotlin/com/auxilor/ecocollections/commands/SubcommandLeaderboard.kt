@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender
 object SubcommandLeaderboard : Subcommand(
     plugin,
     "leaderboard",
-    "ecocollections.command.admin",
+    "ecocollections.command.leaderboard",
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {

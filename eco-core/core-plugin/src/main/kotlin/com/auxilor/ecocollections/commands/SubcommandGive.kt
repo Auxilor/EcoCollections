@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender
 object SubcommandGive : Subcommand(
     plugin,
     "give",
-    "ecocollections.command.admin",
+    "ecocollections.command.give",
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {

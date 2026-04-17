@@ -13,7 +13,7 @@ import org.bukkit.command.CommandSender
 object SubcommandUnlock : Subcommand(
     plugin,
     "unlock",
-    "ecocollections.command.admin",
+    "ecocollections.command.unlock",
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {

@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 object CommandEcoCollections : PluginCommand(
     plugin,
     "ecocollections",
-    "ecocollections.command.admin",
+    "ecocollections.command.ecocollections",
     false
 ) {
     init {
