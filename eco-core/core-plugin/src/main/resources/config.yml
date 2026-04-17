@@ -78,8 +78,8 @@ gui:
       location:
         row: 1
         column: 5
-    # Progression slots pattern defines where tier indicators appear.
-    # 0 = empty, 1-9 then a-z define the order tiers are placed (left-to-right, top-to-bottom).
+    # Progression slots define where tier indicators appear and how they look.
+    # Pattern: 0 = empty, 1-9 then a-z define the order tiers are placed (left-to-right, top-to-bottom).
     progression-slots:
       pattern:
         - "000000000"
@@ -88,6 +88,45 @@ gui:
         - "0fghijkl0"
         - "0mnopqrs0"
         - "000000000"
+      # Max tier reached
+      completed:
+        item: gold_block
+        name: "&6Tier %tier_numeral% &8- &6&lMAXED"
+        lore:
+          - "&7Requires: &e%required% &7items"
+          - "&6&lCollection Complete!"
+          - ""
+          - "&7Rewards:"
+          - "%rewards%"
+      # Tier reached (but not max)
+      reached:
+        item: lime_stained_glass_pane
+        name: "&aTier %tier_numeral%"
+        lore:
+          - "&7Requires: &e%required% &7items"
+          - "&a&lCompleted"
+          - ""
+          - "&7Rewards:"
+          - "%rewards%"
+      # The next tier the player is working towards
+      in-progress:
+        item: yellow_stained_glass_pane
+        name: "&eTier %tier_numeral%"
+        lore:
+          - "&7Requires: &e%required% &7items"
+          - "&7Progress: &e%count%&7/&e%required% &8(&e%percent%%&8)"
+          - ""
+          - "&7Rewards:"
+          - "%rewards%"
+      # Tiers not yet reachable
+      locked:
+        item: gray_stained_glass_pane
+        name: "&7Tier %tier_numeral%"
+        lore:
+          - "&7Requires: &e%required% &7items"
+          - ""
+          - "&7Rewards:"
+          - "%rewards%"
     custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions
