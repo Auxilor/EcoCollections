@@ -44,7 +44,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&eSponge &e%sponge_numeral% &freached!"
+          message: "&6&eSponge &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

@@ -45,7 +45,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&aSea Pickle &e%sea_pickle_numeral% &freached!"
+          message: "&6&aSea Pickle &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

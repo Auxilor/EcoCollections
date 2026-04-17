@@ -46,7 +46,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&6Copper &e%copper_numeral% &freached!"
+          message: "&6&6Copper &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

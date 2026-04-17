@@ -1,6 +1,5 @@
 package com.auxilor.ecocollections.collections
 
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.data.keys.PersistentDataKey
 import com.willfp.eco.core.data.keys.PersistentDataKeyType
@@ -17,6 +16,7 @@ import com.auxilor.ecocollections.api.unlockedCollectionCount
 import com.auxilor.ecocollections.groups.CollectionGroup
 import com.auxilor.ecocollections.groups.CollectionGroups
 import com.auxilor.ecocollections.plugin
+import com.willfp.eco.core.placeholder.PlayerStaticPlaceholder
 import com.willfp.eco.core.registry.KRegistrable
 import com.willfp.eco.util.toNumeral
 import com.willfp.libreforge.ViolationContext
@@ -27,7 +27,6 @@ import com.willfp.libreforge.counters.Counters
 import com.willfp.libreforge.effects.Chain
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.effects.executors.impl.NormalExecutorFactory
-import java.util.concurrent.TimeUnit
 
 class Collection(
     override val id: String,
@@ -111,11 +110,9 @@ class Collection(
         false
     )
 
-    val loreCache = Caffeine.newBuilder()
-        .expireAfterWrite(plugin.configYml.getInt("gui.cache-ttl").toLong(), TimeUnit.MILLISECONDS)
-        .build<String, List<String>>()
-
     init {
+        registerPlaceholders()
+
         val tierRewardsMutable = mutableMapOf<Int, Chain?>()
         var parsedAllTierRewards: Chain? = null
         for (subsection in config.getSubsections("tier-up-effects")) {
@@ -140,7 +137,6 @@ class Collection(
         tierRewards = tierRewardsMutable.toMap()
         allTierRewards = parsedAllTierRewards
 
-        registerPlaceholders()
         checkDupeFilters()
     }
 
@@ -183,6 +179,15 @@ class Collection(
     }
 
     private fun registerPlaceholders() {
+        config.injectPlaceholders(
+            PlayerStaticPlaceholder("tier") { player ->
+                player.getCollectionTier(this).toString()
+            },
+            PlayerStaticPlaceholder("tier_numeral") { player ->
+                player.getCollectionTier(this).toNumeral()
+            }
+        )
+
         PlayerPlaceholder(plugin, id) { player ->
             player.getCollectionTier(this).toString()
         }.register()

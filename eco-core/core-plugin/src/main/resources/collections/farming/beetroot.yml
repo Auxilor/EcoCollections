@@ -46,7 +46,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&4Beetroot &e%beetroot_numeral% &freached!"
+          message: "&6&4Beetroot &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

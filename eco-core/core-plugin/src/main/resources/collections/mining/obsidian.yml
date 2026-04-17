@@ -45,7 +45,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&5Obsidian &e%obsidian_numeral% &freached!"
+          message: "&6&5Obsidian &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

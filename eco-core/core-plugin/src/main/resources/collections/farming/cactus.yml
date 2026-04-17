@@ -45,7 +45,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&2Cactus &e%cactus_numeral% &freached!"
+          message: "&6&2Cactus &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

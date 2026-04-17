@@ -45,7 +45,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&4Ancient Debris &e%ancient_debris_numeral% &freached!"
+          message: "&6&4Ancient Debris &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

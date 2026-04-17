@@ -44,7 +44,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&5Ender Dragon &e%ender_dragon_numeral% &freached!"
+          message: "&6&5Ender Dragon &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast

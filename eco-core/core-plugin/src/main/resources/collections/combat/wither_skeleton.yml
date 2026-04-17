@@ -45,7 +45,7 @@ tier-up-effects:
     effects:
       - id: send_message
         args:
-          message: "&6&8Wither Skeleton &e%wither_skeleton_numeral% &freached!"
+          message: "&6&8Wither Skeleton &e%tier_numeral% &freached!"
 
 completion-effects:
   - id: broadcast
