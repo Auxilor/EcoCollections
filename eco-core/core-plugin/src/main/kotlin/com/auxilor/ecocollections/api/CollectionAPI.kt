@@ -39,8 +39,8 @@ fun OfflinePlayer.isCollectionUnlocked(collection: Collection): Boolean {
 }
 
 fun Player.tryUnlockCollection(collection: Collection): Boolean {
-    if (!collection.hasUnlockConditions) return false
-    if (this.profile.read(collection.unlockedKey)) return false
+    if (!collection.hasUnlockConditions) return true
+    if (this.profile.read(collection.unlockedKey)) return true
 
     if (!collection.unlockConditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
         return false
@@ -61,14 +61,14 @@ fun OfflinePlayer.setCollectionCount(collection: Collection, count: Double) {
     this.profile.write(collection.tierKey, newTier)
 }
 
-fun Player.giveCollectionCount(collection: Collection, amount: Double) {
-    if (amount <= 0) return
+fun Player.giveCollectionCount(collection: Collection, amount: Double): Boolean {
+    if (amount <= 0) return false
 
-    if (!this.tryUnlockCollection(collection)) return
+    if (!this.tryUnlockCollection(collection)) return false
 
     if (collection.hasConditions) {
         if (!collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
-            return
+            return false
         }
     }
 
@@ -80,7 +80,7 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
     val previousTier = this.profile.read(collection.tierKey)
     val newTier = collection.getTierForCount(newCount)
 
-    if (newTier == previousTier) return
+    if (newTier == previousTier) return true
 
     for (t in (previousTier + 1)..newTier) {
         val tierUpEvent = PlayerCollectionTierUpEvent(this, collection, t - 1, t)
@@ -125,6 +125,8 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
             sendCompletionMessages(this, collection)
         }
     }
+
+    return true
 }
 
 fun OfflinePlayer.resetCollection(collection: Collection) {
