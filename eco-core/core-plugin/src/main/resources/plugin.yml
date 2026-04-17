@@ -9,12 +9,57 @@ softdepend:
   - libreforge
   - PlaceholderAPI
 commands:
-  collections:
-    aliases: [coll, collection]
   ecocollections:
-    aliases: [ecoc]
+    description: Base Command
+    permission: ecocollections.command.ecocollections
+  collections:
+    aliases:
+      - coll
+      - collection
+    description: Open the collections menu
+    permission: ecocollections.command.collections
+
 permissions:
+  ecocollections.*:
+    description: All EcoCollections permissions
+    default: op
+    children:
+      ecocollections.command.*: true
+
+  ecocollections.command.*:
+    description: All EcoCollections commands
+    default: op
+    children:
+      ecocollections.command.collections: true
+      ecocollections.command.ecocollections: true
+      ecocollections.command.give: true
+      ecocollections.command.set: true
+      ecocollections.command.reset: true
+      ecocollections.command.unlock: true
+      ecocollections.command.reload: true
+      ecocollections.command.leaderboard: true
+
   ecocollections.command.collections:
+    description: Allows the use of /collections.
     default: true
-  ecocollections.command.admin:
+  ecocollections.command.ecocollections:
+    description: Allows the use of /ecocollections.
+    default: true
+  ecocollections.command.give:
+    description: Allows the use of /ecocollections give.
+    default: op
+  ecocollections.command.set:
+    description: Allows the use of /ecocollections set.
+    default: op
+  ecocollections.command.reset:
+    description: Allows the use of /ecocollections reset.
+    default: op
+  ecocollections.command.unlock:
+    description: Allows the use of /ecocollections unlock.
+    default: op
+  ecocollections.command.reload:
+    description: Allows reloading EcoCollections.
+    default: op
+  ecocollections.command.leaderboard:
+    description: Allows the use of /ecocollections leaderboard.
     default: op
