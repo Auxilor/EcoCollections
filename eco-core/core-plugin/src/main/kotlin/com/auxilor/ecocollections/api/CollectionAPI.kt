@@ -34,23 +34,25 @@ fun OfflinePlayer.isCollectionComplete(collection: Collection): Boolean {
     return this.profile.read(collection.doneKey)
 }
 
-fun OfflinePlayer.isCollectionUnlocked(collection: Collection): Boolean {
-    if (!collection.hasUnlockConditions) return true
-    return this.profile.read(collection.unlockedKey)
-}
-
-fun Player.tryUnlockCollection(collection: Collection): Boolean {
-    if (!collection.hasUnlockConditions) return false
-    if (this.profile.read(collection.unlockedKey)) return false
-
-    if (!collection.unlockConditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
-        return false
+fun OfflinePlayer.isCollectionUnlocked(collection: Collection): Boolean =
+    if (!collection.hasUnlockConditions) {
+        true
+    } else {
+        this.profile.read(collection.unlockedKey)
     }
 
+fun Player.tryUnlockCollection(collection: Collection): Boolean {
+    if (this.profile.read(collection.unlockedKey)) {
+        return true
+    }
+    if (collection.hasUnlockConditions && !collection.unlockConditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
+        return false
+    }
     val event = PlayerCollectionUnlockEvent(this, collection)
     Bukkit.getPluginManager().callEvent(event)
-    if (event.isCancelled) return false
-
+    if (event.isCancelled) {
+        return false
+    }
     this.profile.write(collection.unlockedKey, true)
     sendUnlockMessages(this, collection)
     return true
@@ -65,12 +67,14 @@ fun OfflinePlayer.setCollectionCount(collection: Collection, count: Double) {
 fun Player.giveCollectionCount(collection: Collection, amount: Double) {
     if (amount <= 0) return
 
-    if (!this.tryUnlockCollection(collection)) return
+    if (!this.tryUnlockCollection(collection)) {
+        return
+    }
 
-    if (collection.hasConditions) {
-        if (!collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
-            return
-        }
+    val conditions = collection.hasConditions
+    val met = !collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)
+    if (conditions && met) {
+        return
     }
 
     val previousCount = this.profile.read(collection.countKey)
