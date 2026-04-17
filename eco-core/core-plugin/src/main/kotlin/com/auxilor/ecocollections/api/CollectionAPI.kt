@@ -4,7 +4,6 @@ package com.auxilor.ecocollections.api
 
 import com.willfp.eco.core.data.profile
 import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.event.PlayerCollectionCompleteEvent
 import com.auxilor.ecocollections.api.event.PlayerCollectionTierUpEvent
@@ -14,6 +13,8 @@ import com.auxilor.ecocollections.collections.Collections
 import com.auxilor.ecocollections.plugin
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionComplete
 import com.auxilor.ecocollections.libreforge.trigger.TriggerCollectionTierUp
+import com.willfp.eco.util.formatEco
+import com.willfp.eco.util.toNiceString
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.DispatchedTrigger
@@ -21,6 +22,8 @@ import com.willfp.libreforge.triggers.TriggerData
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+
+private val dynamicTierPlaceholderRegex by lazy { Regex("%tier_(-?\\d+)(_numeral)?%") }
 
 fun OfflinePlayer.getCollectionCount(collection: Collection): Double {
     return this.profile.read(collection.countKey)
@@ -34,25 +37,23 @@ fun OfflinePlayer.isCollectionComplete(collection: Collection): Boolean {
     return this.profile.read(collection.doneKey)
 }
 
-fun OfflinePlayer.isCollectionUnlocked(collection: Collection): Boolean =
-    if (!collection.hasUnlockConditions) {
-        true
-    } else {
-        this.profile.read(collection.unlockedKey)
-    }
+fun OfflinePlayer.isCollectionUnlocked(collection: Collection): Boolean {
+    if (!collection.hasUnlockConditions) return true
+    return this.profile.read(collection.unlockedKey)
+}
 
 fun Player.tryUnlockCollection(collection: Collection): Boolean {
-    if (this.profile.read(collection.unlockedKey)) {
-        return true
-    }
-    if (collection.hasUnlockConditions && !collection.unlockConditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
+    if (!collection.hasUnlockConditions) return false
+    if (this.profile.read(collection.unlockedKey)) return false
+
+    if (!collection.unlockConditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
         return false
     }
+
     val event = PlayerCollectionUnlockEvent(this, collection)
     Bukkit.getPluginManager().callEvent(event)
-    if (event.isCancelled) {
-        return false
-    }
+    if (event.isCancelled) return false
+
     this.profile.write(collection.unlockedKey, true)
     sendUnlockMessages(this, collection)
     return true
@@ -67,14 +68,12 @@ fun OfflinePlayer.setCollectionCount(collection: Collection, count: Double) {
 fun Player.giveCollectionCount(collection: Collection, amount: Double) {
     if (amount <= 0) return
 
-    if (!this.tryUnlockCollection(collection)) {
-        return
-    }
+    if (!this.tryUnlockCollection(collection)) return
 
-    val conditions = collection.hasConditions
-    val met = !collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)
-    if (conditions && met) {
-        return
+    if (collection.hasConditions) {
+        if (!collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
+            return
+        }
     }
 
     val previousCount = this.profile.read(collection.countKey)
@@ -175,7 +174,20 @@ private fun applyPlaceholders(
             .replace("%previous_tier_numeral%", previousTier.toNumeral())
     }
 
-    return StringUtils.format(result)
+    if (tier != null) {
+        result = dynamicTierPlaceholderRegex.replace(result) { match ->
+            val offset = match.groupValues[1].toIntOrNull() ?: return@replace match.value
+            val isNumeral = match.groupValues[2].isNotEmpty()
+            val newTier = tier + offset
+            if (isNumeral) {
+                newTier.toNumeral()
+            } else {
+                newTier.toNiceString()
+            }
+        }
+    }
+
+    return result.formatEco(player, formatPlaceholders = true)
 }
 
 private fun sendTierUpMessages(player: Player, collection: Collection, previousTier: Int, tier: Int) {
