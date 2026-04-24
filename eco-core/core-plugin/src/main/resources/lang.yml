@@ -29,7 +29,7 @@ top:
   empty-position: "&7—"
 
 commands:
-  reload-success: "&aReloaded EcoCollections."
+  reloaded: "Reloaded in %time%ms! Loaded %count% collections."
   give-success: "&aGave &e%amount% &ato &e%player%&a's &e%collection% &acollection."
   set-success: "&aSet &e%player%&a's &e%collection% &acount to &e%amount%&a."
   settier-success: "&aSet &e%player%&a's &e%collection% &atier to &e%tier%&a."

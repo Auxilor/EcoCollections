@@ -51,7 +51,7 @@ object CollectionsLeaderboard {
     private fun buildCache(loader: () -> LeaderboardSnapshot): LoadingCache<Boolean, LeaderboardSnapshot> {
         return Caffeine.newBuilder()
             .refreshAfterWrite(getRefreshDuration())
-            .executor { command -> plugin.scheduler.runAsync { command.run() } }
+            .executor { command -> plugin.scheduler.runTaskAsync { command.run() } }
             .build { loader() }
     }
 
