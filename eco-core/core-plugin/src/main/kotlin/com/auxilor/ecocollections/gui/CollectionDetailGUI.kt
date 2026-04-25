@@ -2,21 +2,21 @@ package com.auxilor.ecocollections.gui
 
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
 import com.auxilor.ecocollections.api.getCollectionCount
 import com.auxilor.ecocollections.api.getCollectionTier
 import com.auxilor.ecocollections.collections.Collection
 import com.auxilor.ecocollections.plugin
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 object CollectionDetailGUI {
 
@@ -33,30 +33,20 @@ object CollectionDetailGUI {
         val playerTier = player.getCollectionTier(collection)
         val playerCount = player.getCollectionCount(collection)
 
-        val progressionPattern = plugin.configYml.getStrings("gui.detail.progression-slots.pattern")
-        val tierPositions = parseProgressionPattern(progressionPattern)
-
         val centerSlot = buildCenterSlot(player, collection, playerTier, playerCount)
-
-        val backRow = rows
-        val backCol = 1
-
-        val backItem = ItemStack(Material.ARROW)
-        val backMeta = backItem.itemMeta
-        backMeta?.setDisplayName(StringUtils.format("&fBack"))
-        backItem.itemMeta = backMeta
-
-        val rankSlot = buildRankSlot(player, collection)
+        val component = TierProgressionComponent(collection)
 
         val theMenu = menu(rows) {
             setTitle(title)
 
-            setMask(
-                FillerMask(
-                    maskItems,
-                    *maskPattern
-                )
-            )
+            setMask(FillerMask(maskItems, *maskPattern))
+
+            maxPages(component.pages)
+            addComponent(1, 1, component)
+
+            defaultPage {
+                component.getPageOf(it.getCollectionTier(collection)).coerceAtLeast(1)
+            }
 
             setSlot(
                 plugin.configYml.getInt("gui.detail.info-icon.location.row"),
@@ -64,31 +54,53 @@ object CollectionDetailGUI {
                 centerSlot
             )
 
-            for (tier in 1..collection.maxTier) {
-                val position = tierPositions.getOrNull(tier - 1) ?: continue
-                val tierSlotItem = buildTierSlot(collection, tier, playerTier, playerCount)
-                setSlot(position.first, position.second, tierSlotItem)
-            }
+            addComponent(
+                plugin.configYml.getInt("gui.detail.buttons.prev-page.location.row"),
+                plugin.configYml.getInt("gui.detail.buttons.prev-page.location.column"),
+                PageChanger(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.prev-page.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.prev-page.name")))
+                        .build(),
+                    PageChanger.Direction.BACKWARDS
+                )
+            )
 
-            setSlot(backRow, backCol, slot(backItem) {
-                onLeftClick { _, _, _, _ ->
-                    val group = collection.group
-                    if (group != null) {
-                        GroupGUI.open(player, group)
-                    } else {
-                        CollectionsGUI.open(player)
+            addComponent(
+                plugin.configYml.getInt("gui.detail.buttons.next-page.location.row"),
+                plugin.configYml.getInt("gui.detail.buttons.next-page.location.column"),
+                PageChanger(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.next-page.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.next-page.name")))
+                        .build(),
+                    PageChanger.Direction.FORWARDS
+                )
+            )
+
+            setSlot(
+                plugin.configYml.getInt("gui.detail.buttons.back.location.row"),
+                plugin.configYml.getInt("gui.detail.buttons.back.location.column"),
+                slot(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.back.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.back.name")))
+                        .build()
+                ) {
+                    onLeftClick { _, _, _, _ ->
+                        val group = collection.group
+                        if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
                     }
                 }
-            })
+            )
 
-            setSlot(backRow, 9, rankSlot)
+            if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
+                setSlot(
+                    plugin.configYml.getInt("gui.detail.buttons.rank.location.row"),
+                    plugin.configYml.getInt("gui.detail.buttons.rank.location.column"),
+                    buildRankSlot(player, collection)
+                )
+            }
 
             for (config in plugin.configYml.getSubsections("gui.detail.custom-slots")) {
-                setSlot(
-                    config.getInt("row"),
-                    config.getInt("column"),
-                    ConfigSlot(config)
-                )
+                setSlot(config.getInt("row"), config.getInt("column"), ConfigSlot(config))
             }
         }
 
@@ -130,78 +142,12 @@ object CollectionDetailGUI {
         return slot(iconItem)
     }
 
-    private fun buildTierSlot(
-        collection: Collection,
-        tier: Int,
-        playerTier: Int,
-        playerCount: Double
-    ): Slot {
-        val isMaxTier = tier == collection.maxTier
-        val requirement = collection.tierRequirements[tier - 1]
-
-        val state = when {
-            isMaxTier && playerTier >= tier -> "completed"
-            playerTier >= tier -> "reached"
-            tier == playerTier + 1 -> "in-progress"
-            else -> "locked"
-        }
-
-        val configKey = "gui.detail.progression-slots.$state"
-
-        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
-        val meta = tierItem.itemMeta
-
-        if (meta != null) {
-            val percent = if (requirement > 0) {
-                (playerCount / requirement * 100).coerceIn(0.0, 100.0).toInt().toString()
-            } else {
-                "100"
-            }
-
-            fun String.applyPlaceholders() = this
-                .replace("%tier%", tier.toString())
-                .replace("%tier_numeral%", tier.toNumeral())
-                .replace("%count%", playerCount.toLong().toString())
-                .replace("%required%", requirement.toLong().toString())
-                .replace("%percent%", percent)
-                .replace("%collection_name%", collection.name)
-
-            meta.setDisplayName(
-                StringUtils.format(
-                    plugin.configYml.getString("$configKey.name").applyPlaceholders()
-                )
-            )
-
-            val rewardMessages = collection.getRewardMessages(tier).map {
-                StringUtils.format(it.applyPlaceholders())
-            }
-
-            val lore = plugin.configYml.getStrings("$configKey.lore").flatMap { line ->
-                if (line.contains("%rewards%")) {
-                    if (rewardMessages.isEmpty()) {
-                        emptyList()
-                    } else {
-                        val margin = line.length - line.trimStart().length
-                        rewardMessages.map { " ".repeat(margin) + it }
-                    }
-                } else {
-                    listOf(StringUtils.format(line.applyPlaceholders()))
-                }
-            }
-
-            meta.lore = lore
-            tierItem.itemMeta = meta
-        }
-
-        return slot(tierItem)
-    }
-
     private fun buildRankSlot(player: Player, collection: Collection): Slot {
-        val rankItem = ItemStack(Material.PLAYER_HEAD)
+        val rankItem = Items.lookup(plugin.configYml.getString("gui.detail.buttons.rank.material")).item.clone()
         val meta = rankItem.itemMeta
 
         if (meta != null) {
-            meta.setDisplayName(StringUtils.format("&7Your Ranking"))
+            meta.setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.rank.name")))
 
             val lore = mutableListOf<String>()
             val rankLine = GroupGUI.formatRankLore(player, collection)
@@ -214,24 +160,6 @@ object CollectionDetailGUI {
         }
 
         return slot(rankItem)
-    }
-
-    private fun parseProgressionPattern(pattern: List<String>): List<Pair<Int, Int>> {
-        val slots = mutableListOf<Triple<Int, Int, Int>>() // row, column, order
-
-        for ((rowIndex, line) in pattern.withIndex()) {
-            for ((colIndex, char) in line.withIndex()) {
-                val order = when (char) {
-                    '0' -> continue
-                    in '1'..'9' -> char - '0'
-                    in 'a'..'z' -> char - 'a' + 10
-                    else -> continue
-                }
-                slots.add(Triple(rowIndex + 1, colIndex + 1, order))
-            }
-        }
-
-        return slots.sortedBy { it.third }.map { Pair(it.first, it.second) }
     }
 
     private fun substituteDetailPlaceholders(

@@ -127,6 +127,32 @@ gui:
           - ""
           - "&7Rewards:"
           - "%rewards%"
+    buttons:
+      prev-page:
+        material: "arrow"
+        name: "&fPrevious Page"
+        location:
+          row: 6
+          column: 4
+      next-page:
+        material: "arrow"
+        name: "&fNext Page"
+        location:
+          row: 6
+          column: 6
+      back:
+        material: "barrier"
+        name: "&fCollections"
+        location:
+          row: 6
+          column: 1
+      rank:
+        enabled: true
+        material: "player_head"
+        name: "&7Your Ranking"
+        location:
+          row: 6
+          column: 9
     custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions
