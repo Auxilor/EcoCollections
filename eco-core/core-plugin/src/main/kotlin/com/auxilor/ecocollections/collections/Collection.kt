@@ -16,8 +16,12 @@ import com.auxilor.ecocollections.api.unlockedCollectionCount
 import com.auxilor.ecocollections.groups.CollectionGroup
 import com.auxilor.ecocollections.groups.CollectionGroups
 import com.auxilor.ecocollections.plugin
+import com.auxilor.ecocollections.util.InvalidConfigurationException
+import com.auxilor.ecocollections.util.TierInjectable
 import com.willfp.eco.core.placeholder.PlayerStaticPlaceholder
+import com.willfp.eco.core.placeholder.context.placeholderContext
 import com.willfp.eco.core.registry.KRegistrable
+import com.willfp.eco.util.evaluateExpression
 import com.willfp.eco.util.toNumeral
 import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.ConditionList
@@ -41,7 +45,18 @@ class Collection(
         CollectionGroups.getByID(groupId)
     }
 
-    val tierRequirements: List<Double> = config.getDoubles("tier-requirements")
+    val tierRequirements: List<Double> = run {
+        val formula = config.getStringOrNull("tier-formula")
+        if (formula != null) {
+            val max = config.getIntOrNull("max-tier")
+                ?: throw InvalidConfigurationException("Collection $id has tier-formula but no max-tier")
+            (1..max).map { tier ->
+                evaluateExpression(formula, placeholderContext(injectable = TierInjectable(tier)))
+            }
+        } else {
+            config.getDoubles("tier-requirements")
+        }
+    }
 
     val maxTier: Int = tierRequirements.size
 
