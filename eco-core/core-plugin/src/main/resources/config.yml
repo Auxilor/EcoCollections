@@ -120,7 +120,7 @@ gui:
           - "%rewards%"
       # Tiers not yet reachable
       locked:
-        item: gray_stained_glass_pane
+        item: red_stained_glass_pane
         name: "&7Tier %tier_numeral%"
         lore:
           - "&7Requires: &e%required% &7items"

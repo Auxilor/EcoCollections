@@ -1,11 +1,8 @@
 package com.auxilor.ecocollections.commands
 
-import com.auxilor.ecocollections.collections.Collections
 import com.auxilor.ecocollections.plugin
-import com.willfp.eco.core.Prerequisite
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNiceString
 import org.bukkit.command.CommandSender
 
 object SubcommandReload : Subcommand(
@@ -15,17 +12,16 @@ object SubcommandReload : Subcommand(
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
-        val runnable = Runnable {
-            sender.sendMessage(
-                plugin.langYml.getMessage("reloaded", StringUtils.FormatOption.WITHOUT_PLACEHOLDERS)
-                    .replace("%time%", plugin.reloadWithTime().toNiceString())
-                    .replace("%count%", Collections.values().size.toString())
+        this.plugin.reload()
+        sender.sendMessage(
+            StringUtils.format(
+                plugin.langYml.getString("commands.reload-success")
             )
-        }
-        if (Prerequisite.HAS_FOLIA.isMet)
-            plugin.scheduler.runTask(runnable)
-        else
-            runnable.run()
+        )
+    }
+
+    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
+        return emptyList()
     }
 }
 

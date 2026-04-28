@@ -3,7 +3,6 @@ version: ${version}
 main: com.auxilor.ecocollections.EcoCollectionsPlugin
 api-version: "1.21"
 authors: [Auxilor, CallumJohnson]
-folia-supported: true
 depend:
   - eco
 softdepend:
