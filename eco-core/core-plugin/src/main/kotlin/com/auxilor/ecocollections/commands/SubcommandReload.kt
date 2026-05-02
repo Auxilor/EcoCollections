@@ -2,7 +2,6 @@ package com.auxilor.ecocollections.commands
 
 import com.auxilor.ecocollections.collections.Collections
 import com.auxilor.ecocollections.plugin
-import com.willfp.eco.core.Prerequisite
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNiceString
