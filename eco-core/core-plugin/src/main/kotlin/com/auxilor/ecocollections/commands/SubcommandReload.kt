@@ -15,17 +15,11 @@ object SubcommandReload : Subcommand(
     false
 ) {
     override fun onExecute(sender: CommandSender, args: List<String>) {
-        val runnable = Runnable {
-            sender.sendMessage(
-                plugin.langYml.getMessage("reloaded", StringUtils.FormatOption.WITHOUT_PLACEHOLDERS)
-                    .replace("%time%", plugin.reloadWithTime().toNiceString())
-                    .replace("%count%", Collections.values().size.toString())
-            )
-        }
-        if (Prerequisite.HAS_FOLIA.isMet)
-            plugin.scheduler.runTask(runnable)
-        else
-            runnable.run()
+        sender.sendMessage(
+            plugin.langYml.getMessage("commands.reloaded", StringUtils.FormatOption.WITHOUT_PLACEHOLDERS)
+                .replace("%time%", plugin.reloadWithTime().toNiceString())
+                .replace("%count%", Collections.values().size.toString())
+        )
     }
 }
 
