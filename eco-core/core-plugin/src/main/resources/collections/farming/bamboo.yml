@@ -31,7 +31,7 @@ tier-requirements:
   - 50000
 
 count-methods:
-  - trigger: mine_block
+  - trigger: mine_block_cascade
     filters:
       player_placed: false
       blocks:

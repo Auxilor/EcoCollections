@@ -302,7 +302,7 @@ class Collection(
 
         for (subsection in config.getSubsections("count-methods")) {
             val trigger = subsection.getString("trigger").lowercase()
-            if (trigger == "mine_block" || trigger == "break_block") {
+            if (trigger == "mine_block" || trigger == "mine_block_cascade" || trigger == "break_block") {
                 val hasPlayerPlacedFilter = subsection.has("filters.player_placed")
                 if (!hasPlayerPlacedFilter) {
                     plugin.logger.warning(
