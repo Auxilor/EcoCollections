@@ -32,6 +32,7 @@ tier-requirements:
 
 count-methods:
   - trigger: kill
+    value: 1
     filters:
       entities:
         - enderman
