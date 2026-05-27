@@ -1,4 +1,4 @@
-group = "com.auxilor"
+group = "com.exanthiax"
 version = rootProject.version
 
 repositories {

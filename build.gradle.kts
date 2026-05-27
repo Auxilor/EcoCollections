@@ -9,7 +9,7 @@ plugins {
     id("com.willfp.libreforge-gradle-plugin") version "2.0.0"
 }
 
-group = "com.auxilor"
+group = "com.exanthiax"
 version = findProperty("version")!!
 val libreforgeVersion = findProperty("libreforge-version")
 
@@ -54,8 +54,8 @@ allprojects {
     tasks {
         shadowJar {
             exclude("META-INF/**")
-            relocate("com.willfp.libreforge.loader", "com.auxilor.ecocollections.libreforge.loader")
-            relocate("com.willfp.ecomponent", "com.auxilor.ecocollections.ecomponent")
+            relocate("com.willfp.libreforge.loader", "com.exanthiax.ecocollections.libreforge.loader")
+            relocate("com.willfp.ecomponent", "com.exanthiax.ecocollections.ecomponent")
             relocate("kotlin", "com.willfp.eco.libs.kotlin")
             relocate("kotlin.jvm", "com.willfp.eco.libs.kotlin.jvm")
             relocate("kotlin.coroutines", "com.willfp.eco.libs.kotlin.coroutines")

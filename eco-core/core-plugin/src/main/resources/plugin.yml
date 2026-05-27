@@ -1,6 +1,6 @@
 ﻿name: ${pluginName}
 version: ${version}
-main: com.auxilor.ecocollections.EcoCollectionsPlugin
+main: com.exanthiax.ecocollections.EcoCollectionsPlugin
 api-version: 1.21.8
 authors: [Auxilor, CallumJohnson]
 depend:
