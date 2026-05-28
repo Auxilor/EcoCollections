@@ -1,4 +1,4 @@
----
+﻿---
 title: "How to make a Collection"
 sidebar_position: 1
 ---
@@ -130,7 +130,7 @@ tier-requirements: # A list of the required counts to reach each tier.
 ```
 
 #### The Effects Section
-:::dangerEffects Section
+:::danger Effects Section
 
 The effects section is the core functionality of the collection. You can configure effects, conditions, and filters to run when the collection is completed or the player tiers up.
 
