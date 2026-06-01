@@ -3,6 +3,8 @@ title: "Plugin Config"
 sidebar_position: 8
 ---
 
+`config.yml` holds the server-wide settings: where collections are disabled, how the GUIs are laid out, the leaderboard behaviour, and the tier-up, completion, and unlock messages. It lives at `/plugins/EcoCollections/config.yml`. Edit it, then run `/ecocollections reload` to apply your changes.
+
 ## Default config.yml
 
 ```yaml
@@ -18,12 +20,12 @@ collections:
 
   # On plugin load, scan every count-method and log a warning if mine_block or
   # break_block is used without an explicit `player_placed` filter. The plugin
-  # itself does not enforce filters — this only emits warnings.
+  # itself does not enforce filters; this only emits warnings.
   warn-on-missing-dupe-filter: true
 
 # GUI
 gui:
-  cache-ttl: 5000   # ms — how long rendered lore is cached
+  cache-ttl: 5000 # Milliseconds rendered lore is cached before re-rendering
 
   collections:
     title: "&8Collections"
@@ -169,7 +171,7 @@ gui:
     show-locked-collections: true
     # The icon used in place of the collection's normal icon when locked.
     icon:
-      material: "iron_bars"   # any item id eco's parser accepts
+      material: "iron_bars" # Any item ID eco's parser accepts
       name: "&7&l? ? ?"
       lore:
         - "&8Locked"
@@ -188,11 +190,11 @@ gui:
 # Leaderboard
 leaderboard:
   enabled: true
-  cache-lifetime: 300  # seconds
+  cache-lifetime: 300 # Seconds before the leaderboard is recomputed
 
 leaderboards:
   refresh-interval: 6h
-  exact-rank-cutoff: 1000   # Set to 0 to always return raw integer ranks (disables Top X% bucketing)
+  exact-rank-cutoff: 1000 # Set to 0 to always return raw integer ranks (disables Top X% bucketing)
   percent-decimal-places: 1
   show-in-group-gui: true
 
@@ -228,3 +230,11 @@ messages:
       volume: 1.0
 
 ```
+
+<hr/>
+
+## Where to go next
+
+- **Make a collection:** [How to Make a Collection](how-to-make-a-collection) covers the per-collection config.
+- **Group your collections:** [How to Make a Group](how-to-make-a-group) covers the categories players browse.
+- **Configure effects:** [Configuring an Effect](https://plugins.auxilor.io/effects/configuring-an-effect) covers the shared effects system.

@@ -3,6 +3,8 @@ title: "PlaceholderAPI"
 sidebar_position: 6
 ---
 
+EcoCollections registers these PlaceholderAPI placeholders for use in any plugin that resolves them, such as scoreboards, tab lists, and holograms. Swap `<id>` for a collection's ID (its file name) and `<n>` for a leaderboard position.
+
 | Placeholder                                    | Description                                               | Options                      |
 |------------------------------------------------|-----------------------------------------------------------|------------------------------|
 | `%ecocollections_<id>%`                        | The player's current tier in the collection.              | add `_numeral` for Roman numerals |
@@ -17,5 +19,12 @@ sidebar_position: 6
 | `%ecocollections_total_tiers%`                 | The player's total tiers across all collections.          |                              |
 | `%ecocollections_completed_count%`             | The number of collections the player has completed.       |                              |
 | `%ecocollections_unlocked_count%`              | The number of collections the player has unlocked.        |                              |
-| `%ecocollections_top_<n>_name%`                | The name of the #n player by total tiers. (n = 1–10)      |                              |
-| `%ecocollections_top_<n>_value%`               | The total tier count of the #n player. (n = 1–10)         |                              |
+| `%ecocollections_top_<n>_name%`                | The name of the #n player by total tiers. (n = 1-10)      |                              |
+| `%ecocollections_top_<n>_value%`               | The total tier count of the #n player. (n = 1-10)         |                              |
+
+<hr/>
+
+## Where to go next
+
+- **Internal placeholders:** [How to Make a Collection](how-to-make-a-collection) lists the placeholders for use inside collection lore.
+- **Commands:** [Commands and Permissions](commands-and-permissions) covers the in-game commands.
