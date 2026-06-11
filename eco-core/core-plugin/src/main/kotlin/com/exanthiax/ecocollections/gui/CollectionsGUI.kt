@@ -1,12 +1,19 @@
 package com.exanthiax.ecocollections.gui
 
 import com.willfp.eco.core.config.BuildableConfig
+import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.menu.MenuLayer
+import com.willfp.eco.core.gui.onEvent
 import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.page.PageChangeEvent
+import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
+import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.util.StringUtils
 import com.exanthiax.ecocollections.api.isCollectionComplete
 import com.exanthiax.ecocollections.collections.Collection
@@ -55,7 +62,7 @@ object CollectionsGUI {
     }
 
     private fun openRootGUI(player: Player) {
-        val title = StringUtils.format(plugin.configYml.getString("gui.collections.title"))
+        val titleTemplate = plugin.configYml.getString("gui.collections.title")
         val rows = plugin.configYml.getInt("gui.collections.rows")
 
         val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.collections.mask.materials"))
@@ -71,37 +78,87 @@ object CollectionsGUI {
         closeMeta?.setDisplayName(StringUtils.format(closeName))
         closeItem.itemMeta = closeMeta
 
-        val theMenu = menu(rows) {
-            setTitle(title)
+        val visibleGroups = CollectionGroups.values().filter {
+            it.permission.isEmpty() || player.hasPermission(it.permission)
+        }
+        val maxPage = visibleGroups.maxOfOrNull { it.guiPage }?.coerceAtLeast(1) ?: 1
 
-            setMask(
-                FillerMask(
-                    maskItems,
-                    *maskPattern
+        fun renderTitle(page: Int) = StringUtils.format(
+            titleTemplate
+                .replace("%page%", page.toString())
+                .replace("%max_page%", maxPage.toString())
+        )
+
+        val theMenu = menu(rows) {
+            setTitle(renderTitle(1))
+
+            maxPages(maxPage)
+
+            onEvent<PageChangeEvent> { eventPlayer, _, event ->
+                @Suppress("DEPRECATION")
+                eventPlayer.openInventory.setTitle(renderTitle(event.newPage))
+            }
+
+            addComponent(
+                MenuLayer.TOP,
+                plugin.configYml.getInt("gui.collections.prev-page.location.row"),
+                plugin.configYml.getInt("gui.collections.prev-page.location.column"),
+                PageChanger(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.collections.prev-page.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.collections.prev-page.name")))
+                        .build(),
+                    PageChanger.Direction.BACKWARDS
                 )
             )
 
-            setSlot(closeRow, closeColumn, slot(closeItem) {
-                onLeftClick { event, _ ->
-                    event.whoClicked.closeInventory()
-                }
-            })
-
-            for (group in CollectionGroups.values()) {
-                if (group.permission.isNotEmpty() && !player.hasPermission(group.permission)) {
-                    continue
-                }
-
-                val groupIcon = buildGroupIcon(player, group)
-                setSlot(group.guiRow, group.guiColumn, groupIcon)
-            }
-
-            for (config in plugin.configYml.getSubsections("gui.collections.custom-slots")) {
-                setSlot(
-                    config.getInt("row"),
-                    config.getInt("column"),
-                    ConfigSlot(config)
+            addComponent(
+                MenuLayer.TOP,
+                plugin.configYml.getInt("gui.collections.next-page.location.row"),
+                plugin.configYml.getInt("gui.collections.next-page.location.column"),
+                PageChanger(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.collections.next-page.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.collections.next-page.name")))
+                        .build(),
+                    PageChanger.Direction.FORWARDS
                 )
+            )
+
+            for (page in 1..maxPage) {
+                addPage(page) {
+                    setMask(
+                        FillerMask(
+                            maskItems,
+                            *maskPattern
+                        )
+                    )
+
+                    setSlot(closeRow, closeColumn, slot(closeItem) {
+                        onLeftClick { event, _ ->
+                            event.whoClicked.closeInventory()
+                        }
+                    })
+
+                    for (group in visibleGroups) {
+                        if (group.guiPage != page) {
+                            continue
+                        }
+
+                        val groupIcon = buildGroupIcon(player, group)
+                        setSlot(group.guiRow, group.guiColumn, groupIcon)
+                    }
+
+                    for (config in plugin.configYml.getSubsections("gui.collections.custom-slots")) {
+                        if (config.getInt("page").coerceAtLeast(1) != page) {
+                            continue
+                        }
+
+                        setSlot(
+                            config.getInt("row"),
+                            config.getInt("column"),
+                            ConfigSlot(config)
+                        )
+                    }
+                }
             }
         }
 

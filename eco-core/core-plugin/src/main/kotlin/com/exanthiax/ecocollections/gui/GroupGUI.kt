@@ -1,13 +1,19 @@
 package com.exanthiax.ecocollections.gui
 
+import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.menu.MenuLayer
+import com.willfp.eco.core.gui.onEvent
 import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.page.PageChangeEvent
+import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -26,10 +32,8 @@ import org.bukkit.inventory.ItemStack
 object GroupGUI {
 
     fun open(player: Player, group: CollectionGroup, bypassMode: Boolean = false) {
-        val title = StringUtils.format(
-            plugin.configYml.getString("gui.group.title")
-                .replace("%group_name%", group.name)
-        )
+        val titleTemplate = plugin.configYml.getString("gui.group.title")
+            .replace("%group_name%", group.name)
         val rows = plugin.configYml.getInt("gui.group.rows")
 
         val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.group.mask.materials"))
@@ -38,47 +42,98 @@ object GroupGUI {
         val collectionsInGroup = CollectionsGUI.getCollectionsInGroup(group)
         val showLeaderboardRank = plugin.configYml.getBool("leaderboards.show-in-group-gui")
 
-        val theMenu = menu(rows) {
-            setTitle(title)
+        val maxPage = collectionsInGroup.maxOfOrNull { it.guiPage }?.coerceAtLeast(1) ?: 1
 
-            setMask(
-                FillerMask(
-                    maskItems,
-                    *maskPattern
+        fun renderTitle(page: Int) = StringUtils.format(
+            titleTemplate
+                .replace("%page%", page.toString())
+                .replace("%max_page%", maxPage.toString())
+        )
+
+        val theMenu = menu(rows) {
+            setTitle(renderTitle(1))
+
+            maxPages(maxPage)
+
+            onEvent<PageChangeEvent> { eventPlayer, _, event ->
+                @Suppress("DEPRECATION")
+                eventPlayer.openInventory.setTitle(renderTitle(event.newPage))
+            }
+
+            addComponent(
+                MenuLayer.TOP,
+                plugin.configYml.getInt("gui.group.prev-page.location.row"),
+                plugin.configYml.getInt("gui.group.prev-page.location.column"),
+                PageChanger(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.group.prev-page.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.group.prev-page.name")))
+                        .build(),
+                    PageChanger.Direction.BACKWARDS
                 )
             )
 
-            if (!bypassMode) {
-                val backMaterial = plugin.configYml.getString("gui.group.back.material")
-                val backName = plugin.configYml.getString("gui.group.back.name")
-                val backRow = plugin.configYml.getInt("gui.group.back.location.row")
-                val backColumn = plugin.configYml.getInt("gui.group.back.location.column")
-
-                val backItem = ItemStack(Material.matchMaterial(backMaterial.uppercase()) ?: Material.ARROW)
-                val backMeta = backItem.itemMeta
-                backMeta?.setDisplayName(StringUtils.format(backName))
-                backItem.itemMeta = backMeta
-
-                setSlot(backRow, backColumn, slot(backItem) {
-                    onLeftClick { _, _, _, _ ->
-                        CollectionsGUI.open(player)
-                    }
-                })
-            }
-
-            for (collection in collectionsInGroup) {
-                val builtSlot = buildCollectionSlot(player, collection, showLeaderboardRank)
-                if (builtSlot != null) {
-                    setSlot(collection.guiRow, collection.guiColumn, builtSlot)
-                }
-            }
-
-            for (config in plugin.configYml.getSubsections("gui.group.custom-slots")) {
-                setSlot(
-                    config.getInt("row"),
-                    config.getInt("column"),
-                    ConfigSlot(config)
+            addComponent(
+                MenuLayer.TOP,
+                plugin.configYml.getInt("gui.group.next-page.location.row"),
+                plugin.configYml.getInt("gui.group.next-page.location.column"),
+                PageChanger(
+                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.group.next-page.material")))
+                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.group.next-page.name")))
+                        .build(),
+                    PageChanger.Direction.FORWARDS
                 )
+            )
+
+            for (page in 1..maxPage) {
+                addPage(page) {
+                    setMask(
+                        FillerMask(
+                            maskItems,
+                            *maskPattern
+                        )
+                    )
+
+                    if (!bypassMode) {
+                        val backMaterial = plugin.configYml.getString("gui.group.back.material")
+                        val backName = plugin.configYml.getString("gui.group.back.name")
+                        val backRow = plugin.configYml.getInt("gui.group.back.location.row")
+                        val backColumn = plugin.configYml.getInt("gui.group.back.location.column")
+
+                        val backItem = ItemStack(Material.matchMaterial(backMaterial.uppercase()) ?: Material.ARROW)
+                        val backMeta = backItem.itemMeta
+                        backMeta?.setDisplayName(StringUtils.format(backName))
+                        backItem.itemMeta = backMeta
+
+                        setSlot(backRow, backColumn, slot(backItem) {
+                            onLeftClick { _, _, _, _ ->
+                                CollectionsGUI.open(player)
+                            }
+                        })
+                    }
+
+                    for (collection in collectionsInGroup) {
+                        if (collection.guiPage != page) {
+                            continue
+                        }
+
+                        val builtSlot = buildCollectionSlot(player, collection, showLeaderboardRank)
+                        if (builtSlot != null) {
+                            setSlot(collection.guiRow, collection.guiColumn, builtSlot)
+                        }
+                    }
+
+                    for (config in plugin.configYml.getSubsections("gui.group.custom-slots")) {
+                        if (config.getInt("page").coerceAtLeast(1) != page) {
+                            continue
+                        }
+
+                        setSlot(
+                            config.getInt("row"),
+                            config.getInt("column"),
+                            ConfigSlot(config)
+                        )
+                    }
+                }
             }
         }
 

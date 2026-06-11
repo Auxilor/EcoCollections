@@ -13,6 +13,7 @@ gui:
   position: # The position of the collection in the GUI.
     row: 2
     column: 5
+    page: 1 # (Optional) The page the collection appears on. Defaults to 1.
   lore: # The lore of the collection icon in the GUI.
     - "%description%"
     - ""

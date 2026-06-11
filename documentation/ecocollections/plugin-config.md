@@ -28,7 +28,7 @@ gui:
   cache-ttl: 5000 # Milliseconds rendered lore is cached before re-rendering
 
   collections:
-    title: "&8Collections"
+    title: "&8Collections" # Supports %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -46,10 +46,22 @@ gui:
       location:
         row: 6
         column: 5
+    prev-page:
+      material: "arrow"
+      name: "&fPrevious Page"
+      location:
+        row: 6
+        column: 4
+    next-page:
+      material: "arrow"
+      name: "&fNext Page"
+      location:
+        row: 6
+        column: 6
     custom-slots: []
 
   group:
-    title: "&8%group_name%"
+    title: "&8%group_name%" # Supports %group_name%, %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -67,10 +79,22 @@ gui:
       location:
         row: 6
         column: 1
+    prev-page:
+      material: "arrow"
+      name: "&fPrevious Page"
+      location:
+        row: 6
+        column: 4
+    next-page:
+      material: "arrow"
+      name: "&fNext Page"
+      location:
+        row: 6
+        column: 6
     custom-slots: []
 
   detail:
-    title: "&8%collection_name% Collection"
+    title: "&8%collection_name% Collection" # Supports %collection_name%, %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:

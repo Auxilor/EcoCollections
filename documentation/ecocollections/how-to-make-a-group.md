@@ -47,6 +47,7 @@ gui:
   position: # Slot in the Collections menu
     row: 2
     column: 6
+    page: 1 # Optional; the page the icon appears on. Defaults to 1
   lore:
     - "&7Slay monsters and hostile mobs."
     - ""
@@ -72,6 +73,7 @@ gui:
   position:
     row: 2
     column: 6
+    page: 1 # Optional; the page the icon appears on. Defaults to 1
   lore:
     - "&7Slay monsters and hostile mobs."
     - ""

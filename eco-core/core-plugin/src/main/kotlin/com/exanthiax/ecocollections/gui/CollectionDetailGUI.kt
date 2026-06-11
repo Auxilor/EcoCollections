@@ -1,7 +1,9 @@
 package com.exanthiax.ecocollections.gui
 
 import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.onEvent
 import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.page.PageChangeEvent
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -21,10 +23,8 @@ import org.bukkit.entity.Player
 object CollectionDetailGUI {
 
     fun open(player: Player, collection: Collection) {
-        val title = StringUtils.format(
-            plugin.configYml.getString("gui.detail.title")
-                .replace("%collection_name%", collection.name)
-        )
+        val titleTemplate = plugin.configYml.getString("gui.detail.title")
+            .replace("%collection_name%", collection.name)
         val rows = plugin.configYml.getInt("gui.detail.rows")
 
         val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.detail.mask.materials"))
@@ -36,8 +36,16 @@ object CollectionDetailGUI {
         val centerSlot = buildCenterSlot(player, collection, playerTier, playerCount)
         val component = TierProgressionComponent(collection)
 
+        fun renderTitle(page: Int) = StringUtils.format(
+            titleTemplate
+                .replace("%page%", page.toString())
+                .replace("%max_page%", component.pages.toString())
+        )
+
+        val defaultPageNum = component.getPageOf(playerTier).coerceAtLeast(1)
+
         val theMenu = menu(rows) {
-            setTitle(title)
+            setTitle(renderTitle(defaultPageNum))
 
             setMask(FillerMask(maskItems, *maskPattern))
 
@@ -46,6 +54,11 @@ object CollectionDetailGUI {
 
             defaultPage {
                 component.getPageOf(it.getCollectionTier(collection)).coerceAtLeast(1)
+            }
+
+            onEvent<PageChangeEvent> { eventPlayer, _, event ->
+                @Suppress("DEPRECATION")
+                eventPlayer.openInventory.setTitle(renderTitle(event.newPage))
             }
 
             setSlot(

@@ -58,6 +58,7 @@ gui:
   position: # Slot in the group GUI
     row: 2
     column: 5
+    page: 1 # Optional; the page the icon appears on. Defaults to 1
   lore:
     - "%description%"
     - ""
@@ -136,6 +137,7 @@ gui:
   position:
     row: 2
     column: 5
+    page: 1 # Optional; the page the icon appears on. Defaults to 1
   lore:
     - "%description%" # Inserts the description block above
     - ""
