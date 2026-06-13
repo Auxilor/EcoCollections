@@ -8,9 +8,7 @@ import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
@@ -61,25 +59,9 @@ class PageChangerComponent(
 
 fun pageButtonProvider(basePath: String): (PageButtonState, Int, Int) -> ItemStack? =
     { state, page, maxPage ->
-        val material: String?
-        val name: String
-
-        if (state == PageButtonState.INACTIVE) {
-            material = plugin.configYml.getStringOrNull("$basePath.material-inactive")
-            name = plugin.configYml.getStringOrNull("$basePath.name-inactive")
-                ?: plugin.configYml.getString("$basePath.name")
-        } else {
-            material = plugin.configYml.getString("$basePath.material")
-            name = plugin.configYml.getString("$basePath.name")
-        }
-
-        if (material == null) {
-            null
-        } else {
-            ItemStackBuilder(Items.lookup(material))
-                .setDisplayName(StringUtils.format(name).withPagePlaceholders(page, maxPage))
-                .build()
-        }
+        val key = if (state == PageButtonState.ACTIVE) "item" else "item-inactive"
+        plugin.configYml.getStringOrNull("$basePath.$key")
+            ?.let { Items.lookup(it.withPagePlaceholders(page, maxPage)).item }
     }
 
 fun Menu.refreshPageTitle(player: Player, rawTitle: String, maxPage: Int) {
