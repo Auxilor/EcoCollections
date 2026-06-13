@@ -2,10 +2,9 @@ package com.exanthiax.ecocollections.gui
 
 import com.willfp.eco.core.config.BuildableConfig
 import com.willfp.eco.core.gui.addPage
+import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.menu.MenuLayer
 import com.willfp.eco.core.gui.onLeftClick
-import com.willfp.eco.core.gui.onRender
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -84,38 +83,13 @@ object CollectionsGUI {
         val formattedTitle = StringUtils.format(titleTemplate)
         val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.collections.page-change-sound"))
 
-        fun renderTitle(page: Int) = formattedTitle.withPagePlaceholders(page, maxPage)
-
         val theMenu = menu(rows) {
-            setTitle(renderTitle(1))
+            title = formattedTitle
 
             maxPages(maxPage)
 
-            onRender { eventPlayer, theMenu ->
-                theMenu.refreshPageTitle(eventPlayer, formattedTitle, maxPage)
-            }
-
-            addComponent(
-                MenuLayer.TOP,
-                plugin.configYml.getInt("gui.collections.prev-page.location.row"),
-                plugin.configYml.getInt("gui.collections.prev-page.location.column"),
-                PageChangerComponent(
-                    PageChanger.Direction.BACKWARDS,
-                    pageChangeSound,
-                    pageButtonProvider("gui.collections.prev-page")
-                )
-            )
-
-            addComponent(
-                MenuLayer.TOP,
-                plugin.configYml.getInt("gui.collections.next-page.location.row"),
-                plugin.configYml.getInt("gui.collections.next-page.location.column"),
-                PageChangerComponent(
-                    PageChanger.Direction.FORWARDS,
-                    pageChangeSound,
-                    pageButtonProvider("gui.collections.next-page")
-                )
-            )
+            addPageChanger(plugin.configYml, "gui.collections.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
+            addPageChanger(plugin.configYml, "gui.collections.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)
 
             for (page in 1..maxPage) {
                 addPage(page) {
