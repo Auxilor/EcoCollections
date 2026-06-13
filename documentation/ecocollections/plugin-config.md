@@ -28,7 +28,7 @@ gui:
   cache-ttl: 5000 # Milliseconds rendered lore is cached before re-rendering
 
   collections:
-    title: "&8Collections" # Supports %page% and %max_page% placeholders
+    title: "&8Collections (%page%/%max_page%)" # Supports %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -47,21 +47,26 @@ gui:
         row: 6
         column: 5
     prev-page:
-      material: "arrow"
-      name: "&fPrevious Page"
+      item: arrow name:"&fPrevious Page"
+      item-inactive: gray_stained_glass_pane name:"&7Previous Page"
       location:
         row: 6
         column: 4
     next-page:
-      material: "arrow"
-      name: "&fNext Page"
+      item: arrow name:"&fNext Page"
+      item-inactive: gray_stained_glass_pane name:"&7Next Page"
       location:
         row: 6
         column: 6
+    page-change-sound:
+      enabled: true
+      sound: ui.button.click
+      pitch: 1.0
+      volume: 1.0
     custom-slots: []
 
   group:
-    title: "&8%group_name%" # Supports %group_name%, %page% and %max_page% placeholders
+    title: "&8%group_name% (%page%/%max_page%)" # Supports %group_name%, %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -80,21 +85,26 @@ gui:
         row: 6
         column: 1
     prev-page:
-      material: "arrow"
-      name: "&fPrevious Page"
+      item: arrow name:"&fPrevious Page"
+      item-inactive: gray_stained_glass_pane name:"&7Previous Page"
       location:
         row: 6
         column: 4
     next-page:
-      material: "arrow"
-      name: "&fNext Page"
+      item: arrow name:"&fNext Page"
+      item-inactive: gray_stained_glass_pane name:"&7Next Page"
       location:
         row: 6
         column: 6
+    page-change-sound:
+      enabled: true
+      sound: ui.button.click
+      pitch: 1.0
+      volume: 1.0
     custom-slots: []
 
   detail:
-    title: "&8%collection_name% Collection" # Supports %collection_name%, %page% and %max_page% placeholders
+    title: "&8%collection_name% Collection (%page%/%max_page%)" # Supports %collection_name%, %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -161,14 +171,14 @@ gui:
           - "%rewards%"
     buttons:
       prev-page:
-        material: "arrow"
-        name: "&fPrevious Page"
+        item: arrow name:"&fPrevious Page"
+        item-inactive: gray_stained_glass_pane name:"&7Previous Page"
         location:
           row: 6
           column: 4
       next-page:
-        material: "arrow"
-        name: "&fNext Page"
+        item: arrow name:"&fNext Page"
+        item-inactive: gray_stained_glass_pane name:"&7Next Page"
         location:
           row: 6
           column: 6
@@ -185,6 +195,11 @@ gui:
         location:
           row: 6
           column: 9
+      page-change-sound:
+        enabled: true
+        sound: ui.button.click
+        pitch: 1.0
+        volume: 1.0
     custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions

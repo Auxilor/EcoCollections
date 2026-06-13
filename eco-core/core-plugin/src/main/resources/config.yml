@@ -20,7 +20,7 @@ gui:
   cache-ttl: 5000   # ms — how long rendered lore is cached
 
   collections:
-    title: "&8Collections" # Supports %page% and %max_page% placeholders
+    title: "&8Collections (%page%/%max_page%)" # Supports %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -58,7 +58,7 @@ gui:
     custom-slots: []
 
   group:
-    title: "&8%group_name%" # Supports %group_name%, %page% and %max_page% placeholders
+    title: "&8%group_name% (%page%/%max_page%)" # Supports %group_name%, %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
@@ -96,7 +96,7 @@ gui:
     custom-slots: []
 
   detail:
-    title: "&8%collection_name% Collection" # Supports %collection_name%, %page% and %max_page% placeholders
+    title: "&8%collection_name% Collection (%page%/%max_page%)" # Supports %collection_name%, %page% and %max_page% placeholders
     rows: 6
     mask:
       materials:
