@@ -3,9 +3,8 @@ package com.exanthiax.ecocollections.gui
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.menu.MenuLayer
-import com.willfp.eco.core.gui.onEvent
 import com.willfp.eco.core.gui.onLeftClick
-import com.willfp.eco.core.gui.page.PageChangeEvent
+import com.willfp.eco.core.gui.onRender
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
@@ -13,7 +12,6 @@ import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -44,31 +42,28 @@ object GroupGUI {
 
         val maxPage = collectionsInGroup.maxOfOrNull { it.guiPage }?.coerceAtLeast(1) ?: 1
 
-        fun renderTitle(page: Int) = StringUtils.format(
-            titleTemplate
-                .replace("%page%", page.toString())
-                .replace("%max_page%", maxPage.toString())
-        )
+        val formattedTitle = StringUtils.format(titleTemplate)
+        val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.group.page-change-sound"))
+
+        fun renderTitle(page: Int) = formattedTitle.withPagePlaceholders(page, maxPage)
 
         val theMenu = menu(rows) {
             setTitle(renderTitle(1))
 
             maxPages(maxPage)
 
-            onEvent<PageChangeEvent> { eventPlayer, _, event ->
-                @Suppress("DEPRECATION")
-                eventPlayer.openInventory.setTitle(renderTitle(event.newPage))
+            onRender { eventPlayer, theMenu ->
+                theMenu.refreshPageTitle(eventPlayer, formattedTitle, maxPage)
             }
 
             addComponent(
                 MenuLayer.TOP,
                 plugin.configYml.getInt("gui.group.prev-page.location.row"),
                 plugin.configYml.getInt("gui.group.prev-page.location.column"),
-                PageChanger(
-                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.group.prev-page.material")))
-                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.group.prev-page.name")))
-                        .build(),
-                    PageChanger.Direction.BACKWARDS
+                PageChangerComponent(
+                    PageChanger.Direction.BACKWARDS,
+                    pageChangeSound,
+                    pageButtonProvider("gui.group.prev-page")
                 )
             )
 
@@ -76,11 +71,10 @@ object GroupGUI {
                 MenuLayer.TOP,
                 plugin.configYml.getInt("gui.group.next-page.location.row"),
                 plugin.configYml.getInt("gui.group.next-page.location.column"),
-                PageChanger(
-                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.group.next-page.material")))
-                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.group.next-page.name")))
-                        .build(),
-                    PageChanger.Direction.FORWARDS
+                PageChangerComponent(
+                    PageChanger.Direction.FORWARDS,
+                    pageChangeSound,
+                    pageButtonProvider("gui.group.next-page")
                 )
             )
 

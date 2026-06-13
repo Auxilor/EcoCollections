@@ -50,6 +50,11 @@ gui:
       location:
         row: 6
         column: 6
+    page-change-sound:
+      enabled: true
+      sound: ui.button.click
+      pitch: 1.0
+      volume: 1.0
     custom-slots: []
 
   group:
@@ -83,6 +88,11 @@ gui:
       location:
         row: 6
         column: 6
+    page-change-sound:
+      enabled: true
+      sound: ui.button.click
+      pitch: 1.0
+      volume: 1.0
     custom-slots: []
 
   detail:
@@ -177,6 +187,11 @@ gui:
         location:
           row: 6
           column: 9
+      page-change-sound:
+        enabled: true
+        sound: ui.button.click
+        pitch: 1.0
+        volume: 1.0
     custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions
