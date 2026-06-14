@@ -8,9 +8,17 @@ import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.event.EventHandler
 
 object TriggerCollectionUnlock : Trigger("unlock_collection") {
+    override val description = "Fires when the player unlocks a collection."
+
+    override val categories = setOf("player")
+
     override val parameters = setOf(
         TriggerParameter.PLAYER,
         TriggerParameter.LOCATION
+    )
+
+    override val parameterDescriptions = mapOf(
+        TriggerParameter.LOCATION to "The player's location when the collection was unlocked."
     )
 
     @EventHandler(ignoreCancelled = true)
