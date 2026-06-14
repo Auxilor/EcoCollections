@@ -14,11 +14,13 @@ object TriggerCollectionUnlock : Trigger("unlock_collection") {
 
     override val parameters = setOf(
         TriggerParameter.PLAYER,
-        TriggerParameter.LOCATION
+        TriggerParameter.LOCATION,
+        TriggerParameter.VALUE
     )
 
     override val parameterDescriptions = mapOf(
-        TriggerParameter.LOCATION to "The player's location when the collection was unlocked."
+        TriggerParameter.LOCATION to "The player's location when the collection was unlocked.",
+        TriggerParameter.VALUE to "Always 1.0, indicating the collection was unlocked."
     )
 
     @EventHandler(ignoreCancelled = true)

@@ -14,11 +14,13 @@ object TriggerCollectionTierUp : Trigger("tier_up_collection") {
 
     override val parameters = setOf(
         TriggerParameter.PLAYER,
-        TriggerParameter.LOCATION
+        TriggerParameter.LOCATION,
+        TriggerParameter.VALUE
     )
 
     override val parameterDescriptions = mapOf(
-        TriggerParameter.LOCATION to "The player's location when the new tier was reached."
+        TriggerParameter.LOCATION to "The player's location when the new tier was reached.",
+        TriggerParameter.VALUE to "The new tier number that the player has reached."
     )
 
     @EventHandler(ignoreCancelled = true)
