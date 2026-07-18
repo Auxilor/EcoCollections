@@ -8,9 +8,19 @@ import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.event.EventHandler
 
 object TriggerCollectionTierUp : Trigger("tier_up_collection") {
+    override val description = "Fires when the player advances to a new tier in a collection."
+
+    override val categories = setOf("player")
+
     override val parameters = setOf(
         TriggerParameter.PLAYER,
-        TriggerParameter.LOCATION
+        TriggerParameter.LOCATION,
+        TriggerParameter.VALUE
+    )
+
+    override val parameterDescriptions = mapOf(
+        TriggerParameter.LOCATION to "The player's location when the new tier was reached.",
+        TriggerParameter.VALUE to "The new tier number that the player has reached."
     )
 
     @EventHandler(ignoreCancelled = true)

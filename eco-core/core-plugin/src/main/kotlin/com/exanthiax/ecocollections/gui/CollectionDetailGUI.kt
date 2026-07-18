@@ -1,5 +1,6 @@
 package com.exanthiax.ecocollections.gui
 
+import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.page.PageChanger
@@ -10,6 +11,7 @@ import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
+import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
 import com.exanthiax.ecocollections.api.getCollectionCount
@@ -21,10 +23,8 @@ import org.bukkit.entity.Player
 object CollectionDetailGUI {
 
     fun open(player: Player, collection: Collection) {
-        val title = StringUtils.format(
-            plugin.configYml.getString("gui.detail.title")
-                .replace("%collection_name%", collection.name)
-        )
+        val titleTemplate = plugin.configYml.getString("gui.detail.title")
+            .replace("%collection_name%", collection.name)
         val rows = plugin.configYml.getInt("gui.detail.rows")
 
         val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.detail.mask.materials"))
@@ -36,8 +36,11 @@ object CollectionDetailGUI {
         val centerSlot = buildCenterSlot(player, collection, playerTier, playerCount)
         val component = TierProgressionComponent(collection)
 
+        val formattedTitle = StringUtils.format(titleTemplate)
+        val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.detail.buttons.page-change-sound"))
+
         val theMenu = menu(rows) {
-            setTitle(title)
+            title = formattedTitle
 
             setMask(FillerMask(maskItems, *maskPattern))
 
@@ -54,27 +57,8 @@ object CollectionDetailGUI {
                 centerSlot
             )
 
-            addComponent(
-                plugin.configYml.getInt("gui.detail.buttons.prev-page.location.row"),
-                plugin.configYml.getInt("gui.detail.buttons.prev-page.location.column"),
-                PageChanger(
-                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.prev-page.material")))
-                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.prev-page.name")))
-                        .build(),
-                    PageChanger.Direction.BACKWARDS
-                )
-            )
-
-            addComponent(
-                plugin.configYml.getInt("gui.detail.buttons.next-page.location.row"),
-                plugin.configYml.getInt("gui.detail.buttons.next-page.location.column"),
-                PageChanger(
-                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.next-page.material")))
-                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.next-page.name")))
-                        .build(),
-                    PageChanger.Direction.FORWARDS
-                )
-            )
+            addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
+            addPageChanger(plugin.configYml, "gui.detail.buttons.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)
 
             setSlot(
                 plugin.configYml.getInt("gui.detail.buttons.back.location.row"),

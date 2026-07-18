@@ -29,7 +29,7 @@ object CollectionsLeaderboard {
     private val perCollectionCaches = ConcurrentHashMap<String, EcoCache<Boolean, LeaderboardSnapshot>>()
 
     private val totalsCache: EcoCache<Boolean, LeaderboardSnapshot> by lazy {
-        buildCache { buildTotalsSnapshot() }
+        buildCache()
     }
 
     private fun getRefreshDuration(): Duration {
@@ -47,16 +47,15 @@ object CollectionsLeaderboard {
         }
     }
 
-    private fun buildCache(loader: () -> LeaderboardSnapshot): EcoCache<Boolean, LeaderboardSnapshot> {
-        return EcoCache.builder()
-            .refreshAfterWrite(getRefreshDuration())
-            .executor { command -> plugin.scheduler.runAsync { command.run() } }
-            .build { loader() }
+    private fun buildCache(): EcoCache<Boolean, LeaderboardSnapshot> {
+        return EcoCache.builder<Boolean, LeaderboardSnapshot>()
+            .expireAfterWrite(getRefreshDuration())
+            .build()
     }
 
     private fun getOrCreateCollectionCache(collection: Collection): EcoCache<Boolean, LeaderboardSnapshot> {
         return perCollectionCaches.computeIfAbsent(collection.id) {
-            buildCache { buildCollectionSnapshot(collection) }
+            buildCache()
         }
     }
 
@@ -106,7 +105,7 @@ object CollectionsLeaderboard {
 
     fun OfflinePlayer.getCollectionRank(collection: Collection): CollectionRank {
         val snapshot = try {
-            getOrCreateCollectionCache(collection).get(true)
+            getOrCreateCollectionCache(collection).get(true) { buildCollectionSnapshot(collection) }
         } catch (e: Exception) {
             return CollectionRank.Unranked
         }
@@ -134,7 +133,7 @@ object CollectionsLeaderboard {
     fun Collection.getTopPlayers(n: Int): List<LeaderboardEntry> {
         val clampedN = n.coerceIn(1, 10)
         val snapshot = try {
-            getOrCreateCollectionCache(this).get(true)
+            getOrCreateCollectionCache(this).get(true) { buildCollectionSnapshot(this@getTopPlayers) }
         } catch (e: Exception) {
             return emptyList()
         }
@@ -149,7 +148,7 @@ object CollectionsLeaderboard {
 
     fun getTopByTotal(position: Int): LeaderboardEntry? {
         val snapshot = try {
-            totalsCache.get(true)
+            totalsCache.get(true) { buildTotalsSnapshot() }
         } catch (e: Exception) {
             return null
         }
@@ -166,7 +165,7 @@ object CollectionsLeaderboard {
 
     fun getPositionByTotal(uuid: UUID): Int? {
         val snapshot = try {
-            totalsCache.get(true)
+            totalsCache.get(true) { buildTotalsSnapshot() }
         } catch (e: Exception) {
             return null
         }
@@ -176,7 +175,7 @@ object CollectionsLeaderboard {
 
     fun getTop(collection: Collection, position: Int): LeaderboardEntry? {
         val snapshot = try {
-            getOrCreateCollectionCache(collection).get(true)
+            getOrCreateCollectionCache(collection).get(true) { buildCollectionSnapshot(collection) }
         } catch (e: Exception) {
             return null
         }
@@ -193,7 +192,7 @@ object CollectionsLeaderboard {
 
     fun getPosition(collection: Collection, uuid: UUID): Int? {
         val snapshot = try {
-            getOrCreateCollectionCache(collection).get(true)
+            getOrCreateCollectionCache(collection).get(true) { buildCollectionSnapshot(collection) }
         } catch (e: Exception) {
             return null
         }

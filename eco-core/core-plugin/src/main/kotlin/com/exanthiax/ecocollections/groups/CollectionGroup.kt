@@ -20,5 +20,7 @@ class CollectionGroup(
 
     val guiColumn: Int = config.getInt("gui.position.column")
 
+    val guiPage: Int = config.getInt("gui.position.page").coerceAtLeast(1)
+
     val guiLore: List<String> = config.getStrings("gui.lore")
 }

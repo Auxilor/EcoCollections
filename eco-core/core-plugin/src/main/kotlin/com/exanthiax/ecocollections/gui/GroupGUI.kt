@@ -1,7 +1,10 @@
 package com.exanthiax.ecocollections.gui
 
+import com.willfp.eco.core.gui.addPage
+import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
 import com.willfp.eco.core.gui.slot.FillerMask
@@ -26,10 +29,8 @@ import org.bukkit.inventory.ItemStack
 object GroupGUI {
 
     fun open(player: Player, group: CollectionGroup, bypassMode: Boolean = false) {
-        val title = StringUtils.format(
-            plugin.configYml.getString("gui.group.title")
-                .replace("%group_name%", group.name)
-        )
+        val titleTemplate = plugin.configYml.getString("gui.group.title")
+            .replace("%group_name%", group.name)
         val rows = plugin.configYml.getInt("gui.group.rows")
 
         val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.group.mask.materials"))
@@ -38,47 +39,69 @@ object GroupGUI {
         val collectionsInGroup = CollectionsGUI.getCollectionsInGroup(group)
         val showLeaderboardRank = plugin.configYml.getBool("leaderboards.show-in-group-gui")
 
+        val maxPage = collectionsInGroup.maxOfOrNull { it.guiPage }?.coerceAtLeast(1) ?: 1
+
+        val formattedTitle = StringUtils.format(titleTemplate)
+        val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.group.page-change-sound"))
+
         val theMenu = menu(rows) {
-            setTitle(title)
+            title = formattedTitle
 
-            setMask(
-                FillerMask(
-                    maskItems,
-                    *maskPattern
-                )
-            )
+            maxPages(maxPage)
 
-            if (!bypassMode) {
-                val backMaterial = plugin.configYml.getString("gui.group.back.material")
-                val backName = plugin.configYml.getString("gui.group.back.name")
-                val backRow = plugin.configYml.getInt("gui.group.back.location.row")
-                val backColumn = plugin.configYml.getInt("gui.group.back.location.column")
+            addPageChanger(plugin.configYml, "gui.group.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
+            addPageChanger(plugin.configYml, "gui.group.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)
 
-                val backItem = ItemStack(Material.matchMaterial(backMaterial.uppercase()) ?: Material.ARROW)
-                val backMeta = backItem.itemMeta
-                backMeta?.setDisplayName(StringUtils.format(backName))
-                backItem.itemMeta = backMeta
+            for (page in 1..maxPage) {
+                addPage(page) {
+                    setMask(
+                        FillerMask(
+                            maskItems,
+                            *maskPattern
+                        )
+                    )
 
-                setSlot(backRow, backColumn, slot(backItem) {
-                    onLeftClick { _, _, _, _ ->
-                        CollectionsGUI.open(player)
+                    if (!bypassMode) {
+                        val backMaterial = plugin.configYml.getString("gui.group.back.material")
+                        val backName = plugin.configYml.getString("gui.group.back.name")
+                        val backRow = plugin.configYml.getInt("gui.group.back.location.row")
+                        val backColumn = plugin.configYml.getInt("gui.group.back.location.column")
+
+                        val backItem = ItemStack(Material.matchMaterial(backMaterial.uppercase()) ?: Material.ARROW)
+                        val backMeta = backItem.itemMeta
+                        backMeta?.setDisplayName(StringUtils.format(backName))
+                        backItem.itemMeta = backMeta
+
+                        setSlot(backRow, backColumn, slot(backItem) {
+                            onLeftClick { _, _, _, _ ->
+                                CollectionsGUI.open(player)
+                            }
+                        })
                     }
-                })
-            }
 
-            for (collection in collectionsInGroup) {
-                val builtSlot = buildCollectionSlot(player, collection, showLeaderboardRank)
-                if (builtSlot != null) {
-                    setSlot(collection.guiRow, collection.guiColumn, builtSlot)
+                    for (collection in collectionsInGroup) {
+                        if (collection.guiPage != page) {
+                            continue
+                        }
+
+                        val builtSlot = buildCollectionSlot(player, collection, showLeaderboardRank)
+                        if (builtSlot != null) {
+                            setSlot(collection.guiRow, collection.guiColumn, builtSlot)
+                        }
+                    }
+
+                    for (config in plugin.configYml.getSubsections("gui.group.custom-slots")) {
+                        if (config.getInt("page").coerceAtLeast(1) != page) {
+                            continue
+                        }
+
+                        setSlot(
+                            config.getInt("row"),
+                            config.getInt("column"),
+                            ConfigSlot(config)
+                        )
+                    }
                 }
-            }
-
-            for (config in plugin.configYml.getSubsections("gui.group.custom-slots")) {
-                setSlot(
-                    config.getInt("row"),
-                    config.getInt("column"),
-                    ConfigSlot(config)
-                )
             }
         }
 

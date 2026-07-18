@@ -8,9 +8,17 @@ import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.event.EventHandler
 
 object TriggerCollectionComplete : Trigger("complete_collection") {
+    override val description = "Fires when the player completes all tiers of a collection."
+
+    override val categories = setOf("player")
+
     override val parameters = setOf(
         TriggerParameter.PLAYER,
         TriggerParameter.LOCATION
+    )
+
+    override val parameterDescriptions = mapOf(
+        TriggerParameter.LOCATION to "The player's location when the collection was completed."
     )
 
     @EventHandler(ignoreCancelled = true)
@@ -20,8 +28,7 @@ object TriggerCollectionComplete : Trigger("complete_collection") {
             TriggerData(
                 player = event.player,
                 location = event.player.location,
-                event = event,
-                value = 1.0
+                event = event
             )
         )
     }
