@@ -78,6 +78,10 @@ gui:
     - "&8Click to view collections"
 ```
 
+:::info Manual collect mode
+With [manual collect mode](plugin-config#manual-collect-mode) on, the group menu is where players hand items in: right-click a collection to submit one item, shift + right-click to submit all of them, or use the **Collect All** button to submit for every unlocked collection in the group at once. Nothing changes in the group config itself; the button is styled under `gui.group.collect-all` in `config.yml`.
+:::
+
 :::tip Troubleshooting
 - **Group not showing up?** Check the file is in `groups/`, the ID has no capitals or hyphens, and you ran `/ecocollections reload`.
 - **Group is empty?** A group only shows collections whose `group` field matches its ID. Confirm at least one collection points at it.

@@ -23,12 +23,22 @@ collections:
   # itself does not enforce filters; this only emits warnings.
   warn-on-missing-dupe-filter: true
 
+  # Manual collect mode: players submit items in the GUI instead of gaining count automatically
+  manual-collect-mode:
+    # If true, players do not gain collection count automatically, and the
+    # `count-methods` option in every collection file is ignored. Players instead
+    # right-click a collection in the group GUI to consume matching items from
+    # their inventory and gain count.
+    enabled: false
+    # If true, players cannot submit more items than the collection's final tier requires.
+    prevent-over-count: true
+
 # GUI
 gui:
   cache-ttl: 5000 # Milliseconds rendered lore is cached before re-rendering
 
   collections:
-    title: "&8Collections"
+    title: "&8Collections (%page%/%max_page%)" # Supports %page% and %max_page%
     rows: 6
     mask:
       materials:
@@ -46,10 +56,27 @@ gui:
       location:
         row: 6
         column: 5
+    prev-page:
+      item: arrow name:"&fPrevious Page"
+      item-inactive: gray_stained_glass_pane name:"&7Previous Page" # Shown on the first page
+      location:
+        row: 6
+        column: 4
+    next-page:
+      item: arrow name:"&fNext Page"
+      item-inactive: gray_stained_glass_pane name:"&7Next Page" # Shown on the last page
+      location:
+        row: 6
+        column: 6
+    page-change-sound:
+      enabled: true
+      sound: ui.button.click
+      pitch: 1.0
+      volume: 1.0
     custom-slots: []
 
   group:
-    title: "&8%group_name%"
+    title: "&8%group_name% (%page%/%max_page%)" # Supports %group_name%, %page% and %max_page%
     rows: 6
     mask:
       materials:
@@ -67,10 +94,35 @@ gui:
       location:
         row: 6
         column: 1
+    prev-page:
+      item: arrow name:"&fPrevious Page"
+      item-inactive: gray_stained_glass_pane name:"&7Previous Page"
+      location:
+        row: 6
+        column: 4
+    next-page:
+      item: arrow name:"&fNext Page"
+      item-inactive: gray_stained_glass_pane name:"&7Next Page"
+      location:
+        row: 6
+        column: 6
+    # Only shown when collections.manual-collect-mode.enabled is true.
+    # Submits every matching item for every unlocked collection in the group at once.
+    collect-all:
+      material: "chest"
+      name: "&aCollect All"
+      location:
+        row: 6
+        column: 5
+    page-change-sound:
+      enabled: true
+      sound: ui.button.click
+      pitch: 1.0
+      volume: 1.0
     custom-slots: []
 
   detail:
-    title: "&8%collection_name% Collection"
+    title: "&8%collection_name% Collection (%page%/%max_page%)" # Supports %collection_name%, %page% and %max_page%
     rows: 6
     mask:
       materials:
@@ -137,14 +189,14 @@ gui:
           - "%rewards%"
     buttons:
       prev-page:
-        material: "arrow"
-        name: "&fPrevious Page"
+        item: arrow name:"&fPrevious Page"
+        item-inactive: gray_stained_glass_pane name:"&7Previous Page"
         location:
           row: 6
           column: 4
       next-page:
-        material: "arrow"
-        name: "&fNext Page"
+        item: arrow name:"&fNext Page"
+        item-inactive: gray_stained_glass_pane name:"&7Next Page"
         location:
           row: 6
           column: 6
@@ -161,6 +213,11 @@ gui:
         location:
           row: 6
           column: 9
+      page-change-sound:
+        enabled: true
+        sound: ui.button.click
+        pitch: 1.0
+        volume: 1.0
     custom-slots: []
 
   # Locked-collection rendering (used when a collection has unmet unlock-conditions
@@ -228,7 +285,80 @@ messages:
       sound: entity_experience_orb_pickup
       pitch: 1.0
       volume: 1.0
+  # Sent every time a player gains count, including outside manual collect mode.
+  # Supports %amount% in lang.yml.
+  count-up:
+    enabled: false
+    chat: true
+    title: true
+    sound:
+      enabled: true
+      sound: entity_experience_orb_pickup
+      pitch: 1.0
+      volume: 1.0
+  # Sent when a manual collect attempt is refused (disabled world, creative/spectator,
+  # AFK, or unmet collection `conditions`)
+  manual-collect-denied:
+    enabled: false
+    chat: true
+    title: true
+    sound:
+      enabled: true
+      sound: entity_villager_no
+      pitch: 1.0
+      volume: 1.0
 
+```
+
+## Manual collect mode
+
+With `collections.manual-collect-mode.enabled: false` (the default), collections count automatically from their `count-methods` triggers. Set it to `true` and that flips: triggers are ignored server-wide, and players gain count by submitting items in the group GUI.
+
+The switch is global — it applies to every collection at once, and there is no per-collection override. What each collection accepts is set per-collection with `manual-collect.items`, covered in [How to Make a Collection](how-to-make-a-collection#manual-collect-items).
+
+| Setting | What it does |
+| --- | --- |
+| `enabled` | Turns manual collect mode on. While on, `count-methods` is ignored for every collection and the dupe-filter warning is skipped |
+| `prevent-over-count` | Caps submissions at the final tier's requirement, so players cannot hand in items past a maxed collection |
+
+### How players submit items
+
+In the group GUI, an unlocked collection responds to:
+
+| Click | Result |
+| --- | --- |
+| Left-click | Opens the collection's detail GUI, same as normal |
+| Right-click | Submits one matching item |
+| Shift + right-click | Submits every matching item in the inventory |
+| Left-click the **Collect All** button | Submits every matching item for every unlocked collection in the group |
+
+Items are taken from the main inventory only, and the GUI reopens on the same page after a successful submission.
+
+:::warning Submissions are refused, not queued
+A player gains nothing if they are in a `disabled-world`, in creative or spectator, AFK (with `prevent-while-afk`), or fail the collection's `conditions`. Enable `messages.manual-collect-denied` so they get told why instead of seeing a click do nothing.
+:::
+
+### Related lang.yml keys
+
+Manual collect mode adds these to `lang.yml`:
+
+```yaml
+messages:
+  count-up:
+    chat: "&aAdded &e%amount% &ato &e%collection_name%&a."
+    title: "&e%collection_name%"
+    subtitle: "&a+%amount%"
+  manual-collect-denied:
+    chat: "&cYou can't collect items right now."
+    title: "&cCollect Denied"
+    subtitle: "&7Failed to meet conditions"
+
+lore:
+  # Appended to each collection's group-GUI lore while manual collect mode is on
+  manual-collect-one:
+    - "&7Right Click: Collect One"
+  manual-collect-all:
+    - "&7Shift + Right Click: Collect All"
 ```
 
 <hr/>
