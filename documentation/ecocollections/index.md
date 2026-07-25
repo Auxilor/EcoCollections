@@ -12,6 +12,7 @@ You can build a collection for any item, mob, or resource, each with its own tie
 
 - **Effects on every tier.** Collections run libreforge effects on tier-up and completion, so a tier can grant items, run commands, apply multipliers, or trigger anything the [effects system](https://plugins.auxilor.io/effects/configuring-an-effect) supports.
 - **Flexible tiers.** Define tiers as an explicit list of requirements, or as a formula for infinite tiers.
+- **Automatic or manual counting.** Count from libreforge triggers as players play, or switch on [manual collect mode](plugin-config#manual-collect-mode) and have them hand items in through the GUI.
 - **Built-in leaderboards.** Rank players by total tiers, with caching and Top X% bucketing out of the box.
 - **Fully custom GUIs.** Every menu, icon, and slot is configurable, and icons accept items from ItemsAdder, Oraxen, Nexo, or any CustomModelData item.
 - **Deep eco integration.** Works with EcoSkills, EcoEnchants, and the rest of the eco ecosystem, plus PlaceholderAPI support throughout.

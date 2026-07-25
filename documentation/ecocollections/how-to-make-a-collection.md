@@ -27,7 +27,7 @@ IDs may only contain lowercase letters, numbers, and underscores (a-z, 0-9, _). 
 
 ## The structure of a collection
 
-A collection config has six parts:
+A collection config has seven parts:
 
 | Part | What it controls |
 | --- | --- |
@@ -35,6 +35,7 @@ A collection config has six parts:
 | **GUI** | The icon, slot, and lore shown in the group menu |
 | **Tiers** | How many items each tier needs, as a list or a formula |
 | **Count methods** | Which trigger and filters add to the count |
+| **Manual collect** | Which items players can hand in, when manual collect mode is on |
 | **Effects** | What runs on tier-up and on completion |
 | **Reward messages and conditions** | The reward lore, and gates on progress or unlocking |
 
@@ -83,6 +84,12 @@ count-methods:
       player_placed: false # Ignore blocks the player placed, to stop dupe farming
       blocks:
         - acacia_log
+
+# === Manual collect: items players can hand in ===
+# Only used when collections.manual-collect-mode.enabled is true in config.yml
+manual-collect:
+  items:
+    - acacia_log
 
 # === Effects: run on tier-up and completion ===
 tier-up-effects:
@@ -179,6 +186,27 @@ count-methods:
 For `mine_block` and `break_block`, set `player_placed: false`, or players can place and break the same block to farm count. The plugin warns on load when this filter is missing but does not enforce it.
 :::
 
+:::info Ignored in manual collect mode
+If `collections.manual-collect-mode.enabled` is `true` in [config.yml](plugin-config#manual-collect-mode), `count-methods` is ignored for every collection: no triggers are bound, and the dupe-filter warning is skipped. Count then comes only from items players hand in, set with `manual-collect.items` below.
+:::
+
+### Manual collect items
+
+`manual-collect.items` lists the items this collection accepts when the server runs in [manual collect mode](plugin-config#manual-collect-mode). Players right-click the collection in its group menu to hand in one item, or shift + right-click to hand in every matching item in their inventory. Each submitted item is worth 1 count.
+
+```yaml
+manual-collect:
+  items:
+    - acacia_log # Item IDs from the Item Lookup System
+    - acacia_wood
+```
+
+Leaving this out, or leaving it empty, means the collection accepts nothing and can never be progressed while manual collect mode is on.
+
+:::warning Items must match exactly
+An item in the player's inventory only counts if it matches the configured item exactly, meta included. A renamed, enchanted, or otherwise modified acacia log will **not** match plain `acacia_log`. To accept a custom item, list its own ID (ItemsAdder, Oraxen, Nexo, and CustomModelData items all work through the [Item Lookup System](https://plugins.auxilor.io/the-item-lookup-system/items)).
+:::
+
 ### Effects
 
 Effects run when the player tiers up (`tier-up-effects`) and once when they max the collection (`completion-effects`).
@@ -219,6 +247,8 @@ conditions: [] # Unmet: the player keeps the collection visible but gains no cou
 unlock-conditions: [] # Unmet: the collection is locked
 ```
 
+Both gates apply in manual collect mode too: unmet `conditions` refuse the submission and consume nothing, and a locked collection cannot be handed items at all.
+
 ## Internal placeholders
 
 These placeholders work inside this config's lore and messages.
@@ -240,6 +270,9 @@ These placeholders work inside this config's lore and messages.
 - **Collection not showing up?** Check the file is in `collections/`, the ID has no capitals or hyphens, and `group` matches an existing group ID.
 - **Count not rising?** Make sure your `count-methods` trigger matches the action, and that no `conditions` are blocking progress. AFK and creative players are ignored by default (see [Plugin Config](plugin-config)).
 - **Players farming count?** Add `player_placed: false` to block triggers so placed-then-broken blocks don't count.
+- **Triggers doing nothing?** Check whether `collections.manual-collect-mode.enabled` is on in `config.yml`; it disables `count-methods` server-wide.
+- **Right-click not collecting?** The collection needs `manual-collect.items`, the items must match exactly (no rename or enchants), and the player must be unlocked, out of creative, and passing `conditions`. Turn on `messages.manual-collect-denied` to see the refusal.
+- **Collect stops early?** `collections.manual-collect-mode.prevent-over-count` caps submissions at the final tier's requirement.
 - **Changes not applying?** Run `/ecocollections reload` after editing the file.
 :::
 
