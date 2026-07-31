@@ -33,7 +33,8 @@ object EffectGiveCollectionCount : Effect<NoCompileData>("give_collection_count"
             "amount",
             "You must specify the amount!",
             description = "The amount of progress to give towards the collection. Supports expressions.",
-            type = ArgType.EXPRESSION
+            type = ArgType.EXPRESSION,
+            example = "%level% * 10"
         )
     }
 
