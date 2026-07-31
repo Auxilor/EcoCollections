@@ -30,7 +30,8 @@ object ConditionCollectionTierAtLeast : Condition<NoCompileData>("collection_tie
             "tier",
             "You must specify the tier!",
             description = "The minimum tier the player must have reached in the collection. Supports expressions.",
-            type = ArgType.EXPRESSION
+            type = ArgType.EXPRESSION,
+            example = "5 + %level%"
         )
     }
 
