@@ -62,7 +62,8 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
       # Matches plugwright's cleanExcludePatterns, so plugwrightClean leaves these in place.
-      # minecraft-data alone is ~330MB, so skipping the Paper download is worth the cache.
+      # Plugwright only downloads server.jar when it is missing, so this key MUST be
+      # bumped alongside minecraftVersion in build.gradle.kts or the old server is reused.
       - name: Cache test server
         uses: actions/cache@v4
         with:
@@ -70,7 +71,7 @@ jobs:
             run/server.jar
             run/cache
             run/libraries
-          key: paper-1.21.11-${{ runner.os }}
+          key: paper-1.21.8-${{ runner.os }}
       - name: Install test dependencies
         working-directory: src/test/e2e
         run: npm ci

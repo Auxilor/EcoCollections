@@ -95,9 +95,13 @@ val downloadEcoPlugin = tasks.register("downloadEcoPlugin") {
 }
 
 plugwright {
-    // 1.21.11 is the newest release mineflayer (via minecraft-data) can speak.
-    // Paper 26.x needs protocol 776, which prismarine hasn't shipped data for yet.
-    minecraftVersion.set("1.21.11")
+    // Pinned to 1.21.8, the newest version eco can actually run on. eco is
+    // Spigot-mapped and relies on Paper's plugin remapper to rewrite the
+    // org.bukkit.craftbukkit.v1_21_R7 references in its NMS proxies. That remapper
+    // is broken from 1.21.9 (PaperMC/Paper#13131) and removed outright in 26.1, so
+    // eco fails to initialise on anything newer.
+    // 1.21.8 also matches our api-version and is supported by mineflayer.
+    minecraftVersion.set("1.21.8")
     testsDir.set(file("src/test/e2e"))
     acceptEula.set(true)
 
