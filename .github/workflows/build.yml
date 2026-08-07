@@ -74,7 +74,20 @@ jobs:
       - name: Install test dependencies
         working-directory: src/test/e2e
         run: npm ci
+      # Plugwright skips itself when these are unset, which would turn a job that
+      # tested nothing green. Fail loudly instead.
+      - name: Check Maven credentials
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+        run: |
+          if [ -z "$MAVEN_USERNAME" ]; then
+            echo "::error::MAVEN_USERNAME/MAVEN_PASSWORD are unavailable, so eco cannot be downloaded and the E2E tests would silently skip."
+            exit 1
+          fi
       - name: Run E2E tests
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
         run: chmod +x gradlew && ./gradlew plugwrightTest --full-stacktrace
       - name: Upload server logs
         if: failure()

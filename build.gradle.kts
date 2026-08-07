@@ -1,6 +1,9 @@
 ﻿import me.drownek.plugwright.PlugwrightRunTask
 import me.drownek.plugwright.PlugwrightTestTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.net.HttpURLConnection
+import java.net.URI
+import java.util.Base64
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -32,6 +35,61 @@ tasks.register<Copy>("dist") {
     rename { "${rootProject.name}-${project.version}.jar" }
 }
 
+// The runnable eco plugin jar lives in maven-private. The copy in maven-public is
+// the shaded API jar: no plugin.yml, so Paper cannot load it. Plugwright's own
+// downloadPlugins can't be used here — it has no auth support, and it logs the URL,
+// which would print credentials into CI logs.
+val mavenUsername = providers.environmentVariable("MAVEN_USERNAME")
+val mavenPassword = providers.environmentVariable("MAVEN_PASSWORD")
+val hasMavenCredentials = mavenUsername.isPresent && mavenPassword.isPresent
+
+val ecoPluginJar = layout.buildDirectory.file("test-plugins/eco.jar")
+
+val downloadEcoPlugin = tasks.register("downloadEcoPlugin") {
+    group = "verification"
+    description = "Downloads the runnable eco plugin jar from the private Auxilor repository."
+
+    inputs.property("ecoVersion", ecoVersion.toString())
+    outputs.file(ecoPluginJar)
+
+    onlyIf {
+        hasMavenCredentials.also {
+            if (!it) logger.warn("MAVEN_USERNAME/MAVEN_PASSWORD not set — skipping eco download.")
+        }
+    }
+
+    doLast {
+        val version = ecoVersion.toString()
+        val target = ecoPluginJar.get().asFile
+        target.parentFile.mkdirs()
+
+        val auth = Base64.getEncoder()
+            .encodeToString("${mavenUsername.get()}:${mavenPassword.get()}".toByteArray())
+
+        val url = "https://repo.auxilor.io/repository/maven-private/" +
+            "com/willfp/eco/$version/eco-$version-all.jar"
+
+        val connection = (URI(url).toURL().openConnection() as HttpURLConnection).apply {
+            setRequestProperty("Authorization", "Basic $auth")
+            connectTimeout = 30_000
+            readTimeout = 300_000
+        }
+
+        if (connection.responseCode != 200) {
+            connection.disconnect()
+            throw GradleException(
+                "Failed to download eco $version from maven-private: HTTP ${connection.responseCode}. " +
+                    "Check MAVEN_USERNAME/MAVEN_PASSWORD."
+            )
+        }
+
+        connection.inputStream.use { input -> target.outputStream().use(input::copyTo) }
+        connection.disconnect()
+
+        logger.lifecycle("Resolved eco plugin: eco-$version-all.jar")
+    }
+}
+
 plugwright {
     // 1.21.11 is the newest release mineflayer (via minecraft-data) can speak.
     // Paper 26.x needs protocol 776, which prismarine hasn't shipped data for yet.
@@ -39,9 +97,9 @@ plugwright {
     testsDir.set(file("src/test/e2e"))
     acceptEula.set(true)
 
-    downloadPlugins {
-        // eco is a hard depend; libreforge is already shaded into our own jar.
-        url("https://repo.auxilor.io/repository/maven-public/com/willfp/eco/$ecoVersion/eco-$ecoVersion-all.jar")
+    // libreforge is already shaded into our own jar, so eco is the only runtime dep.
+    writeFiles {
+        file("plugins/eco.jar", ecoPluginJar.get().asFile)
     }
 }
 
@@ -50,14 +108,26 @@ plugwright {
 afterEvaluate {
     val libreforgeJar = tasks.named("libreforgeJar")
 
+    // The test server can't start without eco, so both tasks sit behind the
+    // credentials that fetch it. Without them the build still runs, minus Plugwright.
     tasks.named<PlugwrightTestTask>("plugwrightTest") {
-        dependsOn(libreforgeJar)
+        dependsOn(libreforgeJar, downloadEcoPlugin)
         pluginJar.set(libreforgeJar.map { it.outputs.files.singleFile })
+        onlyIf {
+            hasMavenCredentials.also {
+                if (!it) logger.warn("MAVEN_USERNAME/MAVEN_PASSWORD not set — skipping Plugwright.")
+            }
+        }
     }
 
     tasks.named<PlugwrightRunTask>("plugwrightRunServer") {
-        dependsOn(libreforgeJar)
+        dependsOn(libreforgeJar, downloadEcoPlugin)
         pluginJar.set(libreforgeJar.map { it.outputs.files.singleFile })
+        onlyIf {
+            hasMavenCredentials.also {
+                if (!it) logger.warn("MAVEN_USERNAME/MAVEN_PASSWORD not set — skipping Plugwright.")
+            }
+        }
     }
 }
 
