@@ -24,3 +24,8 @@ gradle-app.setting
 
 .kotlin
 .worktrees
+
+# Plugwright
+run/
+node_modules/
+src/test/e2e/dist/

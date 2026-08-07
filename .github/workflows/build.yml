@@ -5,12 +5,18 @@ on:
     paths:
       - '**/*.kt'
       - '**/*.kts'
+      - '**/*.ts'
+      - 'eco-core/core-plugin/src/main/resources/**'
+      - 'src/test/e2e/**'
   push:
     branches:
       - master
     paths:
       - '**/*.kt'
       - '**/*.kts'
+      - '**/*.ts'
+      - 'eco-core/core-plugin/src/main/resources/**'
+      - 'src/test/e2e/**'
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,3 +38,51 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: chmod +x gradlew && ./gradlew build --full-stacktrace
+
+  e2e:
+    name: Plugwright E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: 'src/test/e2e/package-lock.json'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      # Matches plugwright's cleanExcludePatterns, so plugwrightClean leaves these in place.
+      # minecraft-data alone is ~330MB, so skipping the Paper download is worth the cache.
+      - name: Cache test server
+        uses: actions/cache@v4
+        with:
+          path: |
+            run/server.jar
+            run/cache
+            run/libraries
+          key: paper-1.21.11-${{ runner.os }}
+      - name: Install test dependencies
+        working-directory: src/test/e2e
+        run: npm ci
+      - name: Run E2E tests
+        run: chmod +x gradlew && ./gradlew plugwrightTest --full-stacktrace
+      - name: Upload server logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugwright-server-logs
+          path: |
+            run/logs/
+            run/plugins/EcoCollections/
+          retention-days: 7
+          if-no-files-found: ignore

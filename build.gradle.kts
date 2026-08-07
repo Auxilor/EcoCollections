@@ -1,4 +1,6 @@
-﻿import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+﻿import me.drownek.plugwright.PlugwrightRunTask
+import me.drownek.plugwright.PlugwrightTestTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -7,6 +9,7 @@ plugins {
     id("maven-publish")
     id("com.gradleup.shadow") version "9.3.1"
     id("com.willfp.libreforge-gradle-plugin") version "2.0.0"
+    id("io.github.drownek.plugwright") version "2.0.3"
 }
 
 group = "com.exanthiax"
@@ -27,6 +30,35 @@ tasks.register<Copy>("dist") {
     from(tasks.named("libreforgeJar").map { it.outputs.files })
     into(layout.projectDirectory.dir("dist"))
     rename { "${rootProject.name}-${project.version}.jar" }
+}
+
+plugwright {
+    // 1.21.11 is the newest release mineflayer (via minecraft-data) can speak.
+    // Paper 26.x needs protocol 776, which prismarine hasn't shipped data for yet.
+    minecraftVersion.set("1.21.11")
+    testsDir.set(file("src/test/e2e"))
+    acceptEula.set(true)
+
+    downloadPlugins {
+        // eco is a hard depend; libreforge is already shaded into our own jar.
+        url("https://repo.auxilor.io/repository/maven-public/com/willfp/eco/$ecoVersion/eco-$ecoVersion-all.jar")
+    }
+}
+
+// Plugwright auto-detects `shadowJar`, but the jar we actually ship comes from
+// `libreforgeJar`. Registered after the plugin's own afterEvaluate, so this wins.
+afterEvaluate {
+    val libreforgeJar = tasks.named("libreforgeJar")
+
+    tasks.named<PlugwrightTestTask>("plugwrightTest") {
+        dependsOn(libreforgeJar)
+        pluginJar.set(libreforgeJar.map { it.outputs.files.singleFile })
+    }
+
+    tasks.named<PlugwrightRunTask>("plugwrightRunServer") {
+        dependsOn(libreforgeJar)
+        pluginJar.set(libreforgeJar.map { it.outputs.files.singleFile })
+    }
 }
 
 java {
