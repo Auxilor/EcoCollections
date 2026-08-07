@@ -52,6 +52,10 @@ val downloadEcoPlugin = tasks.register("downloadEcoPlugin") {
     inputs.property("ecoVersion", ecoVersion.toString())
     outputs.file(ecoPluginJar)
 
+    // compileJava dependsOn(clean), so libreforgeJar drags `clean` into the graph and
+    // it would otherwise wipe build/ — and this download with it — after we fetch it.
+    mustRunAfter(tasks.named("clean"))
+
     onlyIf {
         hasMavenCredentials.also {
             if (!it) logger.warn("MAVEN_USERNAME/MAVEN_PASSWORD not set — skipping eco download.")
