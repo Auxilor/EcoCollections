@@ -1,6 +1,6 @@
 ---
 title: "PlaceholderAPI"
-sidebar_position: 6
+sidebar_position: 3
 ---
 
 EcoCollections registers these PlaceholderAPI placeholders for use in any plugin that resolves them, such as scoreboards, tab lists, and holograms. Swap `<id>` for a collection's ID (its file name) and `<n>` for a leaderboard position.

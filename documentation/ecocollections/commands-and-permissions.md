@@ -1,6 +1,6 @@
 ---
 title: "Commands and Permissions"
-sidebar_position: 5
+sidebar_position: 4
 ---
 
 Every EcoCollections command and the permission node it needs. Players open the GUI with `/collections`; the rest are admin commands under `/ecocollections`.
