@@ -1,6 +1,6 @@
 ---
 title: "Plugin Config"
-sidebar_position: 8
+sidebar_position: 5
 ---
 
 `config.yml` holds the server-wide settings: where collections are disabled, how the GUIs are laid out, the leaderboard behaviour, and the tier-up, completion, and unlock messages. It lives at `/plugins/EcoCollections/config.yml`. Edit it, then run `/ecocollections reload` to apply your changes.
