@@ -1,10 +1,14 @@
 package com.exanthiax.ecocollections.collections
 
+import com.willfp.eco.core.Eco
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.data.keys.PersistentDataKey
 import com.willfp.eco.core.data.keys.PersistentDataKeyType
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
+import com.willfp.eco.core.leaderboard.Leaderboard
+import com.willfp.eco.core.leaderboard.Leaderboards
+import com.willfp.eco.core.leaderboard.registerStandardPlaceholders
 import com.willfp.eco.core.placeholder.PlayerPlaceholder
 import com.exanthiax.ecocollections.api.completedCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionCount
@@ -140,6 +144,13 @@ class Collection(
         false
     )
 
+    /**
+     * The leaderboard ranking players by this collection's count, or null before the plugin has
+     * registered its leaderboards.
+     */
+    var leaderboard: Leaderboard? = null
+        private set
+
     init {
         registerPlaceholders()
 
@@ -182,6 +193,30 @@ class Collection(
     override fun onRemove() {
         for (counter in countMethods) {
             counter.unbind()
+        }
+    }
+
+    /**
+     * Register this collection's leaderboard and its placeholders.
+     *
+     * Called from [com.exanthiax.ecocollections.EcoCollectionsPlugin.handleReload] *after*
+     * [Leaderboards.unregisterAll], because eco reloads config categories (recreating every
+     * Collection) before it calls handleReload.
+     */
+    internal fun registerLeaderboard() {
+        val leaderboard = Leaderboards.register(plugin, id) { uuids ->
+            Eco.get().readAllProfileValues(uuids, countKey)
+                .filterValues { it > 0.0 }
+        }
+
+        this.leaderboard = leaderboard
+
+        leaderboard.registerStandardPlaceholders(
+            plugin,
+            "${id}_leaderboard",
+            plugin.langYml.getString("top.empty-position")
+        ) { value ->
+            value.toLong().toString()
         }
     }
 
@@ -284,11 +319,6 @@ class Collection(
             name
         }.register()
 
-        PlayerPlaceholder(plugin, "${id}_leaderboard_rank") { player ->
-            val entry = CollectionsLeaderboard.getPosition(this, player.uniqueId)
-            entry?.toString() ?: plugin.langYml.getString("top.empty-position")
-        }.register()
-
         PlayerPlaceholder(plugin, "total_tiers") { player ->
             player.totalCollectionTiers.toString()
         }.register()
@@ -303,13 +333,13 @@ class Collection(
 
         for (n in 1..10) {
             PlayerPlaceholder(plugin, "top_${n}_name") { _ ->
-                val entry = CollectionsLeaderboard.getTopByTotal(n)
+                val entry = plugin.totalsLeaderboard?.getTop(n)
                 entry?.player?.name ?: plugin.langYml.getString("top.empty-position")
             }.register()
 
             PlayerPlaceholder(plugin, "top_${n}_value") { _ ->
-                val entry = CollectionsLeaderboard.getTopByTotal(n)
-                entry?.value?.toString() ?: plugin.langYml.getString("top.empty-position")
+                val entry = plugin.totalsLeaderboard?.getTop(n)
+                entry?.value?.toInt()?.toString() ?: plugin.langYml.getString("top.empty-position")
             }.register()
         }
     }

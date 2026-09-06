@@ -15,8 +15,4 @@ object Collections : RegistrableCategory<Collection>("collection", "collections"
     override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
         registry.register(Collection(id, config))
     }
-
-    override fun afterReload(plugin: LibreforgePlugin) {
-        CollectionsLeaderboard.invalidateAll()
-    }
 }
