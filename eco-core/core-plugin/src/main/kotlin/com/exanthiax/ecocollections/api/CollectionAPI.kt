@@ -17,6 +17,7 @@ import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionTierUp
 import com.willfp.eco.util.formatEco
 import com.willfp.eco.util.toNiceString
 import com.willfp.libreforge.EmptyProvidedHolder
+import com.willfp.libreforge.NamedValue
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.DispatchedTrigger
 import com.willfp.libreforge.triggers.TriggerData
@@ -25,6 +26,29 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
 private val dynamicTierPlaceholderRegex by lazy { Regex("%tier_(-?\\d+)(_numeral)?%") }
+
+/**
+ * A tier-up trigger carrying the tier it is for.
+ *
+ * Built per tier rather than once per grant: crossing several tiers in one submission runs
+ * the reward chain once for each, and each run must describe its own tier.
+ *
+ * This deliberately does not use libreforge's shared LevelUpDispatcher. That helper names its
+ * placeholders `level`, and everything a server owner writes here - the config keys, the
+ * events, the docs - is phrased in tiers. Sharing the code would mean `%level%` inside
+ * `tier-rewards`, which is worse than a little duplication.
+ */
+private fun tierUpTrigger(player: Player, tier: Int): DispatchedTrigger =
+    DispatchedTrigger(
+        player.toDispatcher(),
+        TriggerCollectionTierUp,
+        TriggerData(player = player, location = player.location)
+    ).apply {
+        addPlaceholder(NamedValue("tier", tier))
+        addPlaceholder(NamedValue("tier_numeral", tier.toNumeral()))
+        addPlaceholder(NamedValue("previous_tier", tier - 1))
+        addPlaceholder(NamedValue("previous_tier_numeral", (tier - 1).toNumeral()))
+    }
 
 fun OfflinePlayer.getCollectionCount(collection: Collection): Double {
     return this.profile.read(collection.countKey)
@@ -110,21 +134,14 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
         this.profile.write(collection.tierKey, t)
         committed = t
 
-        collection.allTierRewards?.trigger(
-            DispatchedTrigger(
-                this.toDispatcher(),
-                TriggerCollectionTierUp,
-                TriggerData(player = this, location = this.location)
-            )
-        )
+        // %tier% and %tier_numeral% already resolved in these chains, but from the config
+        // placeholders injected in Collection's init - so they read the player's *current*
+        // tier rather than the tier this iteration is granting. They agree here, because the
+        // tier is committed just above before the chain runs. %previous_tier% and
+        // %previous_tier_numeral% had no source at all and simply did not resolve.
+        collection.allTierRewards?.trigger(tierUpTrigger(this, t))
 
-        collection.tierRewards[t]?.trigger(
-            DispatchedTrigger(
-                this.toDispatcher(),
-                TriggerCollectionTierUp,
-                TriggerData(player = this, location = this.location)
-            )
-        )
+        collection.tierRewards[t]?.trigger(tierUpTrigger(this, t))
 
         sendTierUpMessages(this, collection, t - 1, t)
     }
