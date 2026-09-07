@@ -6,6 +6,8 @@ import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.eco.core.leaderboard.Leaderboard
 import com.willfp.eco.core.leaderboard.Leaderboards
 import com.exanthiax.ecocollections.collections.Collections
+import com.exanthiax.ecocollections.collections.EcoCollectionsCollectionTopPlaceholder
+import com.exanthiax.ecocollections.collections.EcoCollectionsTopPlaceholder
 import com.exanthiax.ecocollections.commands.CommandCollections
 import com.exanthiax.ecocollections.commands.CommandEcoCollections
 import com.exanthiax.ecocollections.groups.CollectionGroups
@@ -55,6 +57,11 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
         Conditions.register(ConditionCollectionUnlocked)
         Effects.register(EffectGiveCollectionCount)
         Effects.register(EffectUnlockCollection)
+
+        if (this.configYml.getBool("leaderboards.enabled")) {
+            EcoCollectionsTopPlaceholder.register()
+            EcoCollectionsCollectionTopPlaceholder.register()
+        }
     }
 
     override fun handleReload() {

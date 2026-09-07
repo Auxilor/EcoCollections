@@ -337,18 +337,6 @@ class Collection(
         PlayerPlaceholder(plugin, "unlocked_count") { player ->
             player.unlockedCollectionCount.toString()
         }.register()
-
-        for (n in 1..10) {
-            PlayerPlaceholder(plugin, "top_${n}_name") { _ ->
-                val entry = plugin.totalsLeaderboard?.getTop(n)
-                entry?.player?.name ?: plugin.langYml.getString("top.empty-position")
-            }.register()
-
-            PlayerPlaceholder(plugin, "top_${n}_value") { _ ->
-                val entry = plugin.totalsLeaderboard?.getTop(n)
-                entry?.value?.toInt()?.toString() ?: plugin.langYml.getString("top.empty-position")
-            }.register()
-        }
     }
 
     private fun checkDupeFilters() {
