@@ -65,6 +65,7 @@ fun Player.tryUnlockCollection(collection: Collection): Boolean {
 fun OfflinePlayer.setCollectionCount(collection: Collection, count: Double) {
     this.profile.write(collection.countKey, count)
     val newTier = collection.getTierForCount(count)
+    // Deliberately fires no tier-up events - this is an admin set, not organic progression.
     this.profile.write(collection.tierKey, newTier)
 }
 
@@ -93,12 +94,21 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
 
     if (newTier == previousTier) return
 
+    var committed = previousTier
+
     for (t in (previousTier + 1)..newTier) {
         val tierUpEvent = PlayerCollectionTierUpEvent(this, collection, t - 1, t)
         Bukkit.getPluginManager().callEvent(tierUpEvent)
-        if (tierUpEvent.isCancelled) continue
+
+        if (tierUpEvent.isCancelled) {
+            // Stop the ladder here. `continue` used to let a later iteration write a higher
+            // tier anyway, so the cancelled tier was both skipped and implicitly re-granted -
+            // its rewards were lost permanently.
+            break
+        }
 
         this.profile.write(collection.tierKey, t)
+        committed = t
 
         collection.allTierRewards?.trigger(
             DispatchedTrigger(
@@ -119,7 +129,7 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
         sendTierUpMessages(this, collection, t - 1, t)
     }
 
-    if (newTier == collection.maxTier && !this.profile.read(collection.doneKey)) {
+    if (committed == collection.maxTier && !this.profile.read(collection.doneKey)) {
         val completeEvent = PlayerCollectionCompleteEvent(this, collection)
         Bukkit.getPluginManager().callEvent(completeEvent)
         if (!completeEvent.isCancelled) {
