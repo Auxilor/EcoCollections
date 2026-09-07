@@ -26,6 +26,7 @@ import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.triggers.Triggers
 import org.bukkit.event.Listener
 import java.util.UUID
+import com.willfp.eco.util.formatEco
 
 
 lateinit var plugin: EcoCollectionsPlugin
@@ -92,7 +93,7 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
             return
         }
 
-        val emptyPosition = this.langYml.getString("top.empty-position")
+        val emptyPosition = this.langYml.getString("top.empty-position").formatEco()
 
         totalsLeaderboard?.registerTopPlaceholders(
             this,

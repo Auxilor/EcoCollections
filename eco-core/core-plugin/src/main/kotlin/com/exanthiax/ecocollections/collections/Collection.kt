@@ -34,6 +34,7 @@ import com.willfp.libreforge.counters.Counters
 import com.willfp.libreforge.effects.Chain
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.effects.executors.impl.NormalExecutorFactory
+import com.willfp.eco.util.formatEco
 
 class Collection(
     override val id: String,
@@ -221,7 +222,7 @@ class Collection(
         leaderboard.registerStandardPlaceholders(
             plugin,
             "${id}_leaderboard",
-            plugin.langYml.getString("top.empty-position")
+            plugin.langYml.getString("top.empty-position").formatEco()
         ) { value ->
             value.toLong().toString()
         }
