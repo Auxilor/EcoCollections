@@ -5,9 +5,9 @@ import com.willfp.eco.core.bstats.EcoMetricsChart
 import com.willfp.eco.core.command.impl.PluginCommand
 import com.willfp.eco.core.leaderboard.Leaderboard
 import com.willfp.eco.core.leaderboard.Leaderboards
+import com.willfp.eco.core.leaderboard.registerCategoryTopPlaceholders
+import com.willfp.eco.core.leaderboard.registerTopPlaceholders
 import com.exanthiax.ecocollections.collections.Collections
-import com.exanthiax.ecocollections.collections.EcoCollectionsCollectionTopPlaceholder
-import com.exanthiax.ecocollections.collections.EcoCollectionsTopPlaceholder
 import com.exanthiax.ecocollections.commands.CommandCollections
 import com.exanthiax.ecocollections.commands.CommandEcoCollections
 import com.exanthiax.ecocollections.groups.CollectionGroups
@@ -57,11 +57,6 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
         Conditions.register(ConditionCollectionUnlocked)
         Effects.register(EffectGiveCollectionCount)
         Effects.register(EffectUnlockCollection)
-
-        if (this.configYml.getBool("leaderboards.enabled")) {
-            EcoCollectionsTopPlaceholder.register()
-            EcoCollectionsCollectionTopPlaceholder.register()
-        }
     }
 
     override fun handleReload() {
@@ -92,6 +87,26 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
                 totals.filterValues { it > 0.0 }
             }
         }
+
+        if (!this.configYml.getBool("leaderboards.enabled")) {
+            return
+        }
+
+        val emptyPosition = this.langYml.getString("top.empty-position")
+
+        totalsLeaderboard?.registerTopPlaceholders(
+            this,
+            emptyPosition,
+            listOf("tiers", "amount")
+        )
+
+        // Registered once for every collection at once: the lookup resolves the ID when the
+        // placeholder is read, so a collection added or renamed in a config needs nothing here.
+        registerCategoryTopPlaceholders(
+            this,
+            emptyPosition,
+            listOf("count", "amount")
+        ) { Collections.getByID(it)?.leaderboard }
     }
 
     override fun loadPluginCommands(): List<PluginCommand> = listOf(
