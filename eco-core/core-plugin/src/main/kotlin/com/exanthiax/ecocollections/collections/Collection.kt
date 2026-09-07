@@ -1,6 +1,5 @@
 package com.exanthiax.ecocollections.collections
 
-import com.willfp.eco.core.Eco
 import com.willfp.eco.core.config.interfaces.Config
 import com.willfp.eco.core.data.keys.PersistentDataKey
 import com.willfp.eco.core.data.keys.PersistentDataKeyType
@@ -204,39 +203,27 @@ class Collection(
      * Collection) before it calls handleReload.
      */
     internal fun registerLeaderboard() {
-        val enabled = plugin.configYml.getBool("leaderboards.enabled")
-
-        val leaderboard = Leaderboards.register(plugin, id) { uuids ->
-            // The toggle is honoured here rather than by skipping registration: an empty map
-            // ranks nobody, so no scan is performed and every player reads as unranked.
-            if (!enabled) {
-                emptyMap()
-            } else {
-                // Players with no progress have always been excluded from collection
-                // leaderboards, which also keeps them out of the percentile denominator.
-                Eco.get().readAllProfileValues(uuids, countKey)
-                    .filterValues { it > 0.0 }
-            }
+        // Nothing at all is registered when disabled -- no leaderboard, and no placeholders. A
+        // leaderboard that ranks nobody would still occupy a slot in every refresh sweep.
+        if (!plugin.configYml.getBool("leaderboards.enabled")) {
+            leaderboard = null
+            return
         }
+
+        // Players with no progress have always been excluded from collection leaderboards, which
+        // also keeps them out of the percentile denominator. That is now the rule everywhere:
+        // ofKey ranks a player only if their value is strictly above the key's default, and
+        // countKey defaults to 0.0, so this is exactly the filter it replaces.
+        val leaderboard = Leaderboards.ofKey(plugin, id, countKey)
 
         this.leaderboard = leaderboard
 
-        val emptyPosition = plugin.langYml.getString("top.empty-position")
-
-        if (enabled) {
-            leaderboard.registerStandardPlaceholders(
-                plugin,
-                "${id}_leaderboard",
-                emptyPosition
-            ) { value ->
-                value.toLong().toString()
-            }
-        } else {
-            // Registered even when disabled so the placeholder resolves to the empty position
-            // instead of being left unparsed, matching EcoBits, EcoJobs and EcoSkills.
-            PlayerPlaceholder(plugin, "${id}_leaderboard_rank") {
-                emptyPosition
-            }.register()
+        leaderboard.registerStandardPlaceholders(
+            plugin,
+            "${id}_leaderboard",
+            plugin.langYml.getString("top.empty-position")
+        ) { value ->
+            value.toLong().toString()
         }
     }
 
