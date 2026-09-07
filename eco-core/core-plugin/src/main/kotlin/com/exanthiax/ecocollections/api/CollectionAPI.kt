@@ -3,6 +3,7 @@
 package com.exanthiax.ecocollections.api
 
 import com.willfp.eco.core.data.profile
+import com.willfp.eco.core.progression.ProgressionPlaceholders
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -17,7 +18,7 @@ import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionTierUp
 import com.willfp.eco.util.formatEco
 import com.willfp.eco.util.toNiceString
 import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.NamedValue
+import com.willfp.libreforge.levels.LevelUpDispatcher
 import com.willfp.libreforge.toDispatcher
 import com.willfp.libreforge.triggers.DispatchedTrigger
 import com.willfp.libreforge.triggers.TriggerData
@@ -25,30 +26,28 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
-private val dynamicTierPlaceholderRegex by lazy { Regex("%tier_(-?\\d+)(_numeral)?%") }
-
 /**
- * A tier-up trigger carrying the tier it is for.
+ * Fire the tier-up chains for one tier.
  *
- * Built per tier rather than once per grant: crossing several tiers in one submission runs
- * the reward chain once for each, and each run must describe its own tier.
+ * Called per tier rather than once per grant: crossing several tiers in one submission runs
+ * the reward chains once for each, and each run must describe its own tier.
  *
- * This deliberately does not use libreforge's shared LevelUpDispatcher. That helper names its
- * placeholders `level`, and everything a server owner writes here - the config keys, the
- * events, the docs - is phrased in tiers. Sharing the code would mean `%level%` inside
- * `tier-rewards`, which is worse than a little duplication.
+ * `type = "tier"` is the whole reason the shared dispatcher takes a type. Everything a server
+ * owner writes here - the config keys, the events, the docs - is phrased in tiers, so the
+ * placeholders are `%tier%`, `%tier_2%` and so on rather than `%level%`.
  */
-private fun tierUpTrigger(player: Player, tier: Int): DispatchedTrigger =
-    DispatchedTrigger(
-        player.toDispatcher(),
-        TriggerCollectionTierUp,
-        TriggerData(player = player, location = player.location)
-    ).apply {
-        addPlaceholder(NamedValue("tier", tier))
-        addPlaceholder(NamedValue("tier_numeral", tier.toNumeral()))
-        addPlaceholder(NamedValue("previous_tier", tier - 1))
-        addPlaceholder(NamedValue("previous_tier_numeral", (tier - 1).toNumeral()))
+private fun triggerTierUp(player: Player, collection: Collection, tier: Int) {
+    for (chain in listOf(collection.allTierRewards, collection.tierRewards[tier])) {
+        LevelUpDispatcher.dispatch(
+            player.toDispatcher(),
+            TriggerCollectionTierUp,
+            chain ?: continue,
+            tier,
+            TriggerData(player = player, location = player.location),
+            type = "tier"
+        )
     }
+}
 
 fun OfflinePlayer.getCollectionCount(collection: Collection): Double {
     return this.profile.read(collection.countKey)
@@ -139,9 +138,7 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
         // tier rather than the tier this iteration is granting. They agree here, because the
         // tier is committed just above before the chain runs. %previous_tier% and
         // %previous_tier_numeral% had no source at all and simply did not resolve.
-        collection.allTierRewards?.trigger(tierUpTrigger(this, t))
-
-        collection.tierRewards[t]?.trigger(tierUpTrigger(this, t))
+        triggerTierUp(this, collection, t)
 
         sendTierUpMessages(this, collection, t - 1, t)
     }
@@ -197,12 +194,9 @@ private fun applyPlaceholders(
         .replace("%max_tier%", collection.maxTier.toString())
         .replace("%max_tier_numeral%", collection.maxTier.toNumeral())
 
-    if (tier != null) {
-        result = result
-            .replace("%tier%", tier.toString())
-            .replace("%tier_numeral%", tier.toNumeral())
-    }
-
+    // An explicitly passed previousTier wins, since it is a parameter in its own right rather
+    // than always tier - 1. In practice every caller passes tier - 1, but the signature allows
+    // otherwise and this keeps that promise.
     if (previousTier != null) {
         result = result
             .replace("%previous_tier%", previousTier.toString())
@@ -210,16 +204,10 @@ private fun applyPlaceholders(
     }
 
     if (tier != null) {
-        result = dynamicTierPlaceholderRegex.replace(result) { match ->
-            val offset = match.groupValues[1].toIntOrNull() ?: return@replace match.value
-            val isNumeral = match.groupValues[2].isNotEmpty()
-            val newTier = tier + offset
-            if (isNumeral) {
-                newTier.toNumeral()
-            } else {
-                newTier.toNiceString()
-            }
-        }
+        // %tier%, %tier_numeral%, any remaining %previous_tier*%, and the %tier_N% offsets -
+        // the last of which used to be a local copy of a regex that three other plugins also
+        // each kept their own copy of. It now lives in eco, with tests.
+        result = ProgressionPlaceholders.inject(result, "tier", tier)
     }
 
     if (amount != null) {
