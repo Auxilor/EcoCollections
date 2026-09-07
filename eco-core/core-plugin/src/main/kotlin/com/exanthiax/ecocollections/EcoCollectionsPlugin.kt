@@ -69,15 +69,21 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
         }
 
         totalsLeaderboard = Leaderboards.register(this, "total_tiers") { uuids ->
-            val totals = HashMap<UUID, Double>()
+            if (!this.configYml.getBool("leaderboards.enabled")) {
+                emptyMap()
+            } else {
+                val totals = HashMap<UUID, Double>()
 
-            for (collection in Collections.values()) {
-                for ((uuid, tier) in Eco.get().readAllProfileValues(uuids, collection.tierKey)) {
-                    totals.merge(uuid, tier.toDouble(), Double::plus)
+                // One bulk read per collection, summed - not one profile read per player per
+                // collection, which is what this replaced.
+                for (collection in Collections.values()) {
+                    for ((uuid, tier) in Eco.get().readAllProfileValues(uuids, collection.tierKey)) {
+                        totals.merge(uuid, tier.toDouble(), Double::plus)
+                    }
                 }
-            }
 
-            totals.filterValues { it > 0.0 }
+                totals.filterValues { it > 0.0 }
+            }
         }
     }
 

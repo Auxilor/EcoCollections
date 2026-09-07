@@ -204,19 +204,39 @@ class Collection(
      * Collection) before it calls handleReload.
      */
     internal fun registerLeaderboard() {
+        val enabled = plugin.configYml.getBool("leaderboards.enabled")
+
         val leaderboard = Leaderboards.register(plugin, id) { uuids ->
-            Eco.get().readAllProfileValues(uuids, countKey)
-                .filterValues { it > 0.0 }
+            // The toggle is honoured here rather than by skipping registration: an empty map
+            // ranks nobody, so no scan is performed and every player reads as unranked.
+            if (!enabled) {
+                emptyMap()
+            } else {
+                // Players with no progress have always been excluded from collection
+                // leaderboards, which also keeps them out of the percentile denominator.
+                Eco.get().readAllProfileValues(uuids, countKey)
+                    .filterValues { it > 0.0 }
+            }
         }
 
         this.leaderboard = leaderboard
 
-        leaderboard.registerStandardPlaceholders(
-            plugin,
-            "${id}_leaderboard",
-            plugin.langYml.getString("top.empty-position")
-        ) { value ->
-            value.toLong().toString()
+        val emptyPosition = plugin.langYml.getString("top.empty-position")
+
+        if (enabled) {
+            leaderboard.registerStandardPlaceholders(
+                plugin,
+                "${id}_leaderboard",
+                emptyPosition
+            ) { value ->
+                value.toLong().toString()
+            }
+        } else {
+            // Registered even when disabled so the placeholder resolves to the empty position
+            // instead of being left unparsed, matching EcoBits, EcoJobs and EcoSkills.
+            PlayerPlaceholder(plugin, "${id}_leaderboard_rank") {
+                emptyPosition
+            }.register()
         }
     }
 
