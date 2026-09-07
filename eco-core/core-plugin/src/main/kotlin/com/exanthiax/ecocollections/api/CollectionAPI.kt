@@ -43,7 +43,11 @@ private fun triggerTierUp(player: Player, collection: Collection, tier: Int) {
             TriggerCollectionTierUp,
             chain ?: continue,
             tier,
-            TriggerData(player = player, location = player.location),
+            // value is the tier reached. TriggerCollectionTierUp declares
+            // TriggerParameter.VALUE and its own event-driven dispatch sets it, but these
+            // manual dispatches did not - so an effect reading the trigger's value got 0.0
+            // here and the real tier there, depending only on which path fired it.
+            TriggerData(player = player, location = player.location, value = tier.toDouble()),
             type = "tier"
         )
     }
