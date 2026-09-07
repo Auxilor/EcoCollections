@@ -33,8 +33,14 @@ placeholders:
   locked-name: "&7&l? ? ?"
   unlock-requirement-line: "&8» &7%requirement%"
 
+top-line-format: "&7%rank%. &f%player% &7- &e%value%"
+
 top:
   empty-position: "&7—"
+  totals-name: "&eTotal Tiers"
+  format:
+    - "&8▬▬▬▬ &6%collection% Leaderboard &8▬▬▬▬"
+    - "%lines%"
 
 commands:
   reloaded: "Reloaded in %time%ms! Loaded %count% collections."
