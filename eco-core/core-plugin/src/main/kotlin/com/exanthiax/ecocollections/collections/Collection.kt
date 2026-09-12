@@ -23,6 +23,7 @@ import com.exanthiax.ecocollections.util.InvalidConfigurationException
 import com.exanthiax.ecocollections.util.TierInjectable
 import com.willfp.eco.core.placeholder.PlayerStaticPlaceholder
 import com.willfp.eco.core.placeholder.context.placeholderContext
+import com.willfp.eco.core.progression.LevelProgression
 import com.willfp.eco.core.registry.KRegistrable
 import com.willfp.eco.util.evaluateExpression
 import com.willfp.eco.util.toNumeral
@@ -152,6 +153,20 @@ class Collection(
         private set
 
     init {
+        // A non-increasing requirement makes a tier unreachable, which silently deletes its
+        // rewards. Warn at load rather than leaving it to be noticed in-game.
+        var previousTierRequirement = Double.NEGATIVE_INFINITY
+        for ((index, requirement) in tierRequirements.withIndex()) {
+            if (!requirement.isFinite() || requirement <= previousTierRequirement) {
+                plugin.logger.warning(
+                    "Collection $id: tier-requirements[$index] is $requirement, which is not " +
+                        "greater than the previous tier - tiers beyond $index are unreachable"
+                )
+                break
+            }
+            previousTierRequirement = requirement
+        }
+
         registerPlaceholders()
 
         val tierRewardsMutable = mutableMapOf<Int, Chain?>()
@@ -244,14 +259,8 @@ class Collection(
         return messages
     }
 
-    fun getTierForCount(count: Double): Int {
-        for (i in tierRequirements.indices.reversed()) {
-            if (count >= tierRequirements[i]) {
-                return i + 1
-            }
-        }
-        return 0
-    }
+    fun getTierForCount(count: Double): Int =
+        LevelProgression.levelForCumulative(tierRequirements, count)
 
     private fun registerPlaceholders() {
         config.injectPlaceholders(
