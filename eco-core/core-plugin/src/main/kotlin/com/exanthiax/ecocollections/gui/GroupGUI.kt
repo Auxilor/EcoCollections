@@ -13,6 +13,7 @@ import com.willfp.eco.core.gui.slot.FillerMask
 import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.leaderboard.LeaderboardRank
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -23,8 +24,6 @@ import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.api.giveCollectionCount
 import com.exanthiax.ecocollections.api.isCollectionUnlocked
 import com.exanthiax.ecocollections.collections.Collection
-import com.exanthiax.ecocollections.collections.CollectionRank
-import com.exanthiax.ecocollections.collections.CollectionsLeaderboard.getCollectionRank
 import com.exanthiax.ecocollections.collections.canGainCollectionProgress
 import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.plugin
@@ -467,15 +466,15 @@ object GroupGUI {
     }
 
     internal fun formatRankLore(player: Player, collection: Collection): String? {
-        val rank = player.getCollectionRank(collection)
-        return when (rank) {
-            is CollectionRank.Exact -> plugin.langYml.getString("leaderboard-rank-exact")
+        val rank = collection.leaderboard?.getRank(player.uniqueId) ?: LeaderboardRank.unranked()
+        return when {
+            rank.isExact -> plugin.langYml.getString("leaderboard-rank-exact")
                 .replace("%rank%", rank.rank.toString())
 
-            is CollectionRank.Percent -> plugin.langYml.getString("leaderboard-rank-percent")
-                .replace("%percent%", rank.topPercent.toString())
+            rank.isPercent -> plugin.langYml.getString("leaderboard-rank-percent")
+                .replace("%percent%", rank.percent.toString())
 
-            is CollectionRank.Unranked -> plugin.langYml.getString("leaderboard-rank-unranked")
+            else -> plugin.langYml.getString("leaderboard-rank-unranked")
         }
     }
 }

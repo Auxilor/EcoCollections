@@ -12,6 +12,10 @@ object CommandCollections : PluginCommand(
     "ecocollections.command.collections",
     false
 ) {
+    init {
+        this.addSubcommand(CommandTop)
+    }
+
     override fun onExecute(sender: CommandSender, args: List<String>) {
         if (sender !is Player) return
         CollectionsGUI.open(sender)

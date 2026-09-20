@@ -38,6 +38,7 @@ permissions:
       ecocollections.command.unlock: true
       ecocollections.command.reload: true
       ecocollections.command.leaderboard: true
+      ecocollections.command.top: true
 
   ecocollections.command.collections:
     description: Allows the use of /collections.
@@ -63,3 +64,6 @@ permissions:
   ecocollections.command.leaderboard:
     description: Allows the use of /ecocollections leaderboard.
     default: op
+  ecocollections.command.top:
+    description: Allows the use of /collections top.
+    default: true

@@ -5,6 +5,9 @@ import com.willfp.eco.core.data.keys.PersistentDataKey
 import com.willfp.eco.core.data.keys.PersistentDataKeyType
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.TestableItem
+import com.willfp.eco.core.leaderboard.Leaderboard
+import com.willfp.eco.core.leaderboard.Leaderboards
+import com.willfp.eco.core.leaderboard.registerStandardPlaceholders
 import com.willfp.eco.core.placeholder.PlayerPlaceholder
 import com.exanthiax.ecocollections.api.completedCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionCount
@@ -32,6 +35,7 @@ import com.willfp.libreforge.counters.Counters
 import com.willfp.libreforge.effects.Chain
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.effects.executors.impl.NormalExecutorFactory
+import com.willfp.eco.util.formatEco
 
 class Collection(
     override val id: String,
@@ -141,6 +145,13 @@ class Collection(
         false
     )
 
+    /**
+     * The leaderboard ranking players by this collection's count, or null before the plugin has
+     * registered its leaderboards.
+     */
+    var leaderboard: Leaderboard? = null
+        private set
+
     init {
         // A non-increasing requirement makes a tier unreachable, which silently deletes its
         // rewards. Warn at load rather than leaving it to be noticed in-game.
@@ -197,6 +208,38 @@ class Collection(
     override fun onRemove() {
         for (counter in countMethods) {
             counter.unbind()
+        }
+    }
+
+    /**
+     * Register this collection's leaderboard and its placeholders.
+     *
+     * Called from [com.exanthiax.ecocollections.EcoCollectionsPlugin.handleReload] *after*
+     * [Leaderboards.unregisterAll], because eco reloads config categories (recreating every
+     * Collection) before it calls handleReload.
+     */
+    internal fun registerLeaderboard() {
+        // Nothing at all is registered when disabled -- no leaderboard, and no placeholders. A
+        // leaderboard that ranks nobody would still occupy a slot in every refresh sweep.
+        if (!plugin.configYml.getBool("leaderboards.enabled")) {
+            leaderboard = null
+            return
+        }
+
+        // Players with no progress have always been excluded from collection leaderboards, which
+        // also keeps them out of the percentile denominator. That is now the rule everywhere:
+        // ofKey ranks a player only if their value is strictly above the key's default, and
+        // countKey defaults to 0.0, so this is exactly the filter it replaces.
+        val leaderboard = Leaderboards.ofKey(plugin, id, countKey)
+
+        this.leaderboard = leaderboard
+
+        leaderboard.registerStandardPlaceholders(
+            plugin,
+            "${id}_leaderboard",
+            plugin.langYml.getString("top.empty-position").formatEco()
+        ) { value ->
+            value.toLong().toString()
         }
     }
 
@@ -293,11 +336,6 @@ class Collection(
             name
         }.register()
 
-        PlayerPlaceholder(plugin, "${id}_leaderboard_rank") { player ->
-            val entry = CollectionsLeaderboard.getPosition(this, player.uniqueId)
-            entry?.toString() ?: plugin.langYml.getString("top.empty-position")
-        }.register()
-
         PlayerPlaceholder(plugin, "total_tiers") { player ->
             player.totalCollectionTiers.toString()
         }.register()
@@ -309,18 +347,6 @@ class Collection(
         PlayerPlaceholder(plugin, "unlocked_count") { player ->
             player.unlockedCollectionCount.toString()
         }.register()
-
-        for (n in 1..10) {
-            PlayerPlaceholder(plugin, "top_${n}_name") { _ ->
-                val entry = CollectionsLeaderboard.getTopByTotal(n)
-                entry?.player?.name ?: plugin.langYml.getString("top.empty-position")
-            }.register()
-
-            PlayerPlaceholder(plugin, "top_${n}_value") { _ ->
-                val entry = CollectionsLeaderboard.getTopByTotal(n)
-                entry?.value?.toString() ?: plugin.langYml.getString("top.empty-position")
-            }.register()
-        }
     }
 
     private fun checkDupeFilters() {

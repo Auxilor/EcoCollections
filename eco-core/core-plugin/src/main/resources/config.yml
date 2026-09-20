@@ -232,15 +232,14 @@ gui:
       pitch: 1.0
       volume: 1.0
 
-# Leaderboard
-leaderboard:
-  enabled: true
-  cache-lifetime: 300  # seconds
-
 leaderboards:
-  refresh-interval: 6h
-  exact-rank-cutoff: 1000   # Set to 0 to always return raw integer ranks (disables Top X% bucketing)
-  percent-decimal-places: 1
+  # Set to false to stop ranking collections entirely. Rank placeholders then resolve to
+  # top.empty-position and no scan is performed for this plugin.
+  enabled: true
+
+  # Collection leaderboards are ranked by eco's shared leaderboard service, so the refresh
+  # interval, the exact-rank cutoff (the "Top X%" threshold) and the percentile decimal places
+  # are configured server-wide in eco's own config.yml, under `leaderboards:`.
   show-in-group-gui: true
 
 # Messages on tier-up / completion / unlock (in addition to whatever the rewards do)

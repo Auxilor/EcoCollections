@@ -1,14 +1,13 @@
 package com.exanthiax.ecocollections.commands
 
 import com.exanthiax.ecocollections.collections.Collections
-import com.exanthiax.ecocollections.collections.CollectionsLeaderboard
-import com.exanthiax.ecocollections.plugin
+import com.exanthiax.ecocollections.plugin as ecoCollections
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.util.StringUtils
 import org.bukkit.command.CommandSender
 
 object SubcommandLeaderboard : Subcommand(
-    plugin,
+    ecoCollections,
     "leaderboard",
     "ecocollections.command.leaderboard",
     false
@@ -25,16 +24,20 @@ object SubcommandLeaderboard : Subcommand(
             if (collection == null) {
                 sender.sendMessage(
                     StringUtils.format(
-                        plugin.langYml.getString("commands.no-such-collection")
+                        ecoCollections.langYml.getString("commands.no-such-collection")
                             .replace("%id%", collectionId)
                     )
                 )
                 return
             }
-            CollectionsLeaderboard.invalidate(collection)
+            collection.leaderboard?.refresh()
+            ecoCollections.totalsLeaderboard?.refresh()
             sender.sendMessage(StringUtils.format("&aRefreshed leaderboard for &e${collection.name}&a."))
         } else {
-            CollectionsLeaderboard.invalidateAll()
+            for (each in Collections.values()) {
+                each.leaderboard?.refresh()
+            }
+            ecoCollections.totalsLeaderboard?.refresh()
             sender.sendMessage(StringUtils.format("&aRefreshed all leaderboards."))
         }
     }
