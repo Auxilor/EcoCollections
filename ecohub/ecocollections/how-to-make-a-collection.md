@@ -225,6 +225,27 @@ completion-effects:
       message: "&6%player% &fhas maxed the &6Acacia &fcollection!"
 ```
 
+#### Placeholders in `tier-up-effects`
+
+These describe the tier-up that just happened. A single submission large enough to cross
+several tiers runs the chain once per tier, so each run reports its own tier rather than the
+final one.
+
+| Placeholder | Resolves to |
+| --- | --- |
+| `%tier%` | The tier just reached. |
+| `%tier_numeral%` | The tier just reached, as a Roman numeral. |
+| `%previous_tier%` | The tier before this one, i.e. `%tier%` minus 1. |
+| `%previous_tier_numeral%` | The previous tier, as a Roman numeral. |
+
+`%tier%` and `%tier_numeral%` also work anywhere else in the config as the player's *current*
+tier (see [Internal placeholders](#internal-placeholders)); inside `tier-up-effects` they mean
+the tier being granted. The two agree, because the tier is written before the chain runs.
+
+`completion-effects` runs once when the collection is maxed, so it has no "previous tier" and
+takes no placeholders of its own - `%tier%` there is the player's current tier, which is the
+max tier.
+
 :::danger Effects are their own system
 Effects, conditions, and filters are a shared libreforge system documented separately. To configure them:
 
