@@ -35,8 +35,9 @@ lateinit var plugin: EcoCollectionsPlugin
 class EcoCollectionsPlugin : LibreforgePlugin() {
     /**
      * The leaderboard ranking players by their total collection tiers, or null before the first
-     * reload has registered it.
+     * reload has registered it. Swapped on reload, read from every region on Folia.
      */
+    @Volatile
     var totalsLeaderboard: Leaderboard? = null
         private set
 

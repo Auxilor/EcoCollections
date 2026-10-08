@@ -147,8 +147,9 @@ class Collection(
 
     /**
      * The leaderboard ranking players by this collection's count, or null before the plugin has
-     * registered its leaderboards.
+     * registered its leaderboards. Swapped on reload, read from every region on Folia.
      */
+    @Volatile
     var leaderboard: Leaderboard? = null
         private set
 

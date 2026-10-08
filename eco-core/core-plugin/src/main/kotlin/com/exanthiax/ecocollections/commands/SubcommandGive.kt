@@ -3,6 +3,7 @@ package com.exanthiax.ecocollections.commands
 import com.exanthiax.ecocollections.api.giveCollectionCount
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.plugin
+import com.exanthiax.ecocollections.runOwned
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.util.StringUtils
 import org.bukkit.Bukkit
@@ -51,15 +52,17 @@ object SubcommandGive : Subcommand(
             return
         }
 
-        target.giveCollectionCount(collection, amount)
-        sender.sendMessage(
-            StringUtils.format(
-                plugin.langYml.getString("commands.give-success")
-                    .replace("%amount%", amount.toLong().toString())
-                    .replace("%player%", target.name)
-                    .replace("%collection%", collection.name)
+        target.runOwned {
+            target.giveCollectionCount(collection, amount)
+            sender.sendMessage(
+                StringUtils.format(
+                    plugin.langYml.getString("commands.give-success")
+                        .replace("%amount%", amount.toLong().toString())
+                        .replace("%player%", target.name)
+                        .replace("%collection%", collection.name)
+                )
             )
-        )
+        }
     }
 
     override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
