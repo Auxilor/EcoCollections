@@ -2,6 +2,7 @@
 version: ${version}
 main: com.exanthiax.ecocollections.EcoCollectionsPlugin
 api-version: 1.21.8
+folia-supported: true
 authors: [Auxilor, Exanthiax, Callum]
 depend:
   - eco
