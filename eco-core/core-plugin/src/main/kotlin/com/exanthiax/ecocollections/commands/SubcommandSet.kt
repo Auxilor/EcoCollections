@@ -1,10 +1,10 @@
 package com.exanthiax.ecocollections.commands
 
 import com.exanthiax.ecocollections.api.setCollectionCount
+import com.exanthiax.ecocollections.api.setCollectionTier
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.plugin
 import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.core.data.profile
 import com.willfp.eco.util.StringUtils
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -80,7 +80,7 @@ object SubcommandSet : Subcommand(
                     return
                 }
 
-                target.profile.write(collection.tierKey, tier.coerceIn(0, collection.maxTier))
+                target.setCollectionTier(collection, tier)
                 sender.sendMessage(
                     StringUtils.format(
                         plugin.langYml.getString("commands.settier-success")

@@ -94,6 +94,13 @@ fun OfflinePlayer.setCollectionCount(collection: Collection, count: Double) {
     val newTier = collection.getTierForCount(count)
     // Deliberately fires no tier-up events - this is an admin set, not organic progression.
     this.profile.write(collection.tierKey, newTier)
+    this.profile.write(collection.doneKey, newTier == collection.maxTier)
+    collection.leaderboard?.refresh()
+}
+
+fun OfflinePlayer.setCollectionTier(collection: Collection, tier: Int) {
+    val clampedTier = tier.coerceIn(0, collection.maxTier)
+    this.setCollectionCount(collection, if (clampedTier == 0) 0.0 else collection.tierRequirements[clampedTier - 1])
 }
 
 fun Player.giveCollectionCount(collection: Collection, amount: Double) {
@@ -171,6 +178,7 @@ fun OfflinePlayer.resetCollection(collection: Collection) {
     this.profile.write(collection.tierKey, 0)
     this.profile.write(collection.doneKey, false)
     this.profile.write(collection.unlockedKey, false)
+    collection.leaderboard?.refresh()
 }
 
 val OfflinePlayer.totalCollectionTiers: Int
