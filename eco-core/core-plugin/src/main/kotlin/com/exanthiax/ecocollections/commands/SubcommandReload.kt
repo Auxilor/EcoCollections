@@ -22,7 +22,7 @@ object SubcommandReload : Subcommand(
         }
 
         sender.sendMessage(
-            plugin.langYml.getMessage("commands.reloaded", StringUtils.FormatOption.WITHOUT_PLACEHOLDERS)
+            plugin.langYml.prefix + plugin.langYml.getFormattedString("commands.reloaded", StringUtils.FormatOption.WITHOUT_PLACEHOLDERS)
                 .replace("%time%", plugin.reloadWithTime().toNiceString())
                 .replace("%count%", Collections.values().size.toString())
         )
