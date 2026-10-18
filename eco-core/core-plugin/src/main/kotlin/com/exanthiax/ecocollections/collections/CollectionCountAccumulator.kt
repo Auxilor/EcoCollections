@@ -19,7 +19,7 @@ class CollectionCountAccumulator(
 
 fun Player.canGainCollectionProgress(): Boolean {
     if (plugin.configYml.getStrings("collections.disabled-worlds").contains(world.name)) return false
-    if (gameMode in setOf(GameMode.CREATIVE, GameMode.SPECTATOR)) return false
+    if (plugin.configYml.getBool("collections.prevent-while-creative") && gameMode in setOf(GameMode.CREATIVE, GameMode.SPECTATOR)) return false
     if (plugin.configYml.getBool("collections.prevent-while-afk") && AFKManager.isAfk(this)) return false
 
     return true

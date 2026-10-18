@@ -35,8 +35,6 @@ collections:
 
 # GUI
 gui:
-  cache-ttl: 5000 # Milliseconds rendered lore is cached before re-rendering
-
   collections:
     title: "&8Collections (%page%/%max_page%)" # Supports %page% and %max_page%
     rows: 6
@@ -244,12 +242,11 @@ gui:
       pitch: 1.0
       volume: 1.0
 
-# Leaderboard
-leaderboard:
-  enabled: true
-  cache-lifetime: 300 # Seconds before the leaderboard is recomputed
-
 leaderboards:
+  # Set to false to stop ranking collections entirely. Rank placeholders then resolve to
+  # top.empty-position and no scan is performed for this plugin.
+  enabled: true
+
   # Collection leaderboards are ranked by eco's shared leaderboard service, so the refresh
   # interval, the exact-rank cutoff (the "Top X%" threshold) and the percentile decimal places
   # are configured server-wide in eco's own config.yml, under `leaderboards:`.
