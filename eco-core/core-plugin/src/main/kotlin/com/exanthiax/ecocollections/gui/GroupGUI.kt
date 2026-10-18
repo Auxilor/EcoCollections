@@ -23,6 +23,7 @@ import com.exanthiax.ecocollections.api.getCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.api.giveCollectionCount
 import com.exanthiax.ecocollections.api.isCollectionUnlocked
+import com.exanthiax.ecocollections.api.tryUnlockCollection
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.collections.canGainCollectionProgress
 import com.exanthiax.ecocollections.groups.CollectionGroup
@@ -174,7 +175,7 @@ object GroupGUI {
                 return null
             }
 
-            return buildLockedCollectionSlot(player, collection)
+            return buildLockedCollectionSlot(player, group, bypassMode, collection)
         }
     }
 
@@ -366,6 +367,8 @@ object GroupGUI {
 
     private fun buildLockedCollectionSlot(
         player: Player,
+        group: CollectionGroup,
+        bypassMode: Boolean,
         collection: Collection
     ): Slot {
         val lockedMaterial = plugin.configYml.getString("gui.locked.icon.material")
@@ -398,9 +401,12 @@ object GroupGUI {
         }
 
         return slot(lockedItem) {
-            onLeftClick { event, _ ->
-                val p = event.whoClicked as? Player ?: return@onLeftClick
-                clickSound?.playTo(p)
+            onLeftClick { _, _, _, menu ->
+                if (player.tryUnlockCollection(collection)) {
+                    open(player, group, bypassMode, menu.getPage(player))
+                } else {
+                    clickSound?.playTo(player)
+                }
             }
         }
     }

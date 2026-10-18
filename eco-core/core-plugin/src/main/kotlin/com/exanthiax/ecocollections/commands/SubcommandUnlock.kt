@@ -1,8 +1,10 @@
 package com.exanthiax.ecocollections.commands
 
+import com.exanthiax.ecocollections.api.forceUnlockCollection
 import com.exanthiax.ecocollections.api.isCollectionUnlocked
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.plugin
+import com.exanthiax.ecocollections.runOwned
 import com.willfp.eco.core.command.impl.Subcommand
 import com.willfp.eco.core.data.profile
 import com.willfp.eco.util.StringUtils
@@ -58,12 +60,29 @@ object SubcommandUnlock : Subcommand(
             return
         }
 
-        target.profile.write(collection.unlockedKey, true)
+        val onlineTarget = target.player
+        if (onlineTarget == null) {
+            target.profile.write(collection.unlockedKey, true)
+            sendResult(sender, "commands.unlock-success", target.name ?: playerName, collection.name)
+            return
+        }
+
+        onlineTarget.runOwned {
+            val key = if (onlineTarget.forceUnlockCollection(collection)) {
+                "commands.unlock-success"
+            } else {
+                "commands.unlock-cancelled"
+            }
+            sendResult(sender, key, onlineTarget.name, collection.name)
+        }
+    }
+
+    private fun sendResult(sender: CommandSender, key: String, playerName: String, collectionName: String) {
         sender.sendMessage(
             StringUtils.format(
-                plugin.langYml.getString("commands.unlock-success")
-                    .replace("%player%", target.name ?: playerName)
-                    .replace("%collection%", collection.name)
+                plugin.langYml.getString(key)
+                    .replace("%player%", playerName)
+                    .replace("%collection%", collectionName)
             )
         )
     }
