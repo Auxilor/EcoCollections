@@ -110,9 +110,7 @@ fun Player.giveCollectionCount(collection: Collection, amount: Double) {
         return
     }
 
-    val conditions = collection.hasConditions
-    val met = !collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)
-    if (conditions && met) {
+    if (collection.hasConditions && !collection.conditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
         return
     }
 
