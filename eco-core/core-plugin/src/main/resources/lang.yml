@@ -56,6 +56,7 @@ commands:
 groups:
   uncategorized-name: "&7Uncategorized"
   default-group-name: "&7Collections"
+  progress: "&7Progress: &e%maxed%&7/&e%total% &7maxed"
 
 leaderboard-rank-exact: "&7Your rank: &e#%rank%"
 leaderboard-rank-percent: "&7Your rank: &eTop %percent%%"
