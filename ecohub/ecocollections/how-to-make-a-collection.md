@@ -100,9 +100,9 @@ tier-up-effects:
           message: "&6Acacia &e%tier_numeral% &freached!"
 
 completion-effects: # Run once, when the final tier is reached
-  - id: broadcast
+  - id: give_xp
     args:
-      message: "&6%player% &fhas maxed the &6Acacia &fcollection!"
+      amount: 1000
 
 # === Reward messages and conditions ===
 reward-messages: # Shown in tier-slot lore via %rewards%
@@ -220,10 +220,14 @@ tier-up-effects:
           message: "&6Acacia &e%tier_numeral% &freached!"
 
 completion-effects:
-  - id: broadcast
+  - id: give_xp
     args:
-      message: "&6%player% &fhas maxed the &6Acacia &fcollection!"
+      amount: 1000
 ```
+
+Completing a collection is already announced to the whole server by `messages.complete.broadcast`
+in `config.yml`. Adding a `broadcast` effect here as well sends the announcement twice, so only do
+that if you have turned the built-in one off.
 
 #### Placeholders in `tier-up-effects`
 

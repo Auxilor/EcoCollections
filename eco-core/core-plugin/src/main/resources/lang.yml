@@ -10,7 +10,7 @@ messages:
     chat: "&6&lCOLLECTION MAXED! &r&f%collection_name%"
     title: "&6&lMAXED!"
     subtitle: "&f%collection_name%"
-    broadcast: "&6%player% &fhas maxed the &e%collection_name% &fcollection!"
+    broadcast: "&6%player% &fhas maxed the %collection_name% &fcollection!"
   unlock:
     chat: "&a&lUNLOCKED! &r&fYou can now progress &e%collection_name%&f."
     title: "&a&lUnlocked"
