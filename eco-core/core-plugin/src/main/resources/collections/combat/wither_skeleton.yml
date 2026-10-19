@@ -48,7 +48,4 @@ tier-up-effects:
         args:
           message: "&6&8Wither Skeleton &e%tier_numeral% &freached!"
 
-completion-effects:
-  - id: broadcast
-    args:
-      message: "&6%player% &fhas maxed the &e&8Wither Skeleton &fcollection!"
+completion-effects: []

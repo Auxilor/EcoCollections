@@ -48,7 +48,4 @@ tier-up-effects:
         args:
           message: "&6&4Beetroot &e%tier_numeral% &freached!"
 
-completion-effects:
-  - id: broadcast
-    args:
-      message: "&6%player% &fhas maxed the &e&4Beetroot &fcollection!"
+completion-effects: []

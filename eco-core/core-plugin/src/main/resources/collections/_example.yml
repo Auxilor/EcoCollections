@@ -65,10 +65,13 @@ tier-up-effects:
         args:
           message: "&6&6Acacia &e%tier_numeral% &freached!"
 
-completion-effects: # Effects to be run when the player completes the collection.
-  - id: broadcast
+# Effects to be run when the player completes the collection.
+# A server-wide broadcast is already sent by messages.complete.broadcast in config.yml,
+# so only add a broadcast here if you turn that off.
+completion-effects:
+  - id: give_xp
     args:
-      message: "&6%player% &fhas maxed the &e&6Acacia &fcollection!"
+      amount: 1000
 
 # Reward messages shown in the tier slot lore via %rewards%.
 # "all" applies to every tier, numbered keys apply only to that specific tier.

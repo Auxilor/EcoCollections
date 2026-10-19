@@ -47,7 +47,4 @@ tier-up-effects:
         args:
           message: "&6&8Wither &e%tier_numeral% &freached!"
 
-completion-effects:
-  - id: broadcast
-    args:
-      message: "&6%player% &fhas maxed the &e&8Wither &fcollection!"
+completion-effects: []
