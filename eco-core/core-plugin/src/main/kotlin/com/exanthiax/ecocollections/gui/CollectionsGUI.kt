@@ -4,12 +4,11 @@ import com.willfp.eco.core.config.BuildableConfig
 import com.willfp.eco.core.gui.addCustomSlot
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.component.closeButton
+import com.willfp.eco.core.gui.getSlotLocations
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
-import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
@@ -20,7 +19,9 @@ import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.groups.CollectionGroups
 import com.exanthiax.ecocollections.plugin
 import com.willfp.eco.core.gui.slot.Slot
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 
 object CollectionsGUI {
 
@@ -61,6 +62,14 @@ object CollectionsGUI {
         val titleTemplate = plugin.configYml.getString("gui.collections.title")
         val rows = plugin.configYml.getInt("gui.collections.rows")
 
+        val closeMaterial = plugin.configYml.getString("gui.collections.close.material")
+        val closeName = plugin.configYml.getString("gui.collections.close.name")
+
+        val closeItem = ItemStack(Material.matchMaterial(closeMaterial.uppercase()) ?: Material.BARRIER)
+        val closeMeta = closeItem.itemMeta
+        closeMeta?.setDisplayName(StringUtils.format(closeName))
+        closeItem.itemMeta = closeMeta
+
         val visibleGroups = CollectionGroups.values().filter {
             it.permission.isEmpty() || player.hasPermission(it.permission)
         }
@@ -81,7 +90,13 @@ object CollectionsGUI {
                 addPage(page) {
                     setMask(plugin.configYml, "gui.collections")
 
-                    addComponent(closeButton(plugin.configYml.getSubsection("gui.collections.close")))
+                    for (location in plugin.configYml.getSlotLocations("gui.collections.close")) {
+                        setSlot(location.row, location.column, slot(closeItem) {
+                            onLeftClick { event, _ ->
+                                event.whoClicked.closeInventory()
+                            }
+                        })
+                    }
 
                     for (group in visibleGroups) {
                         if (group.guiPage != page) {

@@ -2,14 +2,14 @@ package com.exanthiax.ecocollections.gui
 
 import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
 import com.willfp.eco.core.gui.menu
+import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
+import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -55,15 +55,22 @@ object CollectionDetailGUI {
             addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
             addPageChanger(plugin.configYml, "gui.detail.buttons.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)
 
-            addComponent(
-                ConfigButton(
-                    plugin.configYml.getSubsection("gui.detail.buttons.back"),
-                    action = { _, _, _, _ ->
-                        val group = collection.group
-                        if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
+            for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.back")) {
+                setSlot(
+                    location.row,
+                    location.column,
+                    slot(
+                        ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.back.material")))
+                            .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.back.name")))
+                            .build()
+                    ) {
+                        onLeftClick { _, _, _, _ ->
+                            val group = collection.group
+                            if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
+                        }
                     }
                 )
-            )
+            }
 
             if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
                 for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.rank")) {
