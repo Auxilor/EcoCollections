@@ -50,9 +50,16 @@ class Collection(
         CollectionGroups.getByID(groupId)
     }
 
+    /**
+     * Cumulative count needed for each tier, cut off at the first requirement that is not
+     * strictly greater than the one before it (or not above 0 for tier 1).
+     *
+     * Such a tier can never be reached, so keeping it would leave [maxTier] pointing at a tier
+     * nobody can complete, and an equal neighbour would divide progress by zero.
+     */
     val tierRequirements: List<Double> = run {
         val formula = config.getStringOrNull("tier-formula")
-        if (formula != null) {
+        val configured = if (formula != null) {
             val max = config.getIntOrNull("max-tier")
                 ?: throw InvalidConfigurationException("Collection $id has tier-formula but no max-tier")
             (1..max).map { tier ->
@@ -61,6 +68,22 @@ class Collection(
         } else {
             config.getDoubles("tier-requirements")
         }
+
+        var previous = 0.0
+        val reachable = configured.takeWhile { requirement ->
+            (requirement.isFinite() && requirement > previous).also { previous = requirement }
+        }
+
+        if (reachable.size < configured.size) {
+            val index = reachable.size
+            plugin.logger.warning(
+                "Collection $id: the requirement for tier ${index + 1} is ${configured[index]}, which is " +
+                    "not greater than ${if (index == 0) "0" else "the previous tier"} - tiers ${index + 1} " +
+                    "to ${configured.size} are unreachable and have been ignored"
+            )
+        }
+
+        reachable
     }
 
     val maxTier: Int = tierRequirements.size
@@ -154,20 +177,6 @@ class Collection(
         private set
 
     init {
-        // A non-increasing requirement makes a tier unreachable, which silently deletes its
-        // rewards. Warn at load rather than leaving it to be noticed in-game.
-        var previousTierRequirement = Double.NEGATIVE_INFINITY
-        for ((index, requirement) in tierRequirements.withIndex()) {
-            if (!requirement.isFinite() || requirement <= previousTierRequirement) {
-                plugin.logger.warning(
-                    "Collection $id: tier-requirements[$index] is $requirement, which is not " +
-                        "greater than the previous tier - tiers beyond $index are unreachable"
-                )
-                break
-            }
-            previousTierRequirement = requirement
-        }
-
         registerPlaceholders()
 
         val tierRewardsMutable = mutableMapOf<Int, Chain?>()
