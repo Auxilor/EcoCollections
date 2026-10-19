@@ -149,7 +149,13 @@ object CollectionsGUI {
                 lore.add(StringUtils.format(line))
             }
             lore.add("")
-            lore.add(StringUtils.format("&7Progress: &e$maxedCount&7/&e$totalCount &7maxed"))
+            lore.add(
+                StringUtils.format(
+                    plugin.langYml.getString("groups.progress")
+                        .replace("%maxed%", maxedCount.toString())
+                        .replace("%total%", totalCount.toString())
+                )
+            )
 
             meta.lore = lore
             iconItem.itemMeta = meta
