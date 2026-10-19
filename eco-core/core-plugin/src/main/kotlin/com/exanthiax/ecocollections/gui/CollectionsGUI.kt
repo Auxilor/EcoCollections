@@ -22,6 +22,7 @@ import com.willfp.eco.core.gui.slot.Slot
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import com.willfp.eco.core.gui.getSlotLocations
 
 object CollectionsGUI {
 
@@ -67,8 +68,6 @@ object CollectionsGUI {
 
         val closeMaterial = plugin.configYml.getString("gui.collections.close.material")
         val closeName = plugin.configYml.getString("gui.collections.close.name")
-        val closeRow = plugin.configYml.getInt("gui.collections.close.location.row")
-        val closeColumn = plugin.configYml.getInt("gui.collections.close.location.column")
 
         val closeItem = ItemStack(Material.matchMaterial(closeMaterial.uppercase()) ?: Material.BARRIER)
         val closeMeta = closeItem.itemMeta
@@ -100,11 +99,13 @@ object CollectionsGUI {
                         )
                     )
 
-                    setSlot(closeRow, closeColumn, slot(closeItem) {
-                        onLeftClick { event, _ ->
-                            event.whoClicked.closeInventory()
-                        }
-                    })
+                    for (location in plugin.configYml.getSlotLocations("gui.collections.close")) {
+                        setSlot(location.row, location.column, slot(closeItem) {
+                            onLeftClick { event, _ ->
+                                event.whoClicked.closeInventory()
+                            }
+                        })
+                    }
 
                     for (group in visibleGroups) {
                         if (group.guiPage != page) {
@@ -120,11 +121,9 @@ object CollectionsGUI {
                             continue
                         }
 
-                        setSlot(
-                            config.getInt("row"),
-                            config.getInt("column"),
-                            ConfigSlot(config)
-                        )
+                        for (location in config.getSlotLocations()) {
+                            setSlot(location.row, location.column, ConfigSlot(config))
+                        }
                     }
                 }
             }

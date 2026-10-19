@@ -19,6 +19,7 @@ import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.plugin
 import org.bukkit.entity.Player
+import com.willfp.eco.core.gui.getSlotLocations
 
 object CollectionDetailGUI {
 
@@ -51,40 +52,40 @@ object CollectionDetailGUI {
                 component.getPageOf(it.getCollectionTier(collection)).coerceAtLeast(1)
             }
 
-            setSlot(
-                plugin.configYml.getInt("gui.detail.info-icon.location.row"),
-                plugin.configYml.getInt("gui.detail.info-icon.location.column"),
-                centerSlot
-            )
+            for (location in plugin.configYml.getSlotLocations("gui.detail.info-icon")) {
+                setSlot(location.row, location.column, centerSlot)
+            }
 
             addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
             addPageChanger(plugin.configYml, "gui.detail.buttons.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)
 
-            setSlot(
-                plugin.configYml.getInt("gui.detail.buttons.back.location.row"),
-                plugin.configYml.getInt("gui.detail.buttons.back.location.column"),
-                slot(
-                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.back.material")))
-                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.back.name")))
-                        .build()
-                ) {
-                    onLeftClick { _, _, _, _ ->
-                        val group = collection.group
-                        if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
-                    }
-                }
-            )
-
-            if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
+            for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.back")) {
                 setSlot(
-                    plugin.configYml.getInt("gui.detail.buttons.rank.location.row"),
-                    plugin.configYml.getInt("gui.detail.buttons.rank.location.column"),
-                    buildRankSlot(player, collection)
+                    location.row,
+                    location.column,
+                    slot(
+                        ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.back.material")))
+                            .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.back.name")))
+                            .build()
+                    ) {
+                        onLeftClick { _, _, _, _ ->
+                            val group = collection.group
+                            if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
+                        }
+                    }
                 )
             }
 
+            if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
+                for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.rank")) {
+                    setSlot(location.row, location.column, buildRankSlot(player, collection))
+                }
+            }
+
             for (config in plugin.configYml.getSubsections("gui.detail.custom-slots")) {
-                setSlot(config.getInt("row"), config.getInt("column"), ConfigSlot(config))
+                for (location in config.getSlotLocations()) {
+                    setSlot(location.row, location.column, ConfigSlot(config))
+                }
             }
         }
 

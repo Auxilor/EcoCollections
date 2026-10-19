@@ -31,6 +31,7 @@ import com.exanthiax.ecocollections.plugin
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import com.willfp.eco.core.gui.getSlotLocations
 
 object GroupGUI {
 
@@ -72,19 +73,19 @@ object GroupGUI {
                     if (!bypassMode) {
                         val backMaterial = plugin.configYml.getString("gui.group.back.material")
                         val backName = plugin.configYml.getString("gui.group.back.name")
-                        val backRow = plugin.configYml.getInt("gui.group.back.location.row")
-                        val backColumn = plugin.configYml.getInt("gui.group.back.location.column")
 
                         val backItem = ItemStack(Material.matchMaterial(backMaterial.uppercase()) ?: Material.ARROW)
                         val backMeta = backItem.itemMeta
                         backMeta?.setDisplayName(StringUtils.format(backName))
                         backItem.itemMeta = backMeta
 
-                        setSlot(backRow, backColumn, slot(backItem) {
-                            onLeftClick { _, _, _, _ ->
-                                CollectionsGUI.open(player)
-                            }
-                        })
+                        for (location in plugin.configYml.getSlotLocations("gui.group.back")) {
+                            setSlot(location.row, location.column, slot(backItem) {
+                                onLeftClick { _, _, _, _ ->
+                                    CollectionsGUI.open(player)
+                                }
+                            })
+                        }
                     }
 
                     for (collection in collectionsInGroup) {
@@ -103,20 +104,16 @@ object GroupGUI {
                             continue
                         }
 
-                        setSlot(
-                            config.getInt("row"),
-                            config.getInt("column"),
-                            ConfigSlot(config)
-                        )
+                        for (location in config.getSlotLocations()) {
+                            setSlot(location.row, location.column, ConfigSlot(config))
+                        }
                     }
 
                     if (plugin.configYml.getBool("collections.manual-collect-mode.enabled")) {
                         val unlockedCollectionsInGroup = collectionsInGroup.filter { player.isCollectionUnlocked(it) }
-                        setSlot(
-                            plugin.configYml.getInt("gui.group.collect-all.location.row"),
-                            plugin.configYml.getInt("gui.group.collect-all.location.column"),
-                            buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
-                        )
+                        for (location in plugin.configYml.getSlotLocations("gui.group.collect-all")) {
+                            setSlot(location.row, location.column, buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup))
+                        }
                     }
                 }
             }
