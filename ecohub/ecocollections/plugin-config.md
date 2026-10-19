@@ -54,18 +54,21 @@ gui:
       location:
         row: 6
         column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     prev-page:
       item: arrow name:"&fPrevious Page"
       item-inactive: gray_stained_glass_pane name:"&7Previous Page" # Shown on the first page
       location:
         row: 6
         column: 4
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     next-page:
       item: arrow name:"&fNext Page"
       item-inactive: gray_stained_glass_pane name:"&7Next Page" # Shown on the last page
       location:
         row: 6
         column: 6
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     page-change-sound:
       enabled: true
       sound: ui.button.click
@@ -92,18 +95,21 @@ gui:
       location:
         row: 6
         column: 1
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     prev-page:
       item: arrow name:"&fPrevious Page"
       item-inactive: gray_stained_glass_pane name:"&7Previous Page"
       location:
         row: 6
         column: 4
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     next-page:
       item: arrow name:"&fNext Page"
       item-inactive: gray_stained_glass_pane name:"&7Next Page"
       location:
         row: 6
         column: 6
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     # Only shown when collections.manual-collect-mode.enabled is true.
     # Submits every matching item for every unlocked collection in the group at once.
     collect-all:
@@ -112,6 +118,7 @@ gui:
       location:
         row: 6
         column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     page-change-sound:
       enabled: true
       sound: ui.button.click
@@ -136,6 +143,7 @@ gui:
       location:
         row: 1
         column: 5
+      locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
     # Progression slots define where tier indicators appear and how they look.
     # Pattern: 0 = empty, 1-9 then a-z define the order tiers are placed (left-to-right, top-to-bottom).
     progression-slots:
@@ -192,18 +200,21 @@ gui:
         location:
           row: 6
           column: 4
+        locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       next-page:
         item: arrow name:"&fNext Page"
         item-inactive: gray_stained_glass_pane name:"&7Next Page"
         location:
           row: 6
           column: 6
+        locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       back:
         material: "barrier"
         name: "&fCollections"
         location:
           row: 6
           column: 1
+        locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       rank:
         enabled: true
         material: "player_head"
@@ -211,6 +222,7 @@ gui:
         location:
           row: 6
           column: 9
+        locations: [ ] # Optional list of row/column slots; if set, the button shows in each of them instead of row/column
       page-change-sound:
         enabled: true
         sound: ui.button.click
