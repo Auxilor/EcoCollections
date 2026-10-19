@@ -32,7 +32,7 @@ object CommandTop : Subcommand(
             && args.getOrNull(pageIndex)?.isBlank() == false
         ) {
             sender.sendMessage(
-                plugin.langYml.getMessage("commands.no-such-collection")
+                plugin.langYml.getFormattedString("commands.no-such-collection")
                     .replace("%id%", args[pageIndex])
             )
             return

@@ -17,7 +17,10 @@ object CommandCollections : PluginCommand(
     }
 
     override fun onExecute(sender: CommandSender, args: List<String>) {
-        if (sender !is Player) return
+        if (sender !is Player) {
+            sender.sendMessage(plugin.langYml.getMessage("not-player"))
+            return
+        }
         CollectionsGUI.open(sender)
     }
 
