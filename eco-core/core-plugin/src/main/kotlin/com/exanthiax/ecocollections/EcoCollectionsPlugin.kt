@@ -70,6 +70,13 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
 
         for (collection in Collections.values()) {
             collection.registerLeaderboard()
+
+            if (collection.group == null && CollectionGroups.values().isNotEmpty()) {
+                this.logger.warning(
+                    "Collection ${collection.id} is in group '${collection.groupId}', which does not " +
+                        "exist - it will not appear in any GUI"
+                )
+            }
         }
 
         totalsLeaderboard = Leaderboards.register(this, "total_tiers") { uuids ->
