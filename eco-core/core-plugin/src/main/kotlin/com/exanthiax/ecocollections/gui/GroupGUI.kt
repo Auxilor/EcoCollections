@@ -7,10 +7,9 @@ import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.onRightClick
 import com.willfp.eco.core.gui.onShiftRightClick
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.leaderboard.LeaderboardRank
@@ -40,9 +39,6 @@ object GroupGUI {
             .replace("%group_name%", group.name)
         val rows = plugin.configYml.getInt("gui.group.rows")
 
-        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.group.mask.materials"))
-        val maskPattern = plugin.configYml.getStrings("gui.group.mask.pattern").toTypedArray()
-
         val collectionsInGroup = CollectionsGUI.getCollectionsInGroup(group)
         val showLeaderboardRank = plugin.configYml.getBool("leaderboards.show-in-group-gui")
 
@@ -63,12 +59,7 @@ object GroupGUI {
 
             for (page in 1..maxPage) {
                 addPage(page) {
-                    setMask(
-                        FillerMask(
-                            maskItems,
-                            *maskPattern
-                        )
-                    )
+                    setMask(plugin.configYml, "gui.group")
 
                     if (!bypassMode) {
                         val backMaterial = plugin.configYml.getString("gui.group.back.material")

@@ -5,11 +5,10 @@ import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.page.PageChanger
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.exanthiax.ecocollections.api.isCollectionComplete
@@ -63,9 +62,6 @@ object CollectionsGUI {
         val titleTemplate = plugin.configYml.getString("gui.collections.title")
         val rows = plugin.configYml.getInt("gui.collections.rows")
 
-        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.collections.mask.materials"))
-        val maskPattern = plugin.configYml.getStrings("gui.collections.mask.pattern").toTypedArray()
-
         val closeMaterial = plugin.configYml.getString("gui.collections.close.material")
         val closeName = plugin.configYml.getString("gui.collections.close.name")
 
@@ -92,12 +88,7 @@ object CollectionsGUI {
 
             for (page in 1..maxPage) {
                 addPage(page) {
-                    setMask(
-                        FillerMask(
-                            maskItems,
-                            *maskPattern
-                        )
-                    )
+                    setMask(plugin.configYml, "gui.collections")
 
                     for (location in plugin.configYml.getSlotLocations("gui.collections.close")) {
                         setSlot(location.row, location.column, slot(closeItem) {

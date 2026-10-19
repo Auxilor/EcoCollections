@@ -4,10 +4,9 @@ import com.willfp.eco.core.gui.addPageChanger
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
 import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.items.builder.ItemStackBuilder
@@ -28,9 +27,6 @@ object CollectionDetailGUI {
             .replace("%collection_name%", collection.name)
         val rows = plugin.configYml.getInt("gui.detail.rows")
 
-        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.detail.mask.materials"))
-        val maskPattern = plugin.configYml.getStrings("gui.detail.mask.pattern").toTypedArray()
-
         val playerTier = player.getCollectionTier(collection)
         val playerCount = player.getCollectionCount(collection)
 
@@ -43,7 +39,7 @@ object CollectionDetailGUI {
         val theMenu = menu(rows) {
             title = formattedTitle
 
-            setMask(FillerMask(maskItems, *maskPattern))
+            setMask(plugin.configYml, "gui.detail")
 
             maxPages(component.pages)
             addComponent(1, 1, component)
