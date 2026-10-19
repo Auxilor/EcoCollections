@@ -41,11 +41,11 @@ object CollectionDetailGUI {
 
             setMask(plugin.configYml, "gui.detail")
 
-            maxPages(component.pages)
+            maxPages(component.menuPages)
             addComponent(1, 1, component)
 
             defaultPage {
-                component.getPageOf(it.getCollectionTier(collection)).coerceAtLeast(1)
+                component.getMenuPageOf(it.getCollectionTier(collection))
             }
 
             for (location in plugin.configYml.getSlotLocations("gui.detail.info-icon")) {
