@@ -79,6 +79,21 @@ fun Player.tryUnlockCollection(collection: Collection): Boolean {
     if (collection.hasUnlockConditions && !collection.unlockConditions.areMet(this.toDispatcher(), EmptyProvidedHolder)) {
         return false
     }
+    return this.forceUnlockCollection(collection)
+}
+
+/**
+ * Unlock [collection] without checking its unlock conditions.
+ *
+ * Still fires [PlayerCollectionUnlockEvent] and respects its cancellation, so every unlock path -
+ * conditions, effects and commands alike - can be vetoed by the same listener.
+ *
+ * @return true if the collection is unlocked afterwards.
+ */
+fun Player.forceUnlockCollection(collection: Collection): Boolean {
+    if (this.profile.read(collection.unlockedKey)) {
+        return true
+    }
     val event = PlayerCollectionUnlockEvent(this, collection)
     Bukkit.getPluginManager().callEvent(event)
     if (event.isCancelled) {
