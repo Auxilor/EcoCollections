@@ -22,9 +22,11 @@ class TierProgressionComponent(
 
     override val maxLevel = collection.maxTier
 
+    /** Page count with at least one slot per page, as before the eco level component. */
     val menuPages: Int
         get() = ceil(maxLevel.toDouble() / levelsPerPage.coerceAtLeast(1)).toInt().coerceAtLeast(1)
 
+    /** Page of [tier] with at least one slot per page, as before the eco level component. */
     fun getMenuPageOf(tier: Int): Int =
         ceil(tier.toDouble() / levelsPerPage.coerceAtLeast(1)).toInt().coerceAtLeast(1)
 
