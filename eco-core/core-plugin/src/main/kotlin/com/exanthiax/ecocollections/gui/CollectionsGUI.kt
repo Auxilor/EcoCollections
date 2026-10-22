@@ -81,7 +81,9 @@ object CollectionsGUI {
                 addPage(page) {
                     setMask(plugin.configYml, "gui.collections")
 
-                    addComponent(closeButton(plugin.configYml.getSubsection("gui.collections.close"), invalidItem = "barrier"))
+                    addComponent(
+                        closeButton(plugin.configYml.getSubsection("gui.collections.close"), invalidItem = "barrier")
+                    )
 
                     for (group in visibleGroups) {
                         if (group.guiPage != page) {

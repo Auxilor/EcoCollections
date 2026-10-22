@@ -34,62 +34,65 @@ class TierProgressionComponent(
         LevelState.of(level, player.getCollectionTier(collection))
 
     override fun getLevelItem(player: Player, menu: Menu, level: Int, levelState: LevelState): ItemStack {
-        val playerCount = player.getCollectionCount(collection)
-        val requirement = collection.tierRequirements[level - 1]
-
-        val configKey = when (levelState) {
-            LevelState.UNLOCKED -> if (level == collection.maxTier) {
-                "gui.detail.progression-slots.completed"
-            } else {
-                "gui.detail.progression-slots.reached"
-            }
-
-            LevelState.IN_PROGRESS -> "gui.detail.progression-slots.in-progress"
-            LevelState.LOCKED -> "gui.detail.progression-slots.locked"
-        }
+        val configKey = getConfigKey(level, levelState)
 
         val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
-        val meta = tierItem.itemMeta
+        val meta = tierItem.itemMeta ?: return tierItem
 
-        if (meta != null) {
-            val percent = if (requirement > 0) {
-                (playerCount / requirement * 100).coerceIn(0.0, 100.0).toInt().toString()
-            } else {
-                "100"
-            }
+        val placeholders = getPlaceholders(player, level)
 
-            fun String.applyPlaceholders() = this
-                .replace("%tier%", level.toString())
-                .replace("%tier_numeral%", level.toNumeral())
-                .replace("%count%", playerCount.toLong().toString())
-                .replace("%required%", requirement.toLong().toString())
-                .replace("%percent%", percent)
-                .replace("%collection_name%", collection.name)
+        meta.setDisplayName(
+            StringUtils.format(plugin.configYml.getString("$configKey.name").applyPlaceholders(placeholders))
+        )
 
-            meta.setDisplayName(
-                StringUtils.format(plugin.configYml.getString("$configKey.name").applyPlaceholders())
-            )
-
-            val rewardMessages = collection.getRewardMessages(level).map {
-                StringUtils.format(it.applyPlaceholders())
-            }
-
-            val lore = plugin.configYml.getStrings("$configKey.lore").flatMap { line ->
-                if (line.contains("%rewards%")) {
-                    if (rewardMessages.isEmpty()) emptyList()
-                    else {
-                        val margin = line.length - line.trimStart().length
-                        rewardMessages.map { " ".repeat(margin) + it }
-                    }
-                } else {
-                    listOf(StringUtils.format(line.applyPlaceholders()))
-                }
-            }
-
-            meta.lore = lore
-            tierItem.itemMeta = meta
+        val rewardMessages = collection.getRewardMessages(level).map {
+            StringUtils.format(it.applyPlaceholders(placeholders))
         }
+
+        meta.lore = plugin.configYml.getStrings("$configKey.lore").flatMap { line ->
+            if (line.contains("%rewards%")) {
+                val margin = line.length - line.trimStart().length
+                rewardMessages.map { " ".repeat(margin) + it }
+            } else {
+                listOf(StringUtils.format(line.applyPlaceholders(placeholders)))
+            }
+        }
+        tierItem.itemMeta = meta
 
         return tierItem
     }
+
+    private fun getConfigKey(level: Int, levelState: LevelState): String = when (levelState) {
+        LevelState.UNLOCKED -> if (level == collection.maxTier) {
+            "gui.detail.progression-slots.completed"
+        } else {
+            "gui.detail.progression-slots.reached"
+        }
+
+        LevelState.IN_PROGRESS -> "gui.detail.progression-slots.in-progress"
+        LevelState.LOCKED -> "gui.detail.progression-slots.locked"
+    }
+
+    private fun getPlaceholders(player: Player, level: Int): List<Pair<String, String>> {
+        val playerCount = player.getCollectionCount(collection)
+        val requirement = collection.tierRequirements[level - 1]
+
+        val percent = if (requirement > 0) {
+            (playerCount / requirement * 100).coerceIn(minimumValue = 0.0, maximumValue = 100.0).toInt().toString()
+        } else {
+            "100"
+        }
+
+        return listOf(
+            "%tier%" to level.toString(),
+            "%tier_numeral%" to level.toNumeral(),
+            "%count%" to playerCount.toLong().toString(),
+            "%required%" to requirement.toLong().toString(),
+            "%percent%" to percent,
+            "%collection_name%" to collection.name
+        )
+    }
+
+    private fun String.applyPlaceholders(placeholders: List<Pair<String, String>>): String =
+        placeholders.fold(this) { text, (placeholder, value) -> text.replace(oldValue = placeholder, newValue = value) }
 }

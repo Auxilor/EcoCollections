@@ -63,7 +63,10 @@ object GroupGUI {
 
                     if (!bypassMode) {
                         addComponent(
-                            ConfigButton(plugin.configYml.getSubsection("gui.group.back"), invalidItem = "arrow") { _, _, _, _ ->
+                            ConfigButton(
+                                plugin.configYml.getSubsection("gui.group.back"),
+                                invalidItem = "arrow"
+                            ) { _, _, _, _ ->
                                 CollectionsGUI.open(player)
                             }
                         )
@@ -91,7 +94,11 @@ object GroupGUI {
                     if (plugin.configYml.getBool("collections.manual-collect-mode.enabled")) {
                         val unlockedCollectionsInGroup = collectionsInGroup.filter { player.isCollectionUnlocked(it) }
                         for (location in plugin.configYml.getSlotLocations("gui.group.collect-all")) {
-                            setSlot(location.row, location.column, buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup))
+                            setSlot(
+                                location.row,
+                                location.column,
+                                buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
+                            )
                         }
                     }
                 }
