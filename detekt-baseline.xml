@@ -1,0 +1,139 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>BracesOnIfStatements:TierProgressionComponent.kt:if</ID>
+    <ID>BracesOnWhenStatements:SubcommandReset.kt:SubcommandReset$when</ID>
+    <ID>BracesOnWhenStatements:SubcommandSet.kt:SubcommandSet$when</ID>
+    <ID>C002:CollectionAPI.kt:collection.leaderboard?.refresh()</ID>
+    <ID>C002:SubcommandLeaderboard.kt:SubcommandLeaderboard$collection.leaderboard?.refresh()</ID>
+    <ID>C002:SubcommandLeaderboard.kt:SubcommandLeaderboard$each.leaderboard?.refresh()</ID>
+    <ID>C002:SubcommandLeaderboard.kt:SubcommandLeaderboard$ecoCollections.totalsLeaderboard?.refresh()</ID>
+    <ID>CognitiveComplexMethod:Collection.kt:Collection$private fun registerPlaceholders</ID>
+    <ID>CognitiveComplexMethod:CollectionsGUI.kt:CollectionsGUI$private fun openRootGUI</ID>
+    <ID>CognitiveComplexMethod:GroupGUI.kt:GroupGUI$fun open</ID>
+    <ID>CognitiveComplexMethod:GroupGUI.kt:GroupGUI$private fun buildUnlockedCollectionSlot: Slot</ID>
+    <ID>CognitiveComplexMethod:GroupGUI.kt:GroupGUI$private fun removeManualCollectItemsFromInventory: Int</ID>
+    <ID>CyclomaticComplexMethod:GroupGUI.kt:GroupGUI$private fun removeManualCollectItemsFromInventory: Int</ID>
+    <ID>DocumentationOverPrivateFunction:CollectionAPI.kt:private fun triggerTierUp</ID>
+    <ID>ExpressionBodySyntax:CollectionAPI.kt:return this.profile.read(collection.countKey)</ID>
+    <ID>ExpressionBodySyntax:CollectionAPI.kt:return this.profile.read(collection.doneKey)</ID>
+    <ID>ExpressionBodySyntax:CollectionAPI.kt:return this.profile.read(collection.tierKey)</ID>
+    <ID>ExpressionBodySyntax:CommandCollections.kt:CommandCollections$return emptyList()</ID>
+    <ID>ExpressionBodySyntax:CommandEcoCollections.kt:CommandEcoCollections$return emptyList()</ID>
+    <ID>FunctionNameMaxLength:GroupGUI.kt:GroupGUI$private fun removeItemAndGiveCollectionCount</ID>
+    <ID>FunctionNameMaxLength:GroupGUI.kt:GroupGUI$private fun removeManualCollectItemsFromInventory: Int</ID>
+    <ID>FunctionNameMaxLength:GroupGUI.kt:GroupGUI$private fun substituteCollectionPlaceholders: String</ID>
+    <ID>IC002:Collection.kt:Collection$// Nothing at all is registered when disabled -- no leaderboard, and no placeholders. A</ID>
+    <ID>IC002:Collection.kt:Collection$// Players with no progress have always been excluded from collection leaderboards, which</ID>
+    <ID>IC002:CollectionAPI.kt:// %tier% and %tier_numeral% already resolved in these chains, but from the config</ID>
+    <ID>IC002:CollectionAPI.kt:// %tier%, %tier_numeral%, any remaining %previous_tier*%, and the %tier_N% offsets -</ID>
+    <ID>IC002:CollectionAPI.kt:// An explicitly passed previousTier wins, since it is a parameter in its own right rather</ID>
+    <ID>IC002:CollectionAPI.kt:// Deliberately fires no tier-up events - this is an admin set, not organic progression.</ID>
+    <ID>IC002:CollectionAPI.kt:// Stop the ladder here. `continue` used to let a later iteration write a higher</ID>
+    <ID>IC002:CollectionAPI.kt:// value is the tier reached. TriggerCollectionTierUp declares</ID>
+    <ID>IC002:CommandTop.kt:CommandTop$// An empty leaderboard still shows its header and footer, with the universal</ID>
+    <ID>IC002:CommandTop.kt:CommandTop$// With no collection named, the first argument is the page and the totals leaderboard is</ID>
+    <ID>IC002:EcoCollectionsPlugin.kt:EcoCollectionsPlugin$// Config categories are reloaded at LifecyclePosition.START, which eco runs before</ID>
+    <ID>IC002:EcoCollectionsPlugin.kt:EcoCollectionsPlugin$// One bulk read per collection, summed - not one profile read per player per</ID>
+    <ID>IC002:EcoCollectionsPlugin.kt:EcoCollectionsPlugin$// Registered once for every collection at once: the lookup resolves the ID when the</ID>
+    <ID>LongMethod:Collection.kt:Collection$private fun registerPlaceholders</ID>
+    <ID>LongMethod:GroupGUI.kt:GroupGUI$fun open</ID>
+    <ID>LongMethod:SubcommandSet.kt:SubcommandSet$override fun onExecute</ID>
+    <ID>LongParameterList:CollectionAPI.kt:private fun applyPlaceholders: String</ID>
+    <ID>LongParameterList:GroupGUI.kt:GroupGUI$private fun buildUnlockedCollectionSlot: Slot</ID>
+    <ID>LongParameterList:GroupGUI.kt:GroupGUI$private fun removeItemAndGiveCollectionCount</ID>
+    <ID>LoopWithTooManyJumpStatements:GroupGUI.kt:GroupGUI$for</ID>
+    <ID>LoopWithTooManyJumpStatements:TierProgressionComponent.kt:TierProgressionComponent$for</ID>
+    <ID>MagicNumber:Collection.kt:Collection$100</ID>
+    <ID>MagicNumber:Collection.kt:Collection$100.0</ID>
+    <ID>MagicNumber:CollectionAPI.kt:10</ID>
+    <ID>MagicNumber:CollectionAPI.kt:40</ID>
+    <ID>MagicNumber:CommandTop.kt:CommandTop$3</ID>
+    <ID>MagicNumber:CommandTop.kt:CommandTop$4</ID>
+    <ID>MagicNumber:CommandTop.kt:CommandTop$5</ID>
+    <ID>MagicNumber:GroupGUI.kt:GroupGUI$10</ID>
+    <ID>MagicNumber:GroupGUI.kt:GroupGUI$40</ID>
+    <ID>MagicNumber:SubcommandGive.kt:SubcommandGive$3</ID>
+    <ID>MagicNumber:SubcommandSet.kt:SubcommandSet$3</ID>
+    <ID>MagicNumber:SubcommandSet.kt:SubcommandSet$4</ID>
+    <ID>MaxLineLength:CollectionAPI.kt:if</ID>
+    <ID>MaxLineLength:CollectionCountAccumulator.kt:if (plugin.configYml.getBool("collections.prevent-while-creative") &amp;&amp; gameMode in setOf(GameMode.CREATIVE, GameMode.SPECTATOR)) return false</ID>
+    <ID>MaxLineLength:CollectionDetailGUI.kt:CollectionDetailGUI$addPageChanger(plugin.configYml, "gui.detail.buttons.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)</ID>
+    <ID>MaxLineLength:CollectionDetailGUI.kt:CollectionDetailGUI$addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)</ID>
+    <ID>MaxLineLength:CollectionDetailGUI.kt:CollectionDetailGUI$val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.detail.buttons.page-change-sound"))</ID>
+    <ID>MaxLineLength:CollectionsGUI.kt:CollectionsGUI$addPageChanger(plugin.configYml, "gui.collections.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)</ID>
+    <ID>MaxLineLength:CollectionsGUI.kt:CollectionsGUI$addPageChanger(plugin.configYml, "gui.collections.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)</ID>
+    <ID>MaxLineLength:CommandEcoCollections.kt:CommandEcoCollections$sender.sendMessage(StringUtils.format("&amp;eEcoCollections &amp;7- Subcommands: give, set, reset, unlock, reload, leaderboard"))</ID>
+    <ID>MaxLineLength:ConditionCollectionTierAtLeast.kt:ConditionCollectionTierAtLeast$override val description = "Passes when the player's tier in the specified collection is at or above the given tier."</ID>
+    <ID>MaxLineLength:GroupGUI.kt:GroupGUI$if (collection.hasConditions &amp;&amp; !collection.conditions.areMet(player.toDispatcher(), EmptyProvidedHolder)) continue</ID>
+    <ID>MaxLineLength:GroupGUI.kt:GroupGUI$val remainingCap = if (maxCount != null) (maxCount - currentCount - removed).toInt().coerceAtLeast(0) else Int.MAX_VALUE</ID>
+    <ID>MaxLineLength:SubcommandReload.kt:SubcommandReload$plugin.langYml.prefix</ID>
+    <ID>MaxLineLength:SubcommandSet.kt:SubcommandSet$sender.sendMessage(StringUtils.format("&amp;cUsage: /ecocollections set &lt;count|tier&gt; &lt;player&gt; &lt;collection&gt; &lt;value&gt;"))</ID>
+    <ID>MultilineLambdaItParameter:Collection.kt:Collection${ Counters.compile( it, ViolationContext(plugin, "Collection $id count-methods") ) }</ID>
+    <ID>NoNameShadowing:GroupGUI.kt:GroupGUI$page</ID>
+    <ID>NullableToStringCall:GroupGUI.kt:GroupGUI$rank.percent.toString()</ID>
+    <ID>NullableToStringCall:GroupGUI.kt:GroupGUI$rank.rank.toString()</ID>
+    <ID>PF012:EcoCollectionsPlugin.kt:EcoCollectionsPlugin$values()</ID>
+    <ID>PF012:SubcommandLeaderboard.kt:SubcommandLeaderboard$values()</ID>
+    <ID>PF012:SubcommandReset.kt:SubcommandReset$values()</ID>
+    <ID>ReturnCount:CollectionAPI.kt:fun Player.forceUnlockCollection: Boolean</ID>
+    <ID>ReturnCount:CollectionAPI.kt:fun Player.giveCollectionCount</ID>
+    <ID>ReturnCount:CollectionAPI.kt:fun Player.tryUnlockCollection: Boolean</ID>
+    <ID>ReturnCount:CollectionCountAccumulator.kt:fun Player.canGainCollectionProgress: Boolean</ID>
+    <ID>ReturnCount:CommandTop.kt:CommandTop$override fun tabComplete: List&lt;String&gt;</ID>
+    <ID>ReturnCount:ConditionCollectionComplete.kt:ConditionCollectionComplete$override fun isMet: Boolean</ID>
+    <ID>ReturnCount:ConditionCollectionTierAtLeast.kt:ConditionCollectionTierAtLeast$override fun isMet: Boolean</ID>
+    <ID>ReturnCount:ConditionCollectionUnlocked.kt:ConditionCollectionUnlocked$override fun isMet: Boolean</ID>
+    <ID>ReturnCount:EffectGiveCollectionCount.kt:EffectGiveCollectionCount$override fun onTrigger: Boolean</ID>
+    <ID>ReturnCount:EffectUnlockCollection.kt:EffectUnlockCollection$override fun onTrigger: Boolean</ID>
+    <ID>ReturnCount:GroupGUI.kt:GroupGUI$private fun buildCollectionSlot: Slot?</ID>
+    <ID>ReturnCount:GroupGUI.kt:GroupGUI$private fun removeItemAndGiveCollectionCount</ID>
+    <ID>ReturnCount:GroupGUI.kt:GroupGUI$private fun removeManualCollectItemsFromInventory: Int</ID>
+    <ID>ReturnCount:SubcommandGive.kt:SubcommandGive$override fun onExecute</ID>
+    <ID>ReturnCount:SubcommandReset.kt:SubcommandReset$override fun onExecute</ID>
+    <ID>ReturnCount:SubcommandSet.kt:SubcommandSet$override fun onExecute</ID>
+    <ID>ReturnCount:SubcommandUnlock.kt:SubcommandUnlock$override fun onExecute</ID>
+    <ID>ReturnCount:TierProgressionComponent.kt:TierProgressionComponent$override fun getSlotAt: Slot?</ID>
+    <ID>SpacingAfterPackageAndImports:EcoCollectionsPlugin.kt: </ID>
+    <ID>SpreadOperator:CollectionDetailGUI.kt:CollectionDetailGUI$(maskItems, *maskPattern)</ID>
+    <ID>SpreadOperator:CollectionsGUI.kt:CollectionsGUI$( maskItems, *maskPattern )</ID>
+    <ID>SpreadOperator:GroupGUI.kt:GroupGUI$( maskItems, *maskPattern )</ID>
+    <ID>TooManyFunctions:CollectionAPI.kt:com.exanthiax.ecocollections.api.CollectionAPI.kt</ID>
+    <ID>TooManyFunctions:GroupGUI.kt:GroupGUI</ID>
+    <ID>UnnamedParameterUse:Collection.kt:Collection$coerceIn</ID>
+    <ID>UnnamedParameterUse:Collection.kt:Collection$registerStandardPlaceholders</ID>
+    <ID>UnnamedParameterUse:CollectionAPI.kt:PlayerCollectionTierUpEvent</ID>
+    <ID>UnnamedParameterUse:CollectionAPI.kt:coerceIn</ID>
+    <ID>UnnamedParameterUse:CollectionAPI.kt:inject</ID>
+    <ID>UnnamedParameterUse:CollectionAPI.kt:replace</ID>
+    <ID>UnnamedParameterUse:CollectionAPI.kt:sendTierUpMessages</ID>
+    <ID>UnnamedParameterUse:CollectionDetailGUI.kt:CollectionDetailGUI$coerceIn</ID>
+    <ID>UnnamedParameterUse:CollectionDetailGUI.kt:CollectionDetailGUI$replace</ID>
+    <ID>UnnamedParameterUse:CollectionsGUI.kt:CollectionsGUI$replace</ID>
+    <ID>UnnamedParameterUse:CommandTop.kt:CommandTop$replace</ID>
+    <ID>UnnamedParameterUse:ConditionCollectionComplete.kt:ConditionCollectionComplete$require</ID>
+    <ID>UnnamedParameterUse:ConditionCollectionTierAtLeast.kt:ConditionCollectionTierAtLeast$require</ID>
+    <ID>UnnamedParameterUse:ConditionCollectionUnlocked.kt:ConditionCollectionUnlocked$require</ID>
+    <ID>UnnamedParameterUse:EffectGiveCollectionCount.kt:EffectGiveCollectionCount$require</ID>
+    <ID>UnnamedParameterUse:EffectUnlockCollection.kt:EffectUnlockCollection$require</ID>
+    <ID>UnnamedParameterUse:GroupGUI.kt:GroupGUI$coerceIn</ID>
+    <ID>UnnamedParameterUse:GroupGUI.kt:GroupGUI$minOf</ID>
+    <ID>UnnamedParameterUse:GroupGUI.kt:GroupGUI$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandGive.kt:SubcommandGive$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandLeaderboard.kt:SubcommandLeaderboard$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandReload.kt:SubcommandReload$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandReset.kt:SubcommandReset$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandSet.kt:SubcommandSet$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandUnlock.kt:SubcommandUnlock$replace</ID>
+    <ID>UnnamedParameterUse:SubcommandUnlock.kt:SubcommandUnlock$sendResult</ID>
+    <ID>UnnamedParameterUse:TierProgressionComponent.kt:TierProgressionComponent$GUIPosition</ID>
+    <ID>UnnamedParameterUse:TierProgressionComponent.kt:coerceIn</ID>
+    <ID>UnnamedParameterUse:TierProgressionComponent.kt:replace</ID>
+    <ID>UnnecessaryParentheses:CollectionAPI.kt:(previousTier + 1)</ID>
+    <ID>UnnecessaryParentheses:CommandTop.kt:CommandTop$(offset + 1)</ID>
+    <ID>UnnecessaryParentheses:CommandTop.kt:CommandTop$(offset + 10)</ID>
+    <ID>UnusedImport:CollectionAPI.kt:import com.willfp.eco.util.StringUtils</ID>
+    <ID>UnusedImport:CollectionAPI.kt:import com.willfp.eco.util.toNiceString</ID>
+  </CurrentIssues>
+</SmellBaseline>

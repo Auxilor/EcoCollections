@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "findings": [
+    {
+      "code": "U003",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocollections/api/event/PlayerCollectionTierUpEvent.kt",
+      "message": "Unused property `previousTier`"
+    },
+    {
+      "code": "U002",
+      "path": "eco-core/core-plugin/src/main/kotlin/com/exanthiax/ecocollections/collections/Collections.kt",
+      "message": "Unused function `getTop`"
+    }
+  ]
+}
