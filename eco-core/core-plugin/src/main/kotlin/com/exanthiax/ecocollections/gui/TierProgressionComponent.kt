@@ -4,117 +4,95 @@ import com.exanthiax.ecocollections.api.getCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.plugin
+import com.willfp.eco.core.gui.component.LevelComponent
+import com.willfp.eco.core.gui.component.LevelState
 import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
-import com.willfp.ecomponent.AutofillComponent
-import com.willfp.ecomponent.GUIPosition
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import kotlin.math.ceil
-
-private val progressionOrder =
-    "123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray()
 
 class TierProgressionComponent(
     private val collection: Collection
-) : AutofillComponent() {
+) : LevelComponent() {
 
-    private val progressionSlots: Map<GUIPosition, Int>
-    val slotsPerPage: Int
-    val pages: Int
+    override val pattern: List<String> = plugin.configYml.getStrings("gui.detail.progression-slots.pattern")
 
-    init {
-        val pattern = plugin.configYml.getStrings("gui.detail.progression-slots.pattern")
-        val slots = mutableMapOf<GUIPosition, Int>()
+    override val maxLevel = collection.maxTier
 
-        var x = 0
-        for (row in pattern) {
-            x++
-            var y = 0
-            for (char in row) {
-                y++
-                if (char == '0') continue
-                val pos = progressionOrder.indexOf(char)
-                if (pos == -1) continue
-                slots[GUIPosition(x, y)] = pos + 1
-            }
+    /** Page count with at least one slot per page, as before the eco level component. */
+    val menuPages: Int
+        get() = ceil(maxLevel.toDouble() / levelsPerPage.coerceAtLeast(1)).toInt().coerceAtLeast(1)
+
+    /** Page of [tier] with at least one slot per page, as before the eco level component. */
+    fun getMenuPageOf(tier: Int): Int =
+        ceil(tier.toDouble() / levelsPerPage.coerceAtLeast(1)).toInt().coerceAtLeast(1)
+
+    override fun getLevelState(player: Player, level: Int): LevelState =
+        LevelState.of(level, player.getCollectionTier(collection))
+
+    override fun getLevelItem(player: Player, menu: Menu, level: Int, levelState: LevelState): ItemStack {
+        val configKey = getConfigKey(level, levelState)
+
+        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
+        val meta = tierItem.itemMeta ?: return tierItem
+
+        val placeholders = getPlaceholders(player, level)
+
+        meta.setDisplayName(
+            StringUtils.format(plugin.configYml.getString("$configKey.name").applyPlaceholders(placeholders))
+        )
+
+        val rewardMessages = collection.getRewardMessages(level).map {
+            StringUtils.format(it.applyPlaceholders(placeholders))
         }
 
-        progressionSlots = slots
-        slotsPerPage = slots.size.coerceAtLeast(1)
-        pages = ceil(collection.maxTier.toDouble() / slotsPerPage).toInt().coerceAtLeast(1)
+        meta.lore = plugin.configYml.getStrings("$configKey.lore").flatMap { line ->
+            if (line.contains("%rewards%")) {
+                val margin = line.length - line.trimStart().length
+                rewardMessages.map { " ".repeat(margin) + it }
+            } else {
+                listOf(StringUtils.format(line.applyPlaceholders(placeholders)))
+            }
+        }
+        tierItem.itemMeta = meta
+
+        return tierItem
     }
 
-    fun getPageOf(tier: Int): Int =
-        ceil(tier.toDouble() / slotsPerPage).toInt().coerceAtLeast(1)
+    private fun getConfigKey(level: Int, levelState: LevelState): String = when (levelState) {
+        LevelState.UNLOCKED -> if (level == collection.maxTier) {
+            "gui.detail.progression-slots.completed"
+        } else {
+            "gui.detail.progression-slots.reached"
+        }
 
-    override fun getSlotAt(row: Int, column: Int, player: Player, menu: Menu): Slot? {
-        val posIndex = progressionSlots[GUIPosition(row, column)] ?: return null
-        val tierIndex = (menu.getPage(player) - 1) * slotsPerPage + posIndex
-
-        if (tierIndex > collection.maxTier) return null
-
-        return buildTierSlot(player, collection, tierIndex)
-    }
-}
-
-private fun buildTierSlot(player: Player, collection: Collection, tier: Int): Slot {
-    val playerTier = player.getCollectionTier(collection)
-    val playerCount = player.getCollectionCount(collection)
-    val isMaxTier = tier == collection.maxTier
-    val requirement = collection.tierRequirements[tier - 1]
-
-    val configKey = when {
-        isMaxTier && playerTier >= tier -> "gui.detail.progression-slots.completed"
-        playerTier >= tier -> "gui.detail.progression-slots.reached"
-        tier == playerTier + 1 -> "gui.detail.progression-slots.in-progress"
-        else -> "gui.detail.progression-slots.locked"
+        LevelState.IN_PROGRESS -> "gui.detail.progression-slots.in-progress"
+        LevelState.LOCKED -> "gui.detail.progression-slots.locked"
     }
 
-    val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
-    val meta = tierItem.itemMeta
+    private fun getPlaceholders(player: Player, level: Int): List<Pair<String, String>> {
+        val playerCount = player.getCollectionCount(collection)
+        val requirement = collection.tierRequirements[level - 1]
 
-    if (meta != null) {
         val percent = if (requirement > 0) {
-            (playerCount / requirement * 100).coerceIn(0.0, 100.0).toInt().toString()
+            (playerCount / requirement * 100).coerceIn(minimumValue = 0.0, maximumValue = 100.0).toInt().toString()
         } else {
             "100"
         }
 
-        fun String.applyPlaceholders() = this
-            .replace("%tier%", tier.toString())
-            .replace("%tier_numeral%", tier.toNumeral())
-            .replace("%count%", playerCount.toLong().toString())
-            .replace("%required%", requirement.toLong().toString())
-            .replace("%percent%", percent)
-            .replace("%collection_name%", collection.name)
-
-        meta.setDisplayName(
-            StringUtils.format(plugin.configYml.getString("$configKey.name").applyPlaceholders())
+        return listOf(
+            "%tier%" to level.toString(),
+            "%tier_numeral%" to level.toNumeral(),
+            "%count%" to playerCount.toLong().toString(),
+            "%required%" to requirement.toLong().toString(),
+            "%percent%" to percent,
+            "%collection_name%" to collection.name
         )
-
-        val rewardMessages = collection.getRewardMessages(tier).map {
-            StringUtils.format(it.applyPlaceholders())
-        }
-
-        val lore = plugin.configYml.getStrings("$configKey.lore").flatMap { line ->
-            if (line.contains("%rewards%")) {
-                if (rewardMessages.isEmpty()) emptyList()
-                else {
-                    val margin = line.length - line.trimStart().length
-                    rewardMessages.map { " ".repeat(margin) + it }
-                }
-            } else {
-                listOf(StringUtils.format(line.applyPlaceholders()))
-            }
-        }
-
-        meta.lore = lore
-        tierItem.itemMeta = meta
     }
 
-    return slot(tierItem)
+    private fun String.applyPlaceholders(placeholders: List<Pair<String, String>>): String =
+        placeholders.fold(this) { text, (placeholder, value) -> text.replace(oldValue = placeholder, newValue = value) }
 }

@@ -1,16 +1,17 @@
 package com.exanthiax.ecocollections.gui
 
+import com.willfp.eco.core.gui.addCustomSlot
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
+import com.willfp.eco.core.gui.component.ConfigButton
+import com.willfp.eco.core.gui.component.addComponent
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.onRightClick
 import com.willfp.eco.core.gui.onShiftRightClick
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
 import com.willfp.eco.core.leaderboard.LeaderboardRank
@@ -28,9 +29,8 @@ import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.collections.canGainCollectionProgress
 import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.plugin
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
+import com.willfp.eco.core.gui.getSlotLocations
 
 object GroupGUI {
 
@@ -38,9 +38,6 @@ object GroupGUI {
         val titleTemplate = plugin.configYml.getString("gui.group.title")
             .replace("%group_name%", group.name)
         val rows = plugin.configYml.getInt("gui.group.rows")
-
-        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.group.mask.materials"))
-        val maskPattern = plugin.configYml.getStrings("gui.group.mask.pattern").toTypedArray()
 
         val collectionsInGroup = CollectionsGUI.getCollectionsInGroup(group)
         val showLeaderboardRank = plugin.configYml.getBool("leaderboards.show-in-group-gui")
@@ -62,29 +59,17 @@ object GroupGUI {
 
             for (page in 1..maxPage) {
                 addPage(page) {
-                    setMask(
-                        FillerMask(
-                            maskItems,
-                            *maskPattern
-                        )
-                    )
+                    setMask(plugin.configYml, "gui.group")
 
                     if (!bypassMode) {
-                        val backMaterial = plugin.configYml.getString("gui.group.back.material")
-                        val backName = plugin.configYml.getString("gui.group.back.name")
-                        val backRow = plugin.configYml.getInt("gui.group.back.location.row")
-                        val backColumn = plugin.configYml.getInt("gui.group.back.location.column")
-
-                        val backItem = ItemStack(Material.matchMaterial(backMaterial.uppercase()) ?: Material.ARROW)
-                        val backMeta = backItem.itemMeta
-                        backMeta?.setDisplayName(StringUtils.format(backName))
-                        backItem.itemMeta = backMeta
-
-                        setSlot(backRow, backColumn, slot(backItem) {
-                            onLeftClick { _, _, _, _ ->
+                        addComponent(
+                            ConfigButton(
+                                plugin.configYml.getSubsection("gui.group.back"),
+                                invalidItem = "arrow"
+                            ) { _, _, _, _ ->
                                 CollectionsGUI.open(player)
                             }
-                        })
+                        )
                     }
 
                     for (collection in collectionsInGroup) {
@@ -103,20 +88,18 @@ object GroupGUI {
                             continue
                         }
 
-                        setSlot(
-                            config.getInt("row"),
-                            config.getInt("column"),
-                            ConfigSlot(config)
-                        )
+                        addCustomSlot(config)
                     }
 
                     if (plugin.configYml.getBool("collections.manual-collect-mode.enabled")) {
                         val unlockedCollectionsInGroup = collectionsInGroup.filter { player.isCollectionUnlocked(it) }
-                        setSlot(
-                            plugin.configYml.getInt("gui.group.collect-all.location.row"),
-                            plugin.configYml.getInt("gui.group.collect-all.location.column"),
-                            buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
-                        )
+                        for (location in plugin.configYml.getSlotLocations("gui.group.collect-all")) {
+                            setSlot(
+                                location.row,
+                                location.column,
+                                buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
+                            )
+                        }
                     }
                 }
             }

@@ -1,16 +1,15 @@
 package com.exanthiax.ecocollections.gui
 
+import com.willfp.eco.core.gui.addCustomSlots
 import com.willfp.eco.core.gui.addPageChanger
+import com.willfp.eco.core.gui.component.ConfigButton
+import com.willfp.eco.core.gui.component.addComponent
 import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.gui.slot.Slot
 import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.builder.ItemStackBuilder
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.willfp.eco.util.toNumeral
@@ -19,6 +18,7 @@ import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.plugin
 import org.bukkit.entity.Player
+import com.willfp.eco.core.gui.getSlotLocations
 
 object CollectionDetailGUI {
 
@@ -26,9 +26,6 @@ object CollectionDetailGUI {
         val titleTemplate = plugin.configYml.getString("gui.detail.title")
             .replace("%collection_name%", collection.name)
         val rows = plugin.configYml.getInt("gui.detail.rows")
-
-        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.detail.mask.materials"))
-        val maskPattern = plugin.configYml.getStrings("gui.detail.mask.pattern").toTypedArray()
 
         val playerTier = player.getCollectionTier(collection)
         val playerCount = player.getCollectionCount(collection)
@@ -42,50 +39,36 @@ object CollectionDetailGUI {
         val theMenu = menu(rows) {
             title = formattedTitle
 
-            setMask(FillerMask(maskItems, *maskPattern))
+            setMask(plugin.configYml, "gui.detail")
 
-            maxPages(component.pages)
+            maxPages(component.menuPages)
             addComponent(1, 1, component)
 
             defaultPage {
-                component.getPageOf(it.getCollectionTier(collection)).coerceAtLeast(1)
+                component.getMenuPageOf(it.getCollectionTier(collection))
             }
 
-            setSlot(
-                plugin.configYml.getInt("gui.detail.info-icon.location.row"),
-                plugin.configYml.getInt("gui.detail.info-icon.location.column"),
-                centerSlot
-            )
+            for (location in plugin.configYml.getSlotLocations("gui.detail.info-icon")) {
+                setSlot(location.row, location.column, centerSlot)
+            }
 
             addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
             addPageChanger(plugin.configYml, "gui.detail.buttons.next-page", PageChanger.Direction.FORWARDS, pageChangeSound)
 
-            setSlot(
-                plugin.configYml.getInt("gui.detail.buttons.back.location.row"),
-                plugin.configYml.getInt("gui.detail.buttons.back.location.column"),
-                slot(
-                    ItemStackBuilder(Items.lookup(plugin.configYml.getString("gui.detail.buttons.back.material")))
-                        .setDisplayName(StringUtils.format(plugin.configYml.getString("gui.detail.buttons.back.name")))
-                        .build()
-                ) {
-                    onLeftClick { _, _, _, _ ->
-                        val group = collection.group
-                        if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
-                    }
+            addComponent(
+                ConfigButton(plugin.configYml.getSubsection("gui.detail.buttons.back")) { _, _, _, _ ->
+                    val group = collection.group
+                    if (group != null) GroupGUI.open(player, group) else CollectionsGUI.open(player)
                 }
             )
 
             if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
-                setSlot(
-                    plugin.configYml.getInt("gui.detail.buttons.rank.location.row"),
-                    plugin.configYml.getInt("gui.detail.buttons.rank.location.column"),
-                    buildRankSlot(player, collection)
-                )
+                for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.rank")) {
+                    setSlot(location.row, location.column, buildRankSlot(player, collection))
+                }
             }
 
-            for (config in plugin.configYml.getSubsections("gui.detail.custom-slots")) {
-                setSlot(config.getInt("row"), config.getInt("column"), ConfigSlot(config))
-            }
+            addCustomSlots(plugin.configYml, "gui.detail")
         }
 
         theMenu.open(player)

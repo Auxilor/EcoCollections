@@ -1,15 +1,16 @@
 package com.exanthiax.ecocollections.gui
 
 import com.willfp.eco.core.config.BuildableConfig
+import com.willfp.eco.core.gui.addCustomSlot
 import com.willfp.eco.core.gui.addPage
 import com.willfp.eco.core.gui.addPageChanger
+import com.willfp.eco.core.gui.component.addComponent
+import com.willfp.eco.core.gui.component.closeButton
 import com.willfp.eco.core.gui.menu
 import com.willfp.eco.core.gui.onLeftClick
 import com.willfp.eco.core.gui.page.PageChanger
+import com.willfp.eco.core.gui.setMask
 import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.ConfigSlot
-import com.willfp.eco.core.gui.slot.FillerMask
-import com.willfp.eco.core.gui.slot.MaskItems
 import com.willfp.eco.core.sound.PlayableSound
 import com.willfp.eco.util.StringUtils
 import com.exanthiax.ecocollections.api.isCollectionComplete
@@ -19,9 +20,7 @@ import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.groups.CollectionGroups
 import com.exanthiax.ecocollections.plugin
 import com.willfp.eco.core.gui.slot.Slot
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 object CollectionsGUI {
 
@@ -62,19 +61,6 @@ object CollectionsGUI {
         val titleTemplate = plugin.configYml.getString("gui.collections.title")
         val rows = plugin.configYml.getInt("gui.collections.rows")
 
-        val maskItems = MaskItems.fromItemNames(plugin.configYml.getStrings("gui.collections.mask.materials"))
-        val maskPattern = plugin.configYml.getStrings("gui.collections.mask.pattern").toTypedArray()
-
-        val closeMaterial = plugin.configYml.getString("gui.collections.close.material")
-        val closeName = plugin.configYml.getString("gui.collections.close.name")
-        val closeRow = plugin.configYml.getInt("gui.collections.close.location.row")
-        val closeColumn = plugin.configYml.getInt("gui.collections.close.location.column")
-
-        val closeItem = ItemStack(Material.matchMaterial(closeMaterial.uppercase()) ?: Material.BARRIER)
-        val closeMeta = closeItem.itemMeta
-        closeMeta?.setDisplayName(StringUtils.format(closeName))
-        closeItem.itemMeta = closeMeta
-
         val visibleGroups = CollectionGroups.values().filter {
             it.permission.isEmpty() || player.hasPermission(it.permission)
         }
@@ -93,18 +79,11 @@ object CollectionsGUI {
 
             for (page in 1..maxPage) {
                 addPage(page) {
-                    setMask(
-                        FillerMask(
-                            maskItems,
-                            *maskPattern
-                        )
-                    )
+                    setMask(plugin.configYml, "gui.collections")
 
-                    setSlot(closeRow, closeColumn, slot(closeItem) {
-                        onLeftClick { event, _ ->
-                            event.whoClicked.closeInventory()
-                        }
-                    })
+                    addComponent(
+                        closeButton(plugin.configYml.getSubsection("gui.collections.close"), invalidItem = "barrier")
+                    )
 
                     for (group in visibleGroups) {
                         if (group.guiPage != page) {
@@ -120,11 +99,7 @@ object CollectionsGUI {
                             continue
                         }
 
-                        setSlot(
-                            config.getInt("row"),
-                            config.getInt("column"),
-                            ConfigSlot(config)
-                        )
+                        addCustomSlot(config)
                     }
                 }
             }
