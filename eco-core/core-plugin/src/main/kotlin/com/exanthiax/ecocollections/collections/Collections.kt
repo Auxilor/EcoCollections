@@ -13,14 +13,14 @@ object Collections : RegistrableCategory<Collection>("collection", "collections"
         return plugin.totalsLeaderboard?.getTop(position)
     }
 
-    override fun clear(plugin: LibreforgePlugin) {
+    override fun clear(plugin: EcoPlugin) {
         for (collection in values()) {
             collection.onRemove()
         }
         registry.clear()
     }
 
-    override fun acceptConfig(plugin: LibreforgePlugin, id: String, config: Config) {
+    override fun acceptConfig(plugin: EcoPlugin, id: String, config: Config) {
         registry.register(Collection(id, config))
     }
 }
