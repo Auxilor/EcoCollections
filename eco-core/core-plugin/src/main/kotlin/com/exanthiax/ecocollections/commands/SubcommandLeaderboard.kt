@@ -1,10 +1,10 @@
 package com.exanthiax.ecocollections.commands
 
 import com.exanthiax.ecocollections.collections.Collections
-import com.exanthiax.ecocollections.plugin as ecoCollections
 import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.util.StringUtils
 import org.bukkit.command.CommandSender
+import wiki.ecohub.ui.text.StringUtils
+import com.exanthiax.ecocollections.plugin as ecoCollections
 
 object SubcommandLeaderboard : Subcommand(
     ecoCollections,

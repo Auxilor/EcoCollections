@@ -1,10 +1,10 @@
 package com.exanthiax.ecocollections.collections
 
 import com.exanthiax.ecocollections.plugin
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.leaderboard.LeaderboardEntry
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.RegistrableCategory
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.category.RegistrableCategory
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.data.playerbase.leaderboard.LeaderboardEntry
 
 object Collections : RegistrableCategory<Collection>("collection", "collections") {
     fun getTop(position: Int): LeaderboardEntry? {

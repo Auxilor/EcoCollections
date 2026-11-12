@@ -1,8 +1,8 @@
 package com.exanthiax.ecocollections.commands
 
-import com.willfp.eco.core.command.impl.PluginCommand
 import com.exanthiax.ecocollections.gui.CollectionsGUI
 import com.exanthiax.ecocollections.plugin
+import com.willfp.eco.core.command.impl.PluginCommand
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 

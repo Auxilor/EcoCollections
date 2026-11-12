@@ -6,10 +6,10 @@ import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.plugin
 import com.exanthiax.ecocollections.runOwned
 import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.core.data.profile
-import com.willfp.eco.util.StringUtils
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import wiki.ecohub.game.entity.player.profile
+import wiki.ecohub.ui.text.StringUtils
 
 @Suppress("DEPRECATION")
 object SubcommandUnlock : Subcommand(

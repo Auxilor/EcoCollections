@@ -5,9 +5,9 @@ import com.exanthiax.ecocollections.api.setCollectionTier
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.plugin
 import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.util.StringUtils
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import wiki.ecohub.ui.text.StringUtils
 
 @Suppress("DEPRECATION")
 object SubcommandSet : Subcommand(

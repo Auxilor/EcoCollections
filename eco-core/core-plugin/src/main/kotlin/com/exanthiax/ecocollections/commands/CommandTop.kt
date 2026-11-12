@@ -2,15 +2,15 @@ package com.exanthiax.ecocollections.commands
 
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.plugin
-import com.exanthiax.ecocollections.plugin as ecoCollections
 import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.core.leaderboard.Leaderboards
-import com.willfp.eco.core.placeholder.context.placeholderContext
-import com.willfp.eco.util.formatEco
-import com.willfp.eco.util.savedDisplayName
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.util.StringUtil
+import wiki.ecohub.data.playerbase.leaderboard.Leaderboards
+import wiki.ecohub.game.entity.player.PlayerUtils
+import wiki.ecohub.ui.placeholder.placeholderContext
+import wiki.ecohub.ui.text.formatEco
+import com.exanthiax.ecocollections.plugin as ecoCollections
 
 object CommandTop : Subcommand(
     plugin,
@@ -52,7 +52,7 @@ object CommandTop : Subcommand(
             val line = plugin.langYml.getString("top-line-format")
                 .replace("%rank%", entry.position.toString())
                 .replace("%value%", entry.value.toLong().toString())
-                .replace("%player%", entry.player.savedDisplayName)
+                .replace("%player%", PlayerUtils.getSavedDisplayName(entry.player))
 
             lines.add(line)
         }

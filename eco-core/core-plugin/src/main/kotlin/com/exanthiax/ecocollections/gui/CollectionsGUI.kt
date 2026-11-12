@@ -1,26 +1,26 @@
 package com.exanthiax.ecocollections.gui
 
-import com.willfp.eco.core.config.BuildableConfig
-import com.willfp.eco.core.gui.addCustomSlot
-import com.willfp.eco.core.gui.addPage
-import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.component.closeButton
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.onLeftClick
-import com.willfp.eco.core.gui.page.PageChanger
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
 import com.exanthiax.ecocollections.api.isCollectionComplete
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.groups.CollectionGroups
 import com.exanthiax.ecocollections.plugin
-import com.willfp.eco.core.gui.slot.Slot
 import org.bukkit.entity.Player
+import wiki.ecohub.config.section.BuildableConfig
+import wiki.ecohub.game.sound.PlayableSound
+import wiki.ecohub.modules.menus.addCustomSlot
+import wiki.ecohub.modules.menus.addPage
+import wiki.ecohub.modules.menus.addPageChanger
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.component.closeButton
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.onLeftClick
+import wiki.ecohub.modules.menus.page.PageChanger
+import wiki.ecohub.modules.menus.setMask
+import wiki.ecohub.modules.menus.slot
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.ui.text.StringUtils
 
 object CollectionsGUI {
 

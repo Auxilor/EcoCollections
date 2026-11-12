@@ -1,12 +1,5 @@
 package com.exanthiax.ecocollections
 
-import com.willfp.eco.core.Eco
-import com.willfp.eco.core.bstats.EcoMetricsChart
-import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.eco.core.leaderboard.Leaderboard
-import com.willfp.eco.core.leaderboard.Leaderboards
-import com.willfp.eco.core.leaderboard.registerCategoryTopPlaceholders
-import com.willfp.eco.core.leaderboard.registerTopPlaceholders
 import com.exanthiax.ecocollections.collections.Collections
 import com.exanthiax.ecocollections.commands.CommandCollections
 import com.exanthiax.ecocollections.commands.CommandEcoCollections
@@ -19,14 +12,20 @@ import com.exanthiax.ecocollections.libreforge.effect.EffectUnlockCollection
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionComplete
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionTierUp
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionUnlock
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.ConfigCategory
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.triggers.Triggers
+import com.willfp.eco.core.command.impl.PluginCommand
 import org.bukkit.event.Listener
+import wiki.ecohub.config.category.NativeConfigCategory
+import wiki.ecohub.core.Eco
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.data.playerbase.leaderboard.Leaderboard
+import wiki.ecohub.data.playerbase.leaderboard.Leaderboards
+import wiki.ecohub.data.playerbase.leaderboard.registerCategoryTopPlaceholders
+import wiki.ecohub.provider.metrics.EcoMetricsChart
+import wiki.ecohub.rules.condition.Conditions
+import wiki.ecohub.rules.effect.Effects
+import wiki.ecohub.rules.trigger.Triggers
+import wiki.ecohub.ui.text.formatEco
 import java.util.UUID
-import com.willfp.eco.util.formatEco
 
 
 lateinit var plugin: EcoCollectionsPlugin

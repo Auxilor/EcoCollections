@@ -1,25 +1,5 @@
 package com.exanthiax.ecocollections.gui
 
-import com.willfp.eco.core.gui.addCustomSlot
-import com.willfp.eco.core.gui.addPage
-import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.onLeftClick
-import com.willfp.eco.core.gui.onRightClick
-import com.willfp.eco.core.gui.onShiftRightClick
-import com.willfp.eco.core.gui.page.PageChanger
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.leaderboard.LeaderboardRank
-import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNumeral
-import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.toDispatcher
 import com.exanthiax.ecocollections.api.getCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.api.giveCollectionCount
@@ -30,7 +10,27 @@ import com.exanthiax.ecocollections.collections.canGainCollectionProgress
 import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.plugin
 import org.bukkit.entity.Player
-import com.willfp.eco.core.gui.getSlotLocations
+import wiki.ecohub.data.playerbase.leaderboard.LeaderboardRank
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.sound.PlayableSound
+import wiki.ecohub.math.toNumeral
+import wiki.ecohub.modules.menus.addCustomSlot
+import wiki.ecohub.modules.menus.addPage
+import wiki.ecohub.modules.menus.addPageChanger
+import wiki.ecohub.modules.menus.component.ConfigButton
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.getSlotLocations
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.onLeftClick
+import wiki.ecohub.modules.menus.onRightClick
+import wiki.ecohub.modules.menus.onShiftRightClick
+import wiki.ecohub.modules.menus.page.PageChanger
+import wiki.ecohub.modules.menus.setMask
+import wiki.ecohub.modules.menus.slot
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.rules.holder.EmptyProvidedHolder
+import wiki.ecohub.ui.text.StringUtils
 
 object GroupGUI {
 

@@ -1,11 +1,11 @@
 package com.exanthiax.ecocollections.libreforge.trigger
 
 import com.exanthiax.ecocollections.api.event.PlayerCollectionCompleteEvent
-import com.willfp.libreforge.toDispatcher
-import com.willfp.libreforge.triggers.Trigger
-import com.willfp.libreforge.triggers.TriggerData
-import com.willfp.libreforge.triggers.TriggerParameter
 import org.bukkit.event.EventHandler
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.rules.trigger.Trigger
+import wiki.ecohub.rules.trigger.TriggerData
+import wiki.ecohub.rules.trigger.TriggerParameter
 
 object TriggerCollectionComplete : Trigger("complete_collection") {
     override val description = "Fires when the player completes all tiers of a collection."

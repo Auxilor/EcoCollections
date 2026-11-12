@@ -2,8 +2,8 @@ package com.exanthiax.ecocollections.commands
 
 import com.exanthiax.ecocollections.plugin
 import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.eco.util.StringUtils
 import org.bukkit.command.CommandSender
+import wiki.ecohub.ui.text.StringUtils
 
 object CommandEcoCollections : PluginCommand(
     plugin,

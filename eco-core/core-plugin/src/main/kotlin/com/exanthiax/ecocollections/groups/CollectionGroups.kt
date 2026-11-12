@@ -1,8 +1,8 @@
 package com.exanthiax.ecocollections.groups
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.RegistrableCategory
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.category.RegistrableCategory
+import wiki.ecohub.core.plugin.EcoPlugin
 
 object CollectionGroups : RegistrableCategory<CollectionGroup>("group", "groups") {
     override fun clear(plugin: LibreforgePlugin) {
