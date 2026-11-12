@@ -7,7 +7,6 @@ authors: [Auxilor, Exanthiax, Callum]
 depend:
   - eco
 softdepend:
-  - libreforge
   - PlaceholderAPI
 commands:
   ecocollections:
