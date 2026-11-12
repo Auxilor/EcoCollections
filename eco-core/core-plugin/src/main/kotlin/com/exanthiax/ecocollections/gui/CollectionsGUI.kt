@@ -47,12 +47,12 @@ object CollectionsGUI {
         val displayName = plugin.langYml.getString("groups.default-group-name")
 
         val config = BuildableConfig()
-        config.set("name", displayName)
-        config.set("permission", "")
-        config.set("gui.icon", "barrier")
-        config.set("gui.position.row", 1)
-        config.set("gui.position.column", 1)
-        config.set("gui.lore", emptyList<String>())
+        config["name"] = displayName
+        config["permission"] = ""
+        config["gui.icon"] = "barrier"
+        config["gui.position.row"] = 1
+        config["gui.position.column"] = 1
+        config["gui.lore"] = emptyList<String>()
 
         return CollectionGroup("default", config)
     }
@@ -70,7 +70,7 @@ object CollectionsGUI {
         val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.collections.page-change-sound"))
 
         val theMenu = menu(rows) {
-            title = formattedTitle
+            setTitle(formattedTitle)
 
             maxPages(maxPage)
 
@@ -91,7 +91,7 @@ object CollectionsGUI {
                         }
 
                         val groupIcon = buildGroupIcon(player, group)
-                        setSlot(group.guiRow, group.guiColumn, groupIcon)
+                        setSlot(row = group.guiRow, column = group.guiColumn, slot = groupIcon)
                     }
 
                     for (config in plugin.configYml.getSubsections("gui.collections.custom-slots")) {
@@ -109,7 +109,7 @@ object CollectionsGUI {
     }
 
     private fun buildGroupIcon(player: Player, group: CollectionGroup): Slot {
-        val iconItem = group.icon.item.clone()
+        val iconItem = group.icon.getItem().clone()
         val meta = iconItem.itemMeta
 
         if (meta != null) {

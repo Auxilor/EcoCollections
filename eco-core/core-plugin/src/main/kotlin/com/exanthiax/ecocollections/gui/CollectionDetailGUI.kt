@@ -37,7 +37,7 @@ object CollectionDetailGUI {
         val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.detail.buttons.page-change-sound"))
 
         val theMenu = menu(rows) {
-            title = formattedTitle
+            setTitle(formattedTitle)
 
             setMask(plugin.configYml, "gui.detail")
 
@@ -49,7 +49,7 @@ object CollectionDetailGUI {
             }
 
             for (location in plugin.configYml.getSlotLocations("gui.detail.info-icon")) {
-                setSlot(location.row, location.column, centerSlot)
+                setSlot(row = location.row, column = location.column, slot = centerSlot)
             }
 
             addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
@@ -64,7 +64,7 @@ object CollectionDetailGUI {
 
             if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
                 for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.rank")) {
-                    setSlot(location.row, location.column, buildRankSlot(player, collection))
+                    setSlot(row = location.row, column = location.column, slot = buildRankSlot(player, collection))
                 }
             }
 
@@ -80,7 +80,7 @@ object CollectionDetailGUI {
         playerTier: Int,
         playerCount: Double
     ): Slot {
-        val iconItem = collection.icon.item.clone()
+        val iconItem = collection.icon.getItem().clone()
         val meta = iconItem.itemMeta
 
         if (meta != null) {
@@ -110,7 +110,7 @@ object CollectionDetailGUI {
     }
 
     private fun buildRankSlot(player: Player, collection: Collection): Slot {
-        val rankItem = Items.lookup(plugin.configYml.getString("gui.detail.buttons.rank.material")).item.clone()
+        val rankItem = Items.lookup(plugin.configYml.getString("gui.detail.buttons.rank.material")).getItem().clone()
         val meta = rankItem.itemMeta
 
         if (meta != null) {

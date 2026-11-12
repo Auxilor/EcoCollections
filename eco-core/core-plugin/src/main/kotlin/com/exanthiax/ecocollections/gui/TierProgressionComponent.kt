@@ -36,7 +36,7 @@ class TierProgressionComponent(
     override fun getLevelItem(player: Player, menu: Menu, level: Int, levelState: LevelState): ItemStack {
         val configKey = getConfigKey(level, levelState)
 
-        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
+        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).getItem().clone()
         val meta = tierItem.itemMeta ?: return tierItem
 
         val placeholders = getPlaceholders(player, level)

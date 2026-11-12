@@ -49,7 +49,7 @@ object GroupGUI {
         val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.group.page-change-sound"))
 
         val theMenu = menu(rows) {
-            title = formattedTitle
+            setTitle(formattedTitle)
 
             maxPages(maxPage)
             defaultPage { targetPage }
@@ -79,7 +79,7 @@ object GroupGUI {
 
                         val builtSlot = buildCollectionSlot(player, group, bypassMode, collection, showLeaderboardRank)
                         if (builtSlot != null) {
-                            setSlot(collection.guiRow, collection.guiColumn, builtSlot)
+                            setSlot(row = collection.guiRow, column = collection.guiColumn, slot = builtSlot)
                         }
                     }
 
@@ -95,9 +95,9 @@ object GroupGUI {
                         val unlockedCollectionsInGroup = collectionsInGroup.filter { player.isCollectionUnlocked(it) }
                         for (location in plugin.configYml.getSlotLocations("gui.group.collect-all")) {
                             setSlot(
-                                location.row,
-                                location.column,
-                                buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
+                                row = location.row,
+                                column = location.column,
+                                slot = buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
                             )
                         }
                     }
@@ -117,7 +117,7 @@ object GroupGUI {
         val collectAllMaterial = plugin.configYml.getString("gui.group.collect-all.material")
         val collectAllName = plugin.configYml.getString("gui.group.collect-all.name")
 
-        val collectAllButtonItem = Items.lookup(collectAllMaterial).item.clone()
+        val collectAllButtonItem = Items.lookup(collectAllMaterial).getItem().clone()
         val meta = collectAllButtonItem.itemMeta
 
         if (meta != null) {
@@ -170,7 +170,7 @@ object GroupGUI {
         tier: Int,
         showLeaderboardRank: Boolean
     ): Slot {
-        val iconItem = collection.icon.item.clone()
+        val iconItem = collection.icon.getItem().clone()
         val meta = iconItem.itemMeta
 
         if (meta != null) {
@@ -329,7 +329,7 @@ object GroupGUI {
             }
 
             val item = inventory.getItem(slot) ?: continue
-            if (item.type.isAir || collection.manualCollectItems.none { item.isSimilar(it.item) }) {
+            if (item.type.isAir || collection.manualCollectItems.none { item.isSimilar(it.getItem()) }) {
                 continue
             }
 
@@ -359,7 +359,7 @@ object GroupGUI {
         val lockedLoreConfig = plugin.configYml.getStrings("gui.locked.icon.lore")
         val clickSound = PlayableSound.create(plugin.configYml.getSubsection("gui.locked.click-sound"))
 
-        val lockedItem = Items.lookup(lockedMaterial).item.clone()
+        val lockedItem = Items.lookup(lockedMaterial).getItem().clone()
         val meta = lockedItem.itemMeta
 
         if (meta != null) {
