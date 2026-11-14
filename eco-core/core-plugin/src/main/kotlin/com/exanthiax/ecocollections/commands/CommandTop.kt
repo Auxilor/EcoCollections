@@ -1,110 +1,83 @@
 package com.exanthiax.ecocollections.commands
 
+import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.collections.Collections
-import com.exanthiax.ecocollections.plugin
-import com.exanthiax.ecocollections.plugin as ecoCollections
-import com.willfp.eco.core.command.impl.Subcommand
-import com.willfp.eco.core.leaderboard.Leaderboards
-import com.willfp.eco.core.placeholder.context.placeholderContext
-import com.willfp.eco.util.formatEco
-import com.willfp.eco.util.savedDisplayName
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.util.StringUtil
+import wiki.ecohub.core.command.CommandBuilder
+import wiki.ecohub.core.command.CommandContext
+import wiki.ecohub.data.playerbase.leaderboard.Leaderboards
+import wiki.ecohub.game.entity.player.PlayerUtils
+import wiki.ecohub.ui.placeholder.placeholderContext
+import wiki.ecohub.ui.text.formatEco
+import com.exanthiax.ecocollections.plugin as ecoCollections
 
-object CommandTop : Subcommand(
-    plugin,
-    "top",
-    "ecocollections.command.top",
-    false
+private val pageCompletions = listOf("1", "2", "3", "4", "5")
+
+private const val PAGE_SIZE = 10
+
+/**
+ * `top [page]` shows the totals leaderboard, `top <collection> [page]` one collection's.
+ */
+internal fun CommandBuilder<CommandSender>.topCommand() = subcommand(
+    name = "top",
+    permission = "ecocollections.command.top"
 ) {
-    override fun onExecute(sender: CommandSender, args: List<String>) {
-        val collection = Collections.getByID(args.getOrNull(0))
-
-        // With no collection named, the first argument is the page and the totals leaderboard is
-        // shown; with one named, the page moves along to the second argument.
-        val pageIndex = if (collection == null) 0 else 1
-        val page = args.getOrNull(pageIndex)?.toIntOrNull() ?: 1
-
-        if (
-            collection == null
-            && args.getOrNull(pageIndex)?.toIntOrNull() == null
-            && args.getOrNull(pageIndex)?.isBlank() == false
-        ) {
-            sender.sendMessage(
-                plugin.langYml.getFormattedString("commands.no-such-collection")
-                    .replace("%id%", args[pageIndex])
-            )
-            return
-        }
-
-        val offset = (page - 1) * 10
-
-        val positions = ((offset + 1)..(offset + 10)).toList()
-
-        val leaderboard = if (collection == null) ecoCollections.totalsLeaderboard else collection.leaderboard
-        val top = positions.mapNotNull { leaderboard?.getTop(it) }
-
-        val messages = plugin.langYml.getStrings("top.format").toMutableList()
-        val lines = mutableListOf<String>()
-
-        for (entry in top) {
-            val line = plugin.langYml.getString("top-line-format")
-                .replace("%rank%", entry.position.toString())
-                .replace("%value%", entry.value.toLong().toString())
-                .replace("%player%", entry.player.savedDisplayName)
-
-            lines.add(line)
-        }
-
-        // An empty leaderboard still shows its header and footer, with the universal
-        // "no records" message standing in for the entries.
-        if (lines.isEmpty()) {
-            lines.add(Leaderboards.getNoRecordsMessage(plugin))
-        }
-
-        val linesIndex = messages.indexOf("%lines%")
-
-        if (linesIndex != -1) {
-            messages.removeAt(linesIndex)
-            messages.addAll(linesIndex, lines)
-        }
-
-        for (message in messages) {
-            sender.sendMessage(
-                message
-                    .replace("%collection%", collection?.name ?: plugin.langYml.getString("top.totals-name"))
-                    .formatEco(
-                        placeholderContext(
-                            player = sender as? Player
-                        )
-                    )
-            )
+    executes {
+        replying {
+            val collection = Collections.getByID(args.getOrNull(0))
+            sendTop(collection, pageOf(collection))
         }
     }
 
-    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        val completions = mutableListOf<String>()
-
-        if (args.size == 1) {
-            StringUtil.copyPartialMatches(
-                args[0],
-                listOf(1, 2, 3, 4, 5).map { it.toString() }
-                        + Collections.values().map { it.id },
-                completions
-            )
-            return completions
+    completes {
+        when {
+            args.size == 1 -> pageCompletions + collectionIds()
+            args.size == 2 && Collections.getByID(args[0]) != null -> pageCompletions
+            else -> emptyList()
         }
+    }
+}
 
-        if (args.size == 2 && Collections.getByID(args[0]) != null) {
-            StringUtil.copyPartialMatches(
-                args[1],
-                listOf(1, 2, 3, 4, 5).map { it.toString() },
-                completions
-            )
-            return completions
-        }
+private fun CommandContext<CommandSender>.pageOf(collection: Collection?): Int {
+    val pageArg = args.getOrNull(if (collection == null) 0 else 1)
 
-        return emptyList()
+    val badPage = pageArg?.takeIf { it.isNotBlank() && it.toIntOrNull() == null }
+
+    if (collection == null && badPage != null) {
+        reject(
+            plugin.langYml.getFormattedString("commands.no-such-collection")
+                .replace(oldValue = "%id%", newValue = badPage)
+        )
+    }
+
+    return pageArg?.toIntOrNull() ?: 1
+}
+
+private fun CommandContext<CommandSender>.sendTop(collection: Collection?, page: Int) {
+    val offset = (page - 1) * PAGE_SIZE
+    val leaderboard = if (collection == null) ecoCollections.totalsLeaderboard else collection.leaderboard
+    val top = (offset + 1..offset + PAGE_SIZE).mapNotNull { leaderboard?.getTop(it) }
+
+    val lines = top.map { entry ->
+        plugin.langYml.getString("top-line-format")
+            .replace(oldValue = "%rank%", newValue = entry.position.toString())
+            .replace(oldValue = "%value%", newValue = entry.value.toLong().toString())
+            .replace(oldValue = "%player%", newValue = PlayerUtils.getSavedDisplayName(entry.player))
+    }.ifEmpty { listOf(Leaderboards.getNoRecordsMessage(plugin)) }
+
+    val messages = plugin.langYml.getStrings("top.format").toMutableList()
+    val linesIndex = messages.indexOf("%lines%")
+
+    if (linesIndex != -1) {
+        messages.removeAt(linesIndex)
+        messages.addAll(linesIndex, lines)
+    }
+
+    val name = collection?.name ?: plugin.langYml.getString("top.totals-name")
+    val context = placeholderContext(player = sender as? Player)
+
+    for (message in messages) {
+        sender.sendMessage(message.replace(oldValue = "%collection%", newValue = name).formatEco(context))
     }
 }

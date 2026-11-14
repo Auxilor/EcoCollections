@@ -1,15 +1,8 @@
 package com.exanthiax.ecocollections
 
-import com.willfp.eco.core.Eco
-import com.willfp.eco.core.bstats.EcoMetricsChart
-import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.eco.core.leaderboard.Leaderboard
-import com.willfp.eco.core.leaderboard.Leaderboards
-import com.willfp.eco.core.leaderboard.registerCategoryTopPlaceholders
-import com.willfp.eco.core.leaderboard.registerTopPlaceholders
 import com.exanthiax.ecocollections.collections.Collections
-import com.exanthiax.ecocollections.commands.CommandCollections
-import com.exanthiax.ecocollections.commands.CommandEcoCollections
+import com.exanthiax.ecocollections.commands.collectionsCommand
+import com.exanthiax.ecocollections.commands.ecoCollectionsCommand
 import com.exanthiax.ecocollections.groups.CollectionGroups
 import com.exanthiax.ecocollections.libreforge.condition.ConditionCollectionComplete
 import com.exanthiax.ecocollections.libreforge.condition.ConditionCollectionTierAtLeast
@@ -19,20 +12,26 @@ import com.exanthiax.ecocollections.libreforge.effect.EffectUnlockCollection
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionComplete
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionTierUp
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionUnlock
-import com.willfp.libreforge.loader.LibreforgePlugin
-import com.willfp.libreforge.loader.configs.ConfigCategory
-import com.willfp.libreforge.conditions.Conditions
-import com.willfp.libreforge.effects.Effects
-import com.willfp.libreforge.triggers.Triggers
 import org.bukkit.event.Listener
+import wiki.ecohub.config.category.NativeConfigCategory
+import wiki.ecohub.core.command.EcoCommand
+import wiki.ecohub.core.Eco
+import wiki.ecohub.core.plugin.EcoPlugin
+import wiki.ecohub.data.playerbase.leaderboard.Leaderboard
+import wiki.ecohub.data.playerbase.leaderboard.Leaderboards
+import wiki.ecohub.data.playerbase.leaderboard.registerCategoryTopPlaceholders
+import wiki.ecohub.provider.metrics.EcoMetricsChart
+import wiki.ecohub.rules.condition.Conditions
+import wiki.ecohub.rules.effect.Effects
+import wiki.ecohub.rules.trigger.Triggers
+import wiki.ecohub.ui.text.formatEco
 import java.util.UUID
-import com.willfp.eco.util.formatEco
 
 
 lateinit var plugin: EcoCollectionsPlugin
     internal set
 
-class EcoCollectionsPlugin : LibreforgePlugin() {
+class EcoCollectionsPlugin : EcoPlugin() {
     /**
      * The leaderboard ranking players by their total collection tiers, or null before the first
      * reload has registered it. Swapped on reload, read from every region on Folia.
@@ -45,7 +44,7 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
         plugin = this
     }
 
-    override fun loadConfigCategories(): List<ConfigCategory> = listOf(
+    override fun loadConfigCategories(): List<NativeConfigCategory> = listOf(
         CollectionGroups,
         Collections
     )
@@ -118,9 +117,9 @@ class EcoCollectionsPlugin : LibreforgePlugin() {
         ) { Collections.getByID(it)?.leaderboard }
     }
 
-    override fun loadPluginCommands(): List<PluginCommand> = listOf(
-        CommandEcoCollections,
-        CommandCollections
+    override fun loadPluginCommands(): List<EcoCommand> = listOf(
+        ecoCollectionsCommand(),
+        collectionsCommand()
     )
 
     override fun loadListeners(): List<Listener> = listOf(

@@ -1,16 +1,16 @@
 package com.exanthiax.ecocollections.libreforge.condition
 
-import com.willfp.eco.core.config.interfaces.Config
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.collections.Collections
-import com.willfp.libreforge.ArgType
-import com.willfp.libreforge.Dispatcher
-import com.willfp.libreforge.NoCompileData
-import com.willfp.libreforge.ProvidedHolder
-import com.willfp.libreforge.arguments
-import com.willfp.libreforge.conditions.Condition
-import com.willfp.libreforge.get
 import org.bukkit.entity.Player
+import wiki.ecohub.config.ArgType
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.arguments
+import wiki.ecohub.core.registry.NoCompileData
+import wiki.ecohub.rules.condition.Condition
+import wiki.ecohub.rules.holder.Dispatcher
+import wiki.ecohub.rules.holder.ProvidedHolder
+import wiki.ecohub.rules.holder.get
 
 object ConditionCollectionTierAtLeast : Condition<NoCompileData>("collection_tier_at_least") {
     override val description = "Passes when the player's tier in the specified collection is at or above the given tier."

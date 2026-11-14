@@ -4,14 +4,14 @@ import com.exanthiax.ecocollections.api.getCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.plugin
-import com.willfp.eco.core.gui.component.LevelComponent
-import com.willfp.eco.core.gui.component.LevelState
-import com.willfp.eco.core.gui.menu.Menu
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNumeral
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.math.toNumeral
+import wiki.ecohub.modules.menus.component.LevelComponent
+import wiki.ecohub.modules.menus.component.LevelState
+import wiki.ecohub.modules.menus.menu.Menu
+import wiki.ecohub.ui.text.StringUtils
 import kotlin.math.ceil
 
 class TierProgressionComponent(
@@ -36,7 +36,7 @@ class TierProgressionComponent(
     override fun getLevelItem(player: Player, menu: Menu, level: Int, levelState: LevelState): ItemStack {
         val configKey = getConfigKey(level, levelState)
 
-        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).item.clone()
+        val tierItem = Items.lookup(plugin.configYml.getString("$configKey.item")).getItem().clone()
         val meta = tierItem.itemMeta ?: return tierItem
 
         val placeholders = getPlaceholders(player, level)

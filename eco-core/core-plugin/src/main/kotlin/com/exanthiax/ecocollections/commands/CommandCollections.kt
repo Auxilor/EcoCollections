@@ -1,30 +1,17 @@
 package com.exanthiax.ecocollections.commands
 
-import com.willfp.eco.core.command.impl.PluginCommand
+import com.exanthiax.ecocollections.EcoCollectionsPlugin
 import com.exanthiax.ecocollections.gui.CollectionsGUI
-import com.exanthiax.ecocollections.plugin
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import wiki.ecohub.core.command.command
 
-object CommandCollections : PluginCommand(
-    plugin,
-    "collections",
-    "ecocollections.command.collections",
-    false
+internal fun EcoCollectionsPlugin.collectionsCommand() = command(
+    name = "collections",
+    permission = "ecocollections.command.collections"
 ) {
-    init {
-        this.addSubcommand(CommandTop)
-    }
+    topCommand()
 
-    override fun onExecute(sender: CommandSender, args: List<String>) {
-        if (sender !is Player) {
-            sender.sendMessage(plugin.langYml.getMessage("not-player"))
-            return
-        }
-        CollectionsGUI.open(sender)
-    }
-
-    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        return emptyList()
+    executes {
+        CollectionsGUI.open(sender as? Player ?: fail("not-player"))
     }
 }
