@@ -1,31 +1,23 @@
 package com.exanthiax.ecocollections.commands
 
-import com.exanthiax.ecocollections.plugin
-import com.willfp.eco.core.command.impl.PluginCommand
-import com.willfp.eco.util.StringUtils
-import org.bukkit.command.CommandSender
+import com.exanthiax.ecocollections.EcoCollectionsPlugin
+import wiki.ecohub.core.command.command
+import wiki.ecohub.ui.text.StringUtils
 
-object CommandEcoCollections : PluginCommand(
-    plugin,
-    "ecocollections",
-    "ecocollections.command.ecocollections",
-    false
+internal fun EcoCollectionsPlugin.ecoCollectionsCommand() = command(
+    name = "ecocollections",
+    permission = "ecocollections.command.ecocollections"
 ) {
-    init {
-        this.addSubcommand(SubcommandGive)
-            .addSubcommand(SubcommandSet)
-            .addSubcommand(SubcommandReset)
-            .addSubcommand(SubcommandUnlock)
-            .addSubcommand(SubcommandReload)
-            .addSubcommand(SubcommandLeaderboard)
-    }
+    giveCommand()
+    setCommand()
+    resetCommand()
+    unlockCommand()
+    reloadCommand()
+    leaderboardCommand()
 
-    override fun onExecute(sender: CommandSender, args: List<String>) {
-        sender.sendMessage(StringUtils.format("&eEcoCollections &7- Subcommands: give, set, reset, unlock, reload, leaderboard"))
-    }
-
-    override fun tabComplete(sender: CommandSender, args: List<String>): List<String> {
-        return emptyList()
+    executes {
+        sender.sendMessage(
+            StringUtils.format("&eEcoCollections &7- Subcommands: give, set, reset, unlock, reload, leaderboard")
+        )
     }
 }
-

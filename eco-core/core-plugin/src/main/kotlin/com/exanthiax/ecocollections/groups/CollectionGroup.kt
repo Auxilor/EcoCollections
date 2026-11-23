@@ -1,9 +1,9 @@
 package com.exanthiax.ecocollections.groups
 
-import com.willfp.eco.core.config.interfaces.Config
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.items.TestableItem
-import com.willfp.eco.core.registry.KRegistrable
+import wiki.ecohub.config.Config
+import wiki.ecohub.core.registry.KRegistrable
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.item.lookup.TestableItem
 
 class CollectionGroup(
     override val id: String,

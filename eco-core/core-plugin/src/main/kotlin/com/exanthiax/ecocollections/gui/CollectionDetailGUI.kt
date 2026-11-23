@@ -1,24 +1,24 @@
 package com.exanthiax.ecocollections.gui
 
-import com.willfp.eco.core.gui.addCustomSlots
-import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.page.PageChanger
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNumeral
 import com.exanthiax.ecocollections.api.getCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.plugin
 import org.bukkit.entity.Player
-import com.willfp.eco.core.gui.getSlotLocations
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.sound.PlayableSound
+import wiki.ecohub.math.toNumeral
+import wiki.ecohub.modules.menus.addCustomSlots
+import wiki.ecohub.modules.menus.addPageChanger
+import wiki.ecohub.modules.menus.component.ConfigButton
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.getSlotLocations
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.page.PageChanger
+import wiki.ecohub.modules.menus.setMask
+import wiki.ecohub.modules.menus.slot
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.ui.text.StringUtils
 
 object CollectionDetailGUI {
 
@@ -37,7 +37,7 @@ object CollectionDetailGUI {
         val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.detail.buttons.page-change-sound"))
 
         val theMenu = menu(rows) {
-            title = formattedTitle
+            setTitle(formattedTitle)
 
             setMask(plugin.configYml, "gui.detail")
 
@@ -49,7 +49,7 @@ object CollectionDetailGUI {
             }
 
             for (location in plugin.configYml.getSlotLocations("gui.detail.info-icon")) {
-                setSlot(location.row, location.column, centerSlot)
+                setSlot(row = location.row, column = location.column, slot = centerSlot)
             }
 
             addPageChanger(plugin.configYml, "gui.detail.buttons.prev-page", PageChanger.Direction.BACKWARDS, pageChangeSound)
@@ -64,7 +64,7 @@ object CollectionDetailGUI {
 
             if (plugin.configYml.getBool("gui.detail.buttons.rank.enabled")) {
                 for (location in plugin.configYml.getSlotLocations("gui.detail.buttons.rank")) {
-                    setSlot(location.row, location.column, buildRankSlot(player, collection))
+                    setSlot(row = location.row, column = location.column, slot = buildRankSlot(player, collection))
                 }
             }
 
@@ -80,7 +80,7 @@ object CollectionDetailGUI {
         playerTier: Int,
         playerCount: Double
     ): Slot {
-        val iconItem = collection.icon.item.clone()
+        val iconItem = collection.icon.getItem().clone()
         val meta = iconItem.itemMeta
 
         if (meta != null) {
@@ -110,7 +110,7 @@ object CollectionDetailGUI {
     }
 
     private fun buildRankSlot(player: Player, collection: Collection): Slot {
-        val rankItem = Items.lookup(plugin.configYml.getString("gui.detail.buttons.rank.material")).item.clone()
+        val rankItem = Items.lookup(plugin.configYml.getString("gui.detail.buttons.rank.material")).getItem().clone()
         val meta = rankItem.itemMeta
 
         if (meta != null) {

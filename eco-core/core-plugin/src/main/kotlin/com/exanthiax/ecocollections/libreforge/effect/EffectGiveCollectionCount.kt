@@ -1,15 +1,15 @@
 package com.exanthiax.ecocollections.libreforge.effect
 
-import com.willfp.eco.core.config.interfaces.Config
 import com.exanthiax.ecocollections.api.giveCollectionCount
 import com.exanthiax.ecocollections.collections.Collections
-import com.willfp.libreforge.ArgType
-import com.willfp.libreforge.NoCompileData
-import com.willfp.libreforge.arguments
-import com.willfp.libreforge.effects.Effect
-import com.willfp.libreforge.getDoubleFromExpression
-import com.willfp.libreforge.triggers.TriggerData
-import com.willfp.libreforge.triggers.TriggerParameter
+import wiki.ecohub.config.ArgType
+import wiki.ecohub.config.Config
+import wiki.ecohub.config.arguments
+import wiki.ecohub.config.section.getDoubleFromExpression
+import wiki.ecohub.core.registry.NoCompileData
+import wiki.ecohub.rules.effect.Effect
+import wiki.ecohub.rules.trigger.TriggerData
+import wiki.ecohub.rules.trigger.TriggerParameter
 
 object EffectGiveCollectionCount : Effect<NoCompileData>("give_collection_count") {
     override val description = "Gives the player progress towards the specified collection."

@@ -1,25 +1,5 @@
 package com.exanthiax.ecocollections.gui
 
-import com.willfp.eco.core.gui.addCustomSlot
-import com.willfp.eco.core.gui.addPage
-import com.willfp.eco.core.gui.addPageChanger
-import com.willfp.eco.core.gui.component.ConfigButton
-import com.willfp.eco.core.gui.component.addComponent
-import com.willfp.eco.core.gui.menu
-import com.willfp.eco.core.gui.onLeftClick
-import com.willfp.eco.core.gui.onRightClick
-import com.willfp.eco.core.gui.onShiftRightClick
-import com.willfp.eco.core.gui.page.PageChanger
-import com.willfp.eco.core.gui.setMask
-import com.willfp.eco.core.gui.slot
-import com.willfp.eco.core.gui.slot.Slot
-import com.willfp.eco.core.items.Items
-import com.willfp.eco.core.leaderboard.LeaderboardRank
-import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNumeral
-import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.toDispatcher
 import com.exanthiax.ecocollections.api.getCollectionCount
 import com.exanthiax.ecocollections.api.getCollectionTier
 import com.exanthiax.ecocollections.api.giveCollectionCount
@@ -30,7 +10,27 @@ import com.exanthiax.ecocollections.collections.canGainCollectionProgress
 import com.exanthiax.ecocollections.groups.CollectionGroup
 import com.exanthiax.ecocollections.plugin
 import org.bukkit.entity.Player
-import com.willfp.eco.core.gui.getSlotLocations
+import wiki.ecohub.data.playerbase.leaderboard.LeaderboardRank
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.game.item.Items
+import wiki.ecohub.game.sound.PlayableSound
+import wiki.ecohub.math.toNumeral
+import wiki.ecohub.modules.menus.addCustomSlot
+import wiki.ecohub.modules.menus.addPage
+import wiki.ecohub.modules.menus.addPageChanger
+import wiki.ecohub.modules.menus.component.ConfigButton
+import wiki.ecohub.modules.menus.component.addComponent
+import wiki.ecohub.modules.menus.getSlotLocations
+import wiki.ecohub.modules.menus.menu
+import wiki.ecohub.modules.menus.onLeftClick
+import wiki.ecohub.modules.menus.onRightClick
+import wiki.ecohub.modules.menus.onShiftRightClick
+import wiki.ecohub.modules.menus.page.PageChanger
+import wiki.ecohub.modules.menus.setMask
+import wiki.ecohub.modules.menus.slot
+import wiki.ecohub.modules.menus.slot.Slot
+import wiki.ecohub.rules.holder.EmptyProvidedHolder
+import wiki.ecohub.ui.text.StringUtils
 
 object GroupGUI {
 
@@ -49,7 +49,7 @@ object GroupGUI {
         val pageChangeSound = PlayableSound.create(plugin.configYml.getSubsection("gui.group.page-change-sound"))
 
         val theMenu = menu(rows) {
-            title = formattedTitle
+            setTitle(formattedTitle)
 
             maxPages(maxPage)
             defaultPage { targetPage }
@@ -79,7 +79,7 @@ object GroupGUI {
 
                         val builtSlot = buildCollectionSlot(player, group, bypassMode, collection, showLeaderboardRank)
                         if (builtSlot != null) {
-                            setSlot(collection.guiRow, collection.guiColumn, builtSlot)
+                            setSlot(row = collection.guiRow, column = collection.guiColumn, slot = builtSlot)
                         }
                     }
 
@@ -95,9 +95,9 @@ object GroupGUI {
                         val unlockedCollectionsInGroup = collectionsInGroup.filter { player.isCollectionUnlocked(it) }
                         for (location in plugin.configYml.getSlotLocations("gui.group.collect-all")) {
                             setSlot(
-                                location.row,
-                                location.column,
-                                buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
+                                row = location.row,
+                                column = location.column,
+                                slot = buildCollectAllSlot(player, group, bypassMode, unlockedCollectionsInGroup)
                             )
                         }
                     }
@@ -117,7 +117,7 @@ object GroupGUI {
         val collectAllMaterial = plugin.configYml.getString("gui.group.collect-all.material")
         val collectAllName = plugin.configYml.getString("gui.group.collect-all.name")
 
-        val collectAllButtonItem = Items.lookup(collectAllMaterial).item.clone()
+        val collectAllButtonItem = Items.lookup(collectAllMaterial).getItem().clone()
         val meta = collectAllButtonItem.itemMeta
 
         if (meta != null) {
@@ -170,7 +170,7 @@ object GroupGUI {
         tier: Int,
         showLeaderboardRank: Boolean
     ): Slot {
-        val iconItem = collection.icon.item.clone()
+        val iconItem = collection.icon.getItem().clone()
         val meta = iconItem.itemMeta
 
         if (meta != null) {
@@ -329,7 +329,7 @@ object GroupGUI {
             }
 
             val item = inventory.getItem(slot) ?: continue
-            if (item.type.isAir || collection.manualCollectItems.none { item.isSimilar(it.item) }) {
+            if (item.type.isAir || collection.manualCollectItems.none { item.isSimilar(it.getItem()) }) {
                 continue
             }
 
@@ -359,7 +359,7 @@ object GroupGUI {
         val lockedLoreConfig = plugin.configYml.getStrings("gui.locked.icon.lore")
         val clickSound = PlayableSound.create(plugin.configYml.getSubsection("gui.locked.click-sound"))
 
-        val lockedItem = Items.lookup(lockedMaterial).item.clone()
+        val lockedItem = Items.lookup(lockedMaterial).getItem().clone()
         val meta = lockedItem.itemMeta
 
         if (meta != null) {

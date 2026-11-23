@@ -2,29 +2,27 @@
 
 package com.exanthiax.ecocollections.api
 
-import com.willfp.eco.core.data.profile
-import com.willfp.eco.core.progression.ProgressionPlaceholders
-import com.willfp.eco.core.sound.PlayableSound
-import com.willfp.eco.util.StringUtils
-import com.willfp.eco.util.toNumeral
 import com.exanthiax.ecocollections.api.event.PlayerCollectionCompleteEvent
 import com.exanthiax.ecocollections.api.event.PlayerCollectionTierUpEvent
 import com.exanthiax.ecocollections.api.event.PlayerCollectionUnlockEvent
 import com.exanthiax.ecocollections.collections.Collection
 import com.exanthiax.ecocollections.collections.Collections
-import com.exanthiax.ecocollections.plugin
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionComplete
 import com.exanthiax.ecocollections.libreforge.trigger.TriggerCollectionTierUp
-import com.willfp.eco.util.formatEco
-import com.willfp.eco.util.toNiceString
-import com.willfp.libreforge.EmptyProvidedHolder
-import com.willfp.libreforge.levels.LevelUpDispatcher
-import com.willfp.libreforge.toDispatcher
-import com.willfp.libreforge.triggers.DispatchedTrigger
-import com.willfp.libreforge.triggers.TriggerData
+import com.exanthiax.ecocollections.plugin
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import wiki.ecohub.game.entity.player.profile
+import wiki.ecohub.game.entity.toDispatcher
+import wiki.ecohub.game.sound.PlayableSound
+import wiki.ecohub.math.toNumeral
+import wiki.ecohub.modules.progression.LevelUpDispatcher
+import wiki.ecohub.modules.progression.ProgressionPlaceholders
+import wiki.ecohub.rules.holder.EmptyProvidedHolder
+import wiki.ecohub.rules.trigger.DispatchedTrigger
+import wiki.ecohub.rules.trigger.TriggerData
+import wiki.ecohub.ui.text.formatEco
 
 /**
  * Fire the tier-up chains for one tier.
